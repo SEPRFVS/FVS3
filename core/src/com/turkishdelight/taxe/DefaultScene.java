@@ -1,9 +1,9 @@
 package com.turkishdelight.taxe;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.turkishdelight.taxe.worldobjects.Location;
+import com.turkishdelight.taxe.guiobjects.Button;
 
-public class DefaultScene extends Scene {
+public class DefaultScene extends Scene{
 	Texture mapText;
 	SpriteComponent map;
 	@Override
@@ -13,10 +13,10 @@ public class DefaultScene extends Scene {
 		map = new SpriteComponent(this, mapText, Game.mapZ);
 		map.setPosition(0, 0);
 		map.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
-		Location London = new Location(this);
-		London.setPosition(210, 390);
-		Add(London);
 		Add(map);
+		Button b = new Button(this);
+		b.setPosition(600, 600);
+		Add(b);
 	}
 	
 	@Override

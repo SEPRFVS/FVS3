@@ -8,7 +8,7 @@ import com.turkishdelight.taxe.SpriteComponent;
 public class Route extends SpriteComponent {
 
 	static Texture text = new Texture("route.png");
-	public Route(Scene parentScene, int z) {
+	public Route(Scene parentScene) {
 		super(parentScene, text, Game.locationZ);
 	}
 

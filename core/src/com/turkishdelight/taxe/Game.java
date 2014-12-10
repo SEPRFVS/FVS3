@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.turkishdelight.taxe.scenes.*;
 
 public class Game extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -15,6 +16,8 @@ public class Game extends ApplicationAdapter {
 	//The values store the z values of various layers in the game. SpriteComponents are then sorted by the zorder before being drawn
 	//To create layering
 	//The map is always the lowest layer
+	public static Game activeGame;
+	
 	public static final int mapZ = 0;
 	//Locations and routes are displayed in the layer above the map
 	public static final int locationZ = 1;
@@ -24,14 +27,22 @@ public class Game extends ApplicationAdapter {
 	public static final int guiZ = 3;
 	
 	public void create () {
+		activeGame = this;
 		batch = new SpriteBatch();
 		//By default we set out scene to the main menu
-		setScene(new DefaultScene());
+		setLocalScene(new MainMenuScene());
 	}
 
-	public void setScene(Scene newScene)
+	public void setLocalScene(Scene newScene)
 	{
 		this.currentScene = newScene;
+		Gdx.input.setInputProcessor(newScene);
+	}
+	
+	public static void setScene(Scene newScene)
+	{
+		activeGame.setLocalScene(newScene);
+		System.out.println("Current Scene:" + newScene.getClass().getSimpleName().toString());
 	}
 	
 	
