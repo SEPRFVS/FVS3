@@ -23,8 +23,10 @@ public class Game extends ApplicationAdapter {
 	public static final int locationZ = 1;
 	//Trains and obstacles are displayed in the layer above the locations and routes
 	public static final int objectsZ = 2;
-	//The gui is displayed as the top layer
+	//The gui is displayed in the layer above the objects
 	public static final int guiZ = 3;
+	//The shop is displayed as the top layer
+	public static final int shopZ = 4;
 	
 	public void create () {
 		activeGame = this;
