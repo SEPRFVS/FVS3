@@ -1,6 +1,5 @@
 package com.turkishdelight.taxe.routing;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.CatmullRomSpline;
@@ -12,15 +11,15 @@ public class CurvedAiSprite extends SpriteComponent {
 
 	private int midSpritex;
 	private int midSpritey;					// halfway of sprite, used to correct into middle of path
-	float speed = 0.15f; 					// speed to travel
+	float speed = 1f; 					// speed to travel
 	float current = 0; 						// 'time' passed (between 0 and 1)
-	private Vector2 out = new Vector2();	// vector to output current location at(?)
+	private Vector2 out = new Vector2(1,1);	// vector to output current location at (set at (1,1) to stop jumping when starting a new path)
 	private Path path;						// the complete path from start to end
 	
 	Connection connection;					// current connection the aiSprite is on
 	private int waypoint = 0;				// index of pathv2 (which path) currently on
 	private boolean completed;				// has aiSprite completed entire path
-
+	float overshoot;
 
 	public CurvedAiSprite(Scene parentScene, Texture text, int z, Path path) {
 		super(parentScene, text, z);
@@ -29,14 +28,29 @@ public class CurvedAiSprite extends SpriteComponent {
 		
 		// set Location to start of path
 	    Vector2 startLocation = path.getStartLocation().getCoords();
-		setPosition(startLocation.x, startLocation.y);
+		
 		midSpritex = 25;  //TODO possible constant-ification
 		midSpritey = 25;
-		
+		setPosition(startLocation.x-midSpritex, startLocation.y-midSpritey);
 	}
+	
+	public void setPath(Path path) {
+		// ASSUMES GIVEN PATH FROM STATION ALREADY AT
+		this.path = path;
+		waypoint = 0;
+		completed = false;
+		current = 0;
+		out = new Vector2(1,1);
+	}
+	
 	@Override
 	public void draw(Batch batch) {
 		super.draw(batch);
+		
+		// for testing only
+		/*if (!completed ) {
+			updatePosition(); // Update the position
+		}*/
 	}
 	
 	@Override
@@ -48,20 +62,41 @@ public class CurvedAiSprite extends SpriteComponent {
 	}
 	
 	private void updatePosition() {
-		// TODO need code to save 'overshoot'
+		// add on, then clear any overshoot if the curvedaisprite stopped at the station previous turn 
+		current += overshoot;
+		overshoot = 0;
 		
-		current += speed;
+		// for constant velocity, ignoring effect of curves (TODO test this!)
+		connection = path.getConnection(waypoint);
+		CatmullRomSpline<Vector2> crs = connection.getPath();
+		crs.derivativeAt(out, current);
+		current += speed*10/out.len();    // 70 is just an arbitrary number, works well- increase to increase distance travelled each turn
 		
-		// testing if reached final waypoint
-		if (waypoint + 1 >= path.size()) {
-			System.out.println("Final waypoint reached");
-			completed = true;
-			return;
+		// for variable velocity (curves affect movement)
+		//current += speed;
+		
+		// for testing with animation only
+		//current += Gdx.graphics.getDeltaTime() * speed;
+		
+		
+		if(current >= 1) {// if a waypoint is reached
+			System.out.println("Waypoint reached");
+			
+			if(waypoint+2 >= path.size()) { // if reached final waypoint, fix it to final waypoint
+				System.out.println("Final waypoint reached");
+				completed = true;
+				current = 1;
+			} else {// otherwise fix it to station, give it overshoot next turn
+				waypoint++; // move to next waypoint
+				overshoot = current -1;
+				current = 0;
+			}
 		}
 		
-		// calculation for current position on given connection
-		connection = path.get(waypoint);
-		CatmullRomSpline<Vector2> crs = connection.getPath();
+		// calculations for current position on given connection
+		connection = path.getConnection(waypoint);
+		crs = connection.getPath();
+		
 		crs.valueAt(out,current);
 		setPosition(out.x - midSpritex, out.y - midSpritey);
 
@@ -69,17 +104,6 @@ public class CurvedAiSprite extends SpriteComponent {
 		out.nor();
 		setRotation(out.angle());
 		
-		// if a waypoint is reached, notify as completed, move to next in path
-		if(current >= 1) {
-			System.out.println("Waypoint reached");
-			current =1;// to waypoint location); // stops it passing past waypoint in high speeds
-
-			if(waypoint + 1 >= path.size()) // if reached final waypoint, fix it to final waypoint
-				completed = true;
-			else {
-				waypoint++;	
-				current = 0;
-			}
-		}
+		
 	}
 }

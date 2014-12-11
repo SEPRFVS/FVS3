@@ -30,7 +30,7 @@ public class Game extends ApplicationAdapter {
 		activeGame = this;
 		batch = new SpriteBatch();
 		//By default we set out scene to the main menu
-		setLocalScene(new MainMenuScene());
+		setLocalScene(new GameScene(new Player(), new Player()));
 	}
 
 	public void setLocalScene(Scene newScene)
