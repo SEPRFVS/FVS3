@@ -2,17 +2,26 @@ package com.turkishdelight.taxe.scenes;
 
 import java.util.HashMap;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.CatmullRomSpline;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Button;
-import com.turkishdelight.taxe.routing.CurvedAiSprite;
+import com.turkishdelight.taxe.routing.Train;
 import com.turkishdelight.taxe.routing.Path;
 import com.turkishdelight.taxe.worldobjects.Location;
 
@@ -33,11 +42,34 @@ public class GameScene extends Scene {
 	private Location budapest;
 	private Location krakow;
 	
-	CurvedAiSprite curvedSprite1;
 	private int k;											// fidelity of spline 
 	private Array<Vector2[]> pointsarray;					// stores array of collection of points that make up the map (used for drawing)
-	private CurvedAiSprite curvedSprite2;
 	
+	public static boolean collided;
+	
+	@Override
+	public void Draw(SpriteBatch batch) {
+		super.Draw(batch);
+		
+		// for testing collision detection
+		/*ShapeRenderer sr = new ShapeRenderer();
+		
+		Polygon p = train1.getPolygon();
+		Polygon p2 = train2.getPolygon();
+		
+		sr.begin(ShapeType.Line);
+		sr.polygon(p.getTransformedVertices());
+		sr.polygon(p2.getTransformedVertices());
+		sr.end();
+		
+		Array<Train> collidedTrains = getCollisions();
+		if (collidedTrains.size > 0) {
+			collided = true;
+			System.out.println("Collisions detected");
+			resolveCollisions();
+		}*/
+		
+	}
 	
 	public GameScene(Player player1In, Player player2In)
 	{
@@ -72,7 +104,6 @@ public class GameScene extends Scene {
 		
 		// setup connections
 		HashMap<String, CatmullRomSpline<Vector2>> paths = getPaths(); // returns all paths with their respective names
-		
 		connectLocations(london, paris, paths.get("LondonParis"), paths.get("ParisLondon")); // should be easier way to do this! pass in strings?
 		connectLocations(paris, rome, paths.get("ParisRome"), paths.get("RomeParis"));
 		connectLocations(rome, krakow, paths.get("RomeKrakow"), paths.get("KrakowRome"));
@@ -82,34 +113,32 @@ public class GameScene extends Scene {
 		connectLocations(paris, berlin, paths.get("ParisBerlin"), paths.get("BerlinParis"));
 		connectLocations(berlin, budapest, paths.get("BerlinBudapest"), paths.get("BudapestBerlin"));
 		connectLocations(krakow, moscow, paths.get("KrakowMoscow"), paths.get("MoscowKrakow"));
-		// add train
-		Texture trainTexture = new Texture("train1.png");
-		curvedSprite1 = new CurvedAiSprite(this, trainTexture, Game.objectsZ, getSpritePath());
-		curvedSprite1.setSize(50, 50);
-		curvedSprite1.setOriginCenter();
-		Add(curvedSprite1);
-		player1.addTrain(curvedSprite1);
 		
-		curvedSprite2 = new CurvedAiSprite(this, trainTexture, Game.objectsZ, getSpritePath2());
-		curvedSprite2.setSize(50, 50);
-		curvedSprite2.setOriginCenter();
-		Add(curvedSprite2);
-		player1.addTrain(curvedSprite2);
+		// add trains
+		Texture trainTexture = new Texture("traincropped.png"); // traincropped added to allow more accurate collision detection
+		Train train1 = new Train(50,20, 1, this, trainTexture, Game.objectsZ, getSpritePath());
+		Add(train1);
+		player1.addTrain(train1);
+		
+		Train train2 = new Train(50,20, 2, this, trainTexture, Game.objectsZ, getSpritePath2());
+		Add(train2);
+		player2.addTrain(train2);
+		
 		// create route (with dotted line)
 		Texture text = new Texture("route.png");
 		float distance = 0; // used to work out distance along path
-		final int divider = 5; // distance between 2 dots
+		final int divider = 7; // distance between 2 dots
 		// calculate length between each point in each path- only draw a dot icon when the distance is >= divider
 		for (Vector2[] points:pointsarray){
 			for (int i = 1; i<k; i++) {
 				if (distance < divider) {											
 					distance += points[i].dst(points[i-1]);
 				} else {
+					distance = distance - divider;
 					SpriteComponent route = new SpriteComponent(this, text, Game.mapZ);
 					route.setSize(2, 2);
 					route.setPosition(points[i].x+2, points[i].y+2);
 					Add(route);
-					distance = distance - divider;
 				}
 			}
 		}
@@ -126,17 +155,78 @@ public class GameScene extends Scene {
 		Add(b);
 	}
 	
-	private Path getSpritePath2() {
-		// TODO Auto-generated method stub
-		Path path;
-		if (MathUtils.randomBoolean()) {
-			path = new Path(berlin, budapest);
+
+	public void nextTurn()
+	{
+		if(activePlayer == player1)
+		{
+			System.out.println("ActivePlayer = 1");
+			activePlayer = player2;
+			player2.updateTurn(true);
+			player1.updateTurn(false);
 		}
-		else {
-			path = new Path(paris, rome);
+		else if(activePlayer == player2)
+		{
+			System.out.println("ActivePlayer = 2");
+			activePlayer = player1;
+			player1.updateTurn(true);
+			player2.updateTurn(false);
 		}
-		return path;
+		if (map != null && !collided)
+			if (getCollisions().size > 0) {
+				collided = true;
+				resolveCollisions();
+				collided = false;		// TODO some way of only changing this back after collision has ended
+				// have an array of colliding trains to keep track of ones in the middle of a collosion?
+			}
 	}
+
+	private Array<Train> getCollisions(){
+		// returns array where every even element is player1 collided train, odd element is player2 collided train
+		Array<Train> collidedTrains = new Array<Train>();
+		for (Train train1: player1.getTrains()) {
+			for (Train train2: player2.getTrains()) {
+				if (collisionOccured(train1, train2)){
+					collidedTrains.add(train1);
+					collidedTrains.add(train2);
+				}
+			}
+		}
+		return collidedTrains;
+	}
+	
+	private boolean collisionOccured(Train train1, Train train2) {
+		// tests whether 2 trains have collided
+		Polygon poly1 = train1.getPolygon();
+		Polygon poly2 = train2.getPolygon();
+		if (Intersector.overlapConvexPolygons(poly1.getTransformedVertices(), poly2.getTransformedVertices(), null)){
+			return true;
+		}
+		return false;
+	}
+	
+	private void resolveCollisions() {
+		Array<Train> collisions = getCollisions();
+		for (int i=0; i<collisions.size; i+=2){
+			Train p1Train = collisions.get(i);
+			Train p2Train = collisions.get(i+1);
+			if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
+				System.out.println("p1 wins!");
+				p2Train.stopTrain();
+			} else {
+				System.out.println("p2 wins!");
+				p1Train.stopTrain();
+				// TODO do something! (BASED AROUND WEIGHT)
+			}
+		}
+	}
+
+	private Location createLocation(Scene parentScene , int x , int y) {
+		Location location = new Location(parentScene, x,y);
+		location.setPosition(x, y);
+		Add(location);
+		return location;
+	}	
 
 	private void connectLocations(Location l1, Location l2, CatmullRomSpline<Vector2> path1, CatmullRomSpline<Vector2> path2){
 		if (!(l1.isConnected(l2))) {
@@ -144,18 +234,11 @@ public class GameScene extends Scene {
 			l2.addConnection(l1, path2); 
 		}
 	}
-	
-	private Location createLocation(Scene parentScene , int x , int y) {
-		Location location = new Location(parentScene, x,y);
-		location.setPosition(x, y);
-		Add(location);
-		return location;
-	}
-	
+
 	private Path getSpritePath(){
 		// random function that returns one of 2 given paths- used for testing
 		Path path;
-		if (MathUtils.randomBoolean()) {
+		if (true) {
 			path = new Path(krakow, madrid);
 		}
 		else {
@@ -164,15 +247,28 @@ public class GameScene extends Scene {
 		return path;
 	}
 	
+
+	private Path getSpritePath2() {
+		// TODO Auto-generated method stub
+		Path path;
+		if (true) {
+			path = new Path(berlin, budapest);
+		}
+		else {
+			path = new Path(paris, rome);
+		}
+		return path;
+	}
+	
 	private HashMap<String, CatmullRomSpline<Vector2>> getPaths() {
 		// this creates all of the paths on the map
-		// TODO currently requires making a path each way- is this necessary?
+		// TODO currently requires making a path each way
 		HashMap<String, CatmullRomSpline<Vector2>> paths = new HashMap<String, CatmullRomSpline<Vector2>>();
 		
-		k = 100; // spline fidelity
+		k = 700; // spline fidelity
 		pointsarray = new Array<Vector2[]>();
 		
-		// first last control points must be same due to catmull rom spline maths
+		// first last control points must be same due to catmullromspline maths
 		Vector2[] dataSet1 = new Vector2[6];
 		dataSet1[0] = (new Vector2(210, 390));
 		dataSet1[1] = (new Vector2(210, 390));
@@ -393,21 +489,4 @@ public class GameScene extends Scene {
 		return rdataSet1;
 	}
 	
-	public void nextTurn()
-	{
-		if(activePlayer == player1)
-		{
-			System.out.println("ActivePlayer = 1");
-			activePlayer = player2;
-			player2.updateTurn(true);
-			player1.updateTurn(false);
-		}
-		else if(activePlayer == player2)
-		{
-			System.out.println("ActivePlayer = 2");
-			activePlayer = player1;
-			player1.updateTurn(true);
-			player2.updateTurn(false);
-		}
-	}
 }
