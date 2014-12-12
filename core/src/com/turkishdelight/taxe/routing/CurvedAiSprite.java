@@ -18,8 +18,8 @@ public class CurvedAiSprite extends SpriteComponent {
 	
 	Connection connection;					// current connection the aiSprite is on
 	private int waypoint = 0;				// index of pathv2 (which path) currently on
-	private boolean completed;				// has aiSprite completed entire path
-	float overshoot;
+	private boolean completed;				// has aiSprite completed entire path?
+	float overshoot;						// amount that the curvedaisprite passes the station by
 
 	public CurvedAiSprite(Scene parentScene, Texture text, int z, Path path) {
 		super(parentScene, text, z);
@@ -79,7 +79,7 @@ public class CurvedAiSprite extends SpriteComponent {
 		//current += Gdx.graphics.getDeltaTime() * speed;
 		
 		
-		if(current >= 1) {// if a waypoint is reached
+		if(current >= 0.95) {// if a waypoint is reached (0.95 means no tiny movements!)
 			System.out.println("Waypoint reached");
 			
 			if(waypoint+2 >= path.size()) { // if reached final waypoint, fix it to final waypoint
@@ -104,6 +104,7 @@ public class CurvedAiSprite extends SpriteComponent {
 		out.nor();
 		setRotation(out.angle());
 		
+		// collision detection
 		
 	}
 }
