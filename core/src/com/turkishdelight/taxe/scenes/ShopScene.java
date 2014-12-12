@@ -97,6 +97,48 @@ public class ShopScene extends Scene {
 		nextGoButton.setTexture(buttonText);
 		Add(nextGoButton);
 		// ---------------------
+		
+		// Create Shop toolbar button
+		Button shopToolbarButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				shopToolbarPressed();
+			}
+		};
+		shopToolbarButton.setPosition(504, 665);
+		shopToolbarButton.setSize(55, 55);
+		shopToolbarButton.setTexture(buttonText);
+		Add(shopToolbarButton);
+		// ---------------------
+		
+		// Create Goals toolbar button
+		Button goalsToolbarButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				goalToolbarPressed();
+			}
+		};
+		goalsToolbarButton.setPosition(428, 665);
+		goalsToolbarButton.setSize(55, 55);
+		goalsToolbarButton.setTexture(buttonText);
+		Add(goalsToolbarButton);
+		// ---------------------
+		
+		// Create Resources toolbar button
+		Button resourcesToolbarButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				resourceToolbarPressed();
+			}
+		};
+		resourcesToolbarButton.setPosition(352, 665);
+		resourcesToolbarButton.setSize(55, 55);
+		resourcesToolbarButton.setTexture(buttonText);
+		Add(resourcesToolbarButton);
+		// ---------------------
 	}
 	
 	public void trainPressed()
@@ -147,6 +189,21 @@ public class ShopScene extends Scene {
 	public void nextGoPressed()
 	{
 		System.out.println("nextGoPressed");
+	}
+	
+	public void shopToolbarPressed() 
+	{
+		System.out.println("shopToolbarPressed");
+	}
+	
+	public void goalToolbarPressed() 
+	{
+		System.out.println("goalToolbarPressed");
+	}
+	
+	public void resourceToolbarPressed() 
+	{
+		System.out.println("resourceToolbarPressed");
 	}
 
 }
