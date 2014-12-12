@@ -14,6 +14,9 @@ public class ShopScene extends Scene {
 	Texture obstaclesText;
 	SpriteComponent shopObstacles;
 	
+	Texture resourcesText;
+	SpriteComponent shopResources;
+	
 	public void onCreate()
 	{
 		// Create background image for trains shop
@@ -31,12 +34,19 @@ public class ShopScene extends Scene {
 		shopObstacles.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
 		// ---------------------
 		
+		// Create background image for resources shop
+		resourcesText = new Texture("Shop_Resources.png");
+		shopResources = new SpriteComponent(this, resourcesText, Game.shopZ);
+		shopResources.setPosition(0, 0);
+		shopResources.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
+		// ---------------------
+		
 		// Create Train button
 		Button trainButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
-					trainPressed();
+				trainPressed();
 			}
 		};
 		trainButton.setPosition(418, 518);
@@ -59,14 +69,45 @@ public class ShopScene extends Scene {
 		obstacleButton.setTexture(buttonText);
 		Add(obstacleButton);
 		// ---------------------
+		
+		// Create Resource button
+		Button resourceButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				resourcePressed();
+			}
+		};
+		resourceButton.setPosition(798, 518);
+		resourceButton.setSize(180, 70);
+		resourceButton.setTexture(buttonText);
+		Add(resourceButton);
+		// ---------------------
+		
+		// Create Next Go button
+		Button nextGoButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				nextGoPressed();
+			}
+		};
+		nextGoButton.setPosition(590, 667);
+		nextGoButton.setSize(83, 44);
+		nextGoButton.setTexture(buttonText);
+		Add(nextGoButton);
+		// ---------------------
 	}
 	
 	public void trainPressed()
 	{
 		System.out.println("trainPressed");
 		
-		// Remove shopTrains texture from scene
+		// Remove obstacles texture from scene
 		Remove(shopObstacles);
+		
+		// Remove resources texture from scene
+		Remove(shopResources);
 		
 		// Add shopObstacles texture to scene
 		Add(shopTrains);
@@ -77,12 +118,35 @@ public class ShopScene extends Scene {
 	{
 		System.out.println("obstaclePressed");
 		
-		// Remove shopTrains texture from scene
+		// Remove trains texture from scene
 		Remove(shopTrains);
+		
+		// Remove resources texture from scene
+		Remove(shopResources);
 		
 		// Add shopObstacles texture to scene
 		Add(shopObstacles);
 		
+	}
+	
+	public void resourcePressed()
+	{
+		System.out.println("resourcePressed");
+		
+		// Remove trains texture from scene
+		Remove(shopTrains);
+		
+		// Remove obstacles texture from scene
+		Remove(shopObstacles);
+		
+		// Add resources texture to scene
+		Add(shopResources);
+		
+	}
+	
+	public void nextGoPressed()
+	{
+		System.out.println("nextGoPressed");
 	}
 
 }
