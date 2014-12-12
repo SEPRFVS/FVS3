@@ -7,38 +7,35 @@ import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Button;
 
 public class ShopScene extends Scene {
-	
-	Texture shopText;
-	SpriteComponent shopTrains;
-	
-	Texture obstaclesText;
-	SpriteComponent shopObstacles;
-	
-	Texture resourcesText;
-	SpriteComponent shopResources;
+
+	SpriteComponent shop;
+	SpriteComponent player1Money;
+	SpriteComponent player2Money;
 	
 	public void onCreate()
 	{
-		// Create background image for trains shop
-		shopText = new Texture("Shop_Trains.png");
-		shopTrains = new SpriteComponent(this, shopText, Game.shopZ);
-		shopTrains.setPosition(0, 0);
-		shopTrains.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
-		Add(shopTrains);
+		// Create background image for shop
+		Texture trainsText = new Texture("Shop_Trains.png");
+		shop = new SpriteComponent(this, trainsText, Game.shopZ);
+		shop.setPosition(0, 0);
+		shop.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
+		Add(shop);
 		// ---------------------
 		
-		// Create background image for obstacles shop
-		obstaclesText = new Texture("Shop_Obstacles.png");
-		shopObstacles = new SpriteComponent(this, obstaclesText, Game.shopZ);
-		shopObstacles.setPosition(0, 0);
-		shopObstacles.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
+		// Create player 1 money icon
+		Texture money1Text = new Texture("Money.png");
+		player1Money = new SpriteComponent(this, money1Text, Game.shopZ);
+		player1Money.setPosition(34, 628);
+		player1Money.setSize(37, 27);
+		Add(player1Money);
 		// ---------------------
 		
-		// Create background image for resources shop
-		resourcesText = new Texture("Shop_Resources.png");
-		shopResources = new SpriteComponent(this, resourcesText, Game.shopZ);
-		shopResources.setPosition(0, 0);
-		shopResources.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
+		// Create player 2 money icon
+		Texture money2Text = new Texture("Money.png");
+		player2Money = new SpriteComponent(this, money2Text, Game.shopZ);
+		player2Money.setPosition(779, 628);
+		player2Money.setSize(37, 27);
+		Add(player2Money);
 		// ---------------------
 		
 		// Create Train button
@@ -145,14 +142,10 @@ public class ShopScene extends Scene {
 	{
 		System.out.println("trainPressed");
 		
-		// Remove obstacles texture from scene
-		Remove(shopObstacles);
-		
-		// Remove resources texture from scene
-		Remove(shopResources);
-		
-		// Add shopObstacles texture to scene
-		Add(shopTrains);
+		// Create trains texture and set shop window background to be trains.
+		Texture trainsText = new Texture("Shop_Trains.png");
+		shop.setTexture(trainsText);
+		// ---------------------
 		
 	}
 	
@@ -160,14 +153,10 @@ public class ShopScene extends Scene {
 	{
 		System.out.println("obstaclePressed");
 		
-		// Remove trains texture from scene
-		Remove(shopTrains);
-		
-		// Remove resources texture from scene
-		Remove(shopResources);
-		
-		// Add shopObstacles texture to scene
-		Add(shopObstacles);
+		// Create obstacles texture and set shop window background to be obstacles.
+		Texture obstaclesText = new Texture("Shop_Obstacles.png");
+		shop.setTexture(obstaclesText);
+		// ---------------------
 		
 	}
 	
@@ -175,14 +164,10 @@ public class ShopScene extends Scene {
 	{
 		System.out.println("resourcePressed");
 		
-		// Remove trains texture from scene
-		Remove(shopTrains);
-		
-		// Remove obstacles texture from scene
-		Remove(shopObstacles);
-		
-		// Add resources texture to scene
-		Add(shopResources);
+		// Create resources texture and set shop window background to be resources.
+		Texture resourcesText = new Texture("Shop_Resources.png");
+		shop.setTexture(resourcesText);
+		// ---------------------
 		
 	}
 	
