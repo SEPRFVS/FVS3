@@ -1,24 +1,22 @@
 package com.turkishdelight.taxe.routing;
 
-import com.badlogic.gdx.math.CatmullRomSpline;
-import com.badlogic.gdx.math.Vector2;
 import com.turkishdelight.taxe.worldobjects.Location;
 
 public class Connection {
 
 	  private final Location endLocation;
-	  private CatmullRomSpline<Vector2> path;
+	  private CurvedRoute curvedRoute;
 
-	  public Connection(Location endLocation, CatmullRomSpline<Vector2> crs) {
+	  public Connection(Location endLocation, CurvedRoute curvedRoute) {
 	    this.endLocation = endLocation;
-	    this.path = crs;
+	    this.curvedRoute = curvedRoute;
 	  }
 
 	  public Location getLocation() { return endLocation; }
-	  public CatmullRomSpline<Vector2> getPath() { return path; }
+	  public CurvedRoute getPath() { return curvedRoute; }
 	  
-	  public void setPath(CatmullRomSpline<Vector2> path){
-		  this.path = path;
+	  public void setRoute(CurvedRoute curvedRoute){
+		  this.curvedRoute = curvedRoute;
 	  }
 	  
 	  @Override
@@ -30,7 +28,7 @@ public class Connection {
 	    	return false;
 	    }
 	    Connection pair = (Connection) o;
-	    return this.endLocation.equals(pair.getLocation()) && this.path.equals(pair.getPath());
+	    return this.endLocation.equals(pair.getLocation()) && this.curvedRoute.equals(pair.getPath());
 	  }
 
 	}

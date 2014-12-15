@@ -2,27 +2,20 @@ package com.turkishdelight.taxe.scenes;
 
 import java.util.HashMap;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Button;
-import com.turkishdelight.taxe.routing.Train;
+import com.turkishdelight.taxe.routing.CurvedRoute;
 import com.turkishdelight.taxe.routing.Path;
+import com.turkishdelight.taxe.routing.Train;
 import com.turkishdelight.taxe.worldobjects.Location;
 
 public class GameScene extends Scene {
@@ -51,7 +44,7 @@ public class GameScene extends Scene {
 	public void Draw(SpriteBatch batch) {
 		super.Draw(batch);
 		
-		// for testing collision detection
+		// for testing collision detection by drawing hitbox
 		/*ShapeRenderer sr = new ShapeRenderer();
 		
 		Polygon p = train1.getPolygon();
@@ -103,7 +96,7 @@ public class GameScene extends Scene {
 		System.out.println("Locations created");
 		
 		// setup connections
-		HashMap<String, CatmullRomSpline<Vector2>> paths = getPaths(); // returns all paths with their respective names
+		HashMap<String, CurvedRoute> paths = getPaths(); // returns all paths with their respective names
 		connectLocations(london, paris, paths.get("LondonParis"), paths.get("ParisLondon")); // should be easier way to do this! pass in strings?
 		connectLocations(paris, rome, paths.get("ParisRome"), paths.get("RomeParis"));
 		connectLocations(rome, krakow, paths.get("RomeKrakow"), paths.get("KrakowRome"));
@@ -116,11 +109,16 @@ public class GameScene extends Scene {
 		
 		// add trains
 		Texture trainTexture = new Texture("traincropped.png"); // traincropped added to allow more accurate collision detection
-		Train train1 = new Train(50,20, 1, this, trainTexture, Game.objectsZ, getSpritePath());
+		
+		SpriteComponent carriage1 = new SpriteComponent(this, trainTexture, Game.objectsZ);
+		Add(carriage1);
+		Train train1 = new Train(50,20, 1, this, trainTexture, Game.objectsZ, getSpritePath(), carriage1);
 		Add(train1);
 		player1.addTrain(train1);
 		
-		Train train2 = new Train(50,20, 2, this, trainTexture, Game.objectsZ, getSpritePath2());
+		SpriteComponent carriage2 = new SpriteComponent(this, trainTexture, Game.objectsZ);
+		Add(carriage2);
+		Train train2 = new Train(50,20, 2, this, trainTexture, Game.objectsZ, getSpritePath2(), carriage2);
 		Add(train2);
 		player2.addTrain(train2);
 		
@@ -160,14 +158,14 @@ public class GameScene extends Scene {
 	{
 		if(activePlayer == player1)
 		{
-			System.out.println("ActivePlayer = 1");
+			//System.out.println("ActivePlayer = 1");
 			activePlayer = player2;
 			player2.updateTurn(true);
 			player1.updateTurn(false);
 		}
 		else if(activePlayer == player2)
 		{
-			System.out.println("ActivePlayer = 2");
+			//System.out.println("ActivePlayer = 2");
 			activePlayer = player1;
 			player1.updateTurn(true);
 			player2.updateTurn(false);
@@ -228,7 +226,7 @@ public class GameScene extends Scene {
 		return location;
 	}	
 
-	private void connectLocations(Location l1, Location l2, CatmullRomSpline<Vector2> path1, CatmullRomSpline<Vector2> path2){
+	private void connectLocations(Location l1, Location l2, CurvedRoute path1, CurvedRoute path2){
 		if (!(l1.isConnected(l2))) {
 			l1.addConnection(l2, path1);
 			l2.addConnection(l1, path2); 
@@ -239,7 +237,7 @@ public class GameScene extends Scene {
 		// random function that returns one of 2 given paths- used for testing
 		Path path;
 		if (true) {
-			path = new Path(krakow, madrid);
+			path = new Path(moscow, krakow, madrid);
 		}
 		else {
 			path = new Path(madrid, krakow);
@@ -249,10 +247,10 @@ public class GameScene extends Scene {
 	
 
 	private Path getSpritePath2() {
-		// TODO Auto-generated method stub
+		// random function that returns one of 2 given paths- used for testing
 		Path path;
 		if (true) {
-			path = new Path(berlin, budapest);
+			path = new Path(madrid, krakow);
 		}
 		else {
 			path = new Path(paris, rome);
@@ -260,10 +258,10 @@ public class GameScene extends Scene {
 		return path;
 	}
 	
-	private HashMap<String, CatmullRomSpline<Vector2>> getPaths() {
+	private HashMap<String, CurvedRoute> getPaths() {
 		// this creates all of the paths on the map
-		// TODO currently requires making a path each way
-		HashMap<String, CatmullRomSpline<Vector2>> paths = new HashMap<String, CatmullRomSpline<Vector2>>();
+		// TODO currently requires making a path each way, clean up the process
+		HashMap<String, CurvedRoute> paths = new HashMap<String, CurvedRoute>();
 		
 		k = 700; // spline fidelity
 		pointsarray = new Array<Vector2[]>();
@@ -276,7 +274,7 @@ public class GameScene extends Scene {
 		dataSet1[3] = (new Vector2(270, 357));
 		dataSet1[4] = (new Vector2(300, 340));
 		dataSet1[5] = (new Vector2(300, 340));
-		CatmullRomSpline<Vector2> londonParis = new CatmullRomSpline<Vector2>(dataSet1, false);
+		CurvedRoute londonParis = new CurvedRoute(dataSet1, false);
 
 		Vector2[] points1 = new Vector2[k]; // collection of points on curve 
 		for (int i = 0; i <k; ++i) {
@@ -287,8 +285,9 @@ public class GameScene extends Scene {
 		pointsarray.add(points1);
 		
 		Vector2[] rdataSet1 = reverseDataset(dataSet1);
-		CatmullRomSpline<Vector2> parisLondon = new CatmullRomSpline<Vector2>(rdataSet1, false);
+		CurvedRoute parisLondon = new CurvedRoute(rdataSet1, false);
 		paths.put("ParisLondon" , parisLondon);
+		
 		
 		
 		Vector2[] dataSet2 = new Vector2[6];
@@ -298,7 +297,7 @@ public class GameScene extends Scene {
 		dataSet2[3] = (new Vector2(360, 250));
 		dataSet2[4] = (new Vector2(415, 168));
 		dataSet2[5] = (new Vector2(415, 168));
-		CatmullRomSpline<Vector2> parisRome = new CatmullRomSpline<Vector2>(dataSet2, false);
+		CurvedRoute parisRome = new CurvedRoute(dataSet2, false);
 		
 		Vector2[] points2 = new Vector2[k];
 		for (int i = 0; i <k; i++) {
@@ -309,8 +308,9 @@ public class GameScene extends Scene {
 		pointsarray.add(points2);
 		
 		Vector2[] rdataSet2 = reverseDataset(dataSet2);	
-		CatmullRomSpline<Vector2> romeParis = new CatmullRomSpline<Vector2>(rdataSet2, false);
+		CurvedRoute romeParis = new CurvedRoute(rdataSet2, false);
 		paths.put("RomeParis", romeParis);
+		
 		
 		
 		Vector2[] dataSet3 = new Vector2[6];
@@ -320,7 +320,7 @@ public class GameScene extends Scene {
 		dataSet3[3] = (new Vector2(450, 270));
 		dataSet3[4] = (new Vector2(510, 290));
 		dataSet3[5] = (new Vector2(510, 290));
-		CatmullRomSpline<Vector2> romeKrakow = new CatmullRomSpline<Vector2>(dataSet3, false);
+		CurvedRoute romeKrakow = new CurvedRoute(dataSet3, false);
 		
 		Vector2[] points3 = new Vector2[k];
 		for (int i = 0; i <k; ++i) {
@@ -331,8 +331,9 @@ public class GameScene extends Scene {
 		pointsarray.add(points3);
 		
 		Vector2[] rdataSet3 = reverseDataset(dataSet3);
-		CatmullRomSpline<Vector2> krakowRome = new CatmullRomSpline<Vector2>(rdataSet3, false);
+		CurvedRoute krakowRome = new CurvedRoute(rdataSet3, false);
 		paths.put("KrakowRome", krakowRome);
+		
 		
 		
 		Vector2[] dataSet4 = new Vector2[7];
@@ -343,7 +344,7 @@ public class GameScene extends Scene {
 		dataSet4[4] = (new Vector2(80, 220));
 		dataSet4[5] = (new Vector2(30, 120));
 		dataSet4[6] = (new Vector2(30, 120));
-		CatmullRomSpline<Vector2> londonLisbon = new CatmullRomSpline<Vector2>(dataSet4, false);
+		CurvedRoute londonLisbon = new CurvedRoute(dataSet4, false);
 		
 		Vector2[] points4 = new Vector2[k];
 		for (int i = 0; i <k; ++i) {
@@ -354,15 +355,17 @@ public class GameScene extends Scene {
 		pointsarray.add(points4);
 		
 		Vector2[] rdataSet4 = reverseDataset(dataSet4);
-		CatmullRomSpline<Vector2> lisbonLondon = new CatmullRomSpline<Vector2>(rdataSet4, false);
+		CurvedRoute lisbonLondon = new CurvedRoute(rdataSet4, false);
 		paths.put("LisbonLondon", lisbonLondon);
+		
+		
 		
 		Vector2[] dataSet5 = new Vector2[4];
 		dataSet5[0] = (new Vector2(520, 350));
 		dataSet5[1] = (new Vector2(520, 350));
 		dataSet5[2] = (new Vector2(120, 150));
 		dataSet5[3] = (new Vector2(120, 150));
-		CatmullRomSpline<Vector2> krakowMadrid = new CatmullRomSpline<Vector2>(dataSet5, false);
+		CurvedRoute krakowMadrid = new CurvedRoute(dataSet5, false);
 		
 		Vector2[] points5 = new Vector2[k];
 		for (int i = 0; i <k; ++i) {
@@ -373,15 +376,17 @@ public class GameScene extends Scene {
 		pointsarray.add(points5);
 		
 		Vector2[] rdataSet5 = reverseDataset(dataSet5);
-		CatmullRomSpline<Vector2> madridKrakow = new CatmullRomSpline<Vector2>(rdataSet5, false);
+		CurvedRoute madridKrakow = new CurvedRoute(rdataSet5, false);
 		paths.put("MadridKrakow", madridKrakow);
+		
+		
 		
 		Vector2[] dataSet6 = new Vector2[4];
 		dataSet6[0] = (new Vector2(30, 120));
 		dataSet6[1] = (new Vector2(30, 120));
 		dataSet6[2] = (new Vector2(120, 150));
 		dataSet6[3] = (new Vector2(120, 150));
-		CatmullRomSpline<Vector2> lisbonMadrid = new CatmullRomSpline<Vector2>(dataSet6, false);
+		CurvedRoute lisbonMadrid = new CurvedRoute(dataSet6, false);
 		
 		Vector2[] points6 = new Vector2[k];
 		for (int i = 0; i <k; ++i) {
@@ -392,8 +397,10 @@ public class GameScene extends Scene {
 		pointsarray.add(points6);
 		
 		Vector2[] rdataSet6 = reverseDataset(dataSet6);
-		CatmullRomSpline<Vector2> madridLisbon = new CatmullRomSpline<Vector2>(rdataSet6, false);
+		CurvedRoute madridLisbon = new CurvedRoute(rdataSet6, false);
 		paths.put("MadridLisbon", madridLisbon);
+		
+		
 		
 		Vector2[] dataSet7 = new Vector2[5];
 		dataSet7[0] = (new Vector2(300, 340));
@@ -401,7 +408,7 @@ public class GameScene extends Scene {
 		dataSet7[2] = (new Vector2(350, 340));
 		dataSet7[3] = (new Vector2(410,400));
 		dataSet7[4] = (new Vector2(410,400));
-		CatmullRomSpline<Vector2> parisBerlin = new CatmullRomSpline<Vector2>(dataSet7, false);
+		CurvedRoute parisBerlin = new CurvedRoute(dataSet7, false);
 		
 		Vector2[] points7 = new Vector2[k];
 		for (int i = 0; i <k; ++i) {
@@ -412,15 +419,17 @@ public class GameScene extends Scene {
 		pointsarray.add(points7);
 		
 		Vector2[] rdataSet7 = reverseDataset(dataSet7);
-		CatmullRomSpline<Vector2> berlinParis = new CatmullRomSpline<Vector2>(rdataSet7, false);
+		CurvedRoute berlinParis = new CurvedRoute(rdataSet7, false);
 		paths.put("BerlinParis", berlinParis);
+		
+		
 		
 		Vector2[] dataSet8 = new Vector2[4];
 		dataSet8[0] = (new Vector2(410, 400));
 		dataSet8[1] = (new Vector2(410, 400));
 		dataSet8[2] = (new Vector2(510, 290));
 		dataSet8[3] = (new Vector2(510, 290));
-		CatmullRomSpline<Vector2> berlinBudapest = new CatmullRomSpline<Vector2>(dataSet8, false);
+		CurvedRoute berlinBudapest = new CurvedRoute(dataSet8, false);
 		
 		Vector2[] points8 = new Vector2[k];
 		for (int i = 0; i <k; ++i) {
@@ -431,8 +440,9 @@ public class GameScene extends Scene {
 		pointsarray.add(points8);
 		
 		Vector2[] rdataSet8 = reverseDataset(dataSet8);
-		CatmullRomSpline<Vector2> budapestBerlin = new CatmullRomSpline<Vector2>(rdataSet8, false);
+		CurvedRoute budapestBerlin = new CurvedRoute(rdataSet8, false);
 		paths.put("BudapestBerlin", budapestBerlin);
+		
 		
 		
 		Vector2[] dataSet9 = new Vector2[5];
@@ -441,7 +451,7 @@ public class GameScene extends Scene {
 		dataSet9[2] = (new Vector2(700, 370));
 		dataSet9[3] = (new Vector2(800, 450));
 		dataSet9[4] = (new Vector2(800, 450));
-		CatmullRomSpline<Vector2> krakowMoscow = new CatmullRomSpline<Vector2>(dataSet9, false);
+		CurvedRoute krakowMoscow = new CurvedRoute(dataSet9, false);
 		
 		Vector2[] points9 = new Vector2[k];
 		for (int i = 0; i <k; ++i) {
@@ -452,7 +462,7 @@ public class GameScene extends Scene {
 		pointsarray.add(points9);
 		
 		Vector2[] rdataSet9 = reverseDataset(dataSet9);
-		CatmullRomSpline<Vector2> moscowKrakow = new CatmullRomSpline<Vector2>(rdataSet9, false);
+		CurvedRoute moscowKrakow = new CurvedRoute(rdataSet9, false);
 		paths.put("MoscowKrakow", moscowKrakow);
 		
 		
@@ -464,7 +474,7 @@ public class GameScene extends Scene {
 		dataSet10[3] = (new Vector2(700, 420));
 		dataSet10[4] = (new Vector2(800, 450));
 		dataSet10[5] = (new Vector2(800, 450));
-		CatmullRomSpline<Vector2> budapestMoscow = new CatmullRomSpline<Vector2>(dataSet10, false);
+		CurvedRoute budapestMoscow = new CurvedRoute(dataSet10, false);
 		
 		Vector2[] points10 = new Vector2[k];
 		for (int i = 0; i <k; ++i) {
@@ -475,7 +485,7 @@ public class GameScene extends Scene {
 		pointsarray.add(points10);
 		
 		Vector2[] rdataSet10 = reverseDataset(dataSet10);
-		CatmullRomSpline<Vector2> moscowBudapest = new CatmullRomSpline<Vector2>(rdataSet10, false);
+		CurvedRoute moscowBudapest = new CurvedRoute(rdataSet10, false);
 		paths.put("MoscowBudapest", moscowBudapest);
 		
 		return paths;

@@ -23,7 +23,7 @@ public class Path {
 				this.startLocation = location;
 			} else {
 				if (previous.isConnected(location)){
-					this.connections.add(new Connection(location, previous.getPath(location)));
+					this.connections.add(new Connection(location, previous.getCurvedRoute(location)));
 				} else {
 					System.out.println("NOT A VALID ROUTE"); // TODO be stricter here
 				}
