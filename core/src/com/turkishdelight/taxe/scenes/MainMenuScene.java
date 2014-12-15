@@ -21,5 +21,6 @@ public class MainMenuScene extends Scene {
 		b.setPosition(Game.targetWindowsWidth / 2, Game.targetWindowsHeight / 2);		
 		//Add the button
 		Add(b);
+		
 	}
 }
