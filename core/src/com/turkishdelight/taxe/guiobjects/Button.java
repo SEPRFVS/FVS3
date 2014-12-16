@@ -22,6 +22,7 @@ public class Button extends Clickable {
 	public Button(Scene parentScene, Texture targText, int width, int height, int z) {
 		super(parentScene, targText, z);
 		this.setSize(width, height);
+		this.setTexture(targText);
 	}
 	
 	@Override
