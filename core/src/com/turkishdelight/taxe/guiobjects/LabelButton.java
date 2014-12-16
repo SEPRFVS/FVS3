@@ -1,46 +1,34 @@
 package com.turkishdelight.taxe.guiobjects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
-import com.turkishdelight.taxe.SpriteComponent;
 
-public class Label extends SpriteComponent {
-	//This class is used to create sprites with text on top of them, allowing us to add
-	//Labels to the GUI and game
+public class LabelButton extends Button {
+	//This method extends the button object so that is can have text on top of the texture
 	
-	//We store the font, text, and text alignment of the label as private variables
+	//We store the font, text and text alignment as private variables
 	private BitmapFont font;
 	private String text;
 	private int alignment = 1;
 	
-	public Label(Scene parentScene, Texture targText, BitmapFont font) {
-		super(parentScene, targText, Game.shopZ);
+	public LabelButton(Scene parentScene) {
+		super(parentScene);
+		this.font = Label.genericFont(Color.BLACK, 30);
+	}
+	
+	public LabelButton(Scene parentScene, Texture targText, int width, int height, BitmapFont font) {
+		super(parentScene, targText, width, height, Game.guiZ);
 		this.font = font;
 	}
 	
-	//This method creates a new font object of a specific color and size for our default font file GOST.ttf
-	public static BitmapFont genericFont(Color fontColor, int fontSize)
-	{
-		//We use GOST.ttf
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("GOST.ttf"));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-		
-		//This size of the font is set and the font is generated
-		parameter.size = fontSize;
-		BitmapFont font = generator.generateFont(parameter);
-		
-		//Set the color of the font and return is
-		font.setColor(fontColor);
-		generator.dispose();
-		return font;
+	public LabelButton(Scene parentScene, Texture targText, int width, int height, int z, BitmapFont font) {
+		super(parentScene, targText, width, height, z);
+		this.font = font;
 	}
 	
 	//This method returns the label's font
@@ -109,4 +97,3 @@ public class Label extends SpriteComponent {
 	}
 
 }
-

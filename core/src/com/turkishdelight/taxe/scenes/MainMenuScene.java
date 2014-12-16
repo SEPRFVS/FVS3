@@ -14,7 +14,7 @@ public class MainMenuScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				Game.setScene(new NewGameScene());
+				Game.setScene(new ShopScene());
 			}
 		};
 		//Position the button
