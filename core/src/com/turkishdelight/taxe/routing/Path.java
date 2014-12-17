@@ -33,6 +33,10 @@ public class Path {
 		}
 	}
 	
+	public int size(){
+		return size;
+	}
+	
 	public Connection getConnection(int i){
 		return connections.get(i);
 	}
@@ -53,7 +57,5 @@ public class Path {
 		connections.add(connection);
 		size+=1;
 	}
-	public int size(){
-		return size;
-	}
+	
 }

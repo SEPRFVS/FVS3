@@ -2,6 +2,7 @@ package com.turkishdelight.taxe;
 
 import java.util.ArrayList;
 
+import com.turkishdelight.taxe.routing.AiSprite;
 import com.turkishdelight.taxe.routing.Train;
 
 public class Player {
@@ -9,63 +10,63 @@ public class Player {
 	private int score = 0;
 	private int fuel = 0;
 	private ArrayList<SpriteComponent> possessions = new ArrayList<SpriteComponent>();
-	private ArrayList<Train> trains = new ArrayList<Train>(); // used in game scene for collisions
-	
+	private ArrayList<AiSprite> aiSprites = new ArrayList<AiSprite>(); // used in game scene for collisions
+
 	public int getFuel()
 	{
 		return fuel;
 	}
-	
+
 	public int getMoney()
 	{
 		return money;
 	}
-	
+
 	public int getScore()
 	{
 		return score;
 	}
-	
+
 	public void setFuel(int newFuel)
 	{
 		fuel = newFuel;
 	}
-	
+
 	public void setMoney(int newMoney)
 	{
 		money = newMoney;
 	}
-	
+
 	public void setScore(int newScore)
 	{
 		score = newScore;
 	}
-	
+
 	public void updateFuel(int delta)
 	{
 		fuel += delta;
 	}
-	
+
 	public void updateMoney(int delta)
 	{
 		money += delta;
 	}
-	
+
 	public void updateScore(int delta)
 	{
 		score += delta;
 	}
-	
-	public void addTrain(SpriteComponent Train)
+
+	public void addAiSprite(SpriteComponent aiSprite)
 	{
-		possessions.add(Train);
-		trains.add((Train) Train);
+		possessions.add(aiSprite);
+		aiSprites.add((AiSprite) aiSprite);
 	}
-	
-	public ArrayList<Train> getTrains(){
-		return trains;
+
+	public ArrayList<AiSprite> getAiSprites(){
+		return aiSprites;
 	}
-	
+
 	public void updateTurn(boolean activePlayer)
 	{
 		updateGUI(activePlayer);
@@ -77,7 +78,7 @@ public class Player {
 			}
 		}
 	}
-	
+
 	public void updateGUI(boolean activePlayer)
 	{
 		if(activePlayer)
