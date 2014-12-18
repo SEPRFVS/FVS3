@@ -5,23 +5,23 @@ import com.turkishdelight.taxe.worldobjects.Location;
 public class Connection {
 
 	private final Location endLocation;
-	private CurvedRoute curvedRoute;
+	private CurvedPath curvedPath;
 
-	public Connection(Location endLocation, CurvedRoute curvedRoute) {
+	public Connection(Location endLocation, CurvedPath curvedPath) {
 		this.endLocation = endLocation;
-		this.curvedRoute = curvedRoute;
+		this.curvedPath = curvedPath;
 	}
 
 	public Location getLocation() { 
 		return endLocation; 
 	}
 
-	public CurvedRoute getPath() { 
-		return curvedRoute; 
+	public CurvedPath getPath() { 
+		return curvedPath; 
 	}
 
-	public void setRoute(CurvedRoute curvedRoute){
-		this.curvedRoute = curvedRoute;
+	public void setRoute(CurvedPath curvedPath){
+		this.curvedPath = curvedPath;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class Connection {
 			return false;
 		}
 		Connection pair = (Connection) o;
-		return this.endLocation.equals(pair.getLocation()) && this.curvedRoute.equals(pair.getPath());
+		return this.endLocation.equals(pair.getLocation()) && this.curvedPath.equals(pair.getPath());
 	}
 
 }

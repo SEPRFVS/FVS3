@@ -9,14 +9,14 @@ import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
 
 public class Carriage extends AiSprite {
-
+	// carriage moves 50 pxs behind the train it is connected to.
 	private Train train;							// train that the carriage is connected to
 	private int numCarriages = 1; 					// counts of number of carriages currently carrying ( >= 0)
 	private boolean nextRoute;						// boolean to test whether train is on next route 
 	private float prevDistances = 0f;				// the distance of the routes that the train has completed
 
-	public Carriage(Scene parentScene, Texture text, Path path, Train train) {
-		super(parentScene, text, path);
+	public Carriage(Scene parentScene, Texture text, Route route, Train train) {
+		super(parentScene, text, route);
 		this.weight = 1;
 		this.train = train;			
 	}
@@ -32,16 +32,16 @@ public class Carriage extends AiSprite {
 		if (train.getDistance() >= 50){
 			if (nextRoute){
 				waypoint++; // move to next waypoint
-				connection = path.getConnection(waypoint);	// get next connection in path
-				curvedRoute = connection.getPath();					// get next route in path
+				connection = route.getConnection(waypoint);	// get next connection in route
+				curvedPath = connection.getPath();					// get next route in route
 				current = 0;
 				nextRoute = false;
 			}
 			if (train.getCurrent() != 0){ // if train isnt at start of a waypoint
-				current = curvedRoute.getTFromDistance(train.getDistance()-prevDistances-50f);	// carriage is always 50 pixels behind train
+				current = curvedPath.getTFromDistance(train.getDistance()-prevDistances-50f);	// carriage is always 50 pixels behind train
 			} else if (train.getCurrent() == 0 && train.getWaypoint() >= 1) { // if at an intermediate waypoint/ final waypoint
-				current = curvedRoute.getTFromDistance(curvedRoute.getFinalDistance() - 50f); // work out 50 pixels behind waypoint (on previous path)
-				prevDistances += curvedRoute.getFinalDistance();
+				current = curvedPath.getTFromDistance(curvedPath.getFinalDistance() - 50f); // work out 50 pixels behind waypoint (on previous route)
+				prevDistances += curvedPath.getFinalDistance();
 				nextRoute = true;
 			}
 			move();
@@ -63,8 +63,8 @@ public class Carriage extends AiSprite {
 	}
 
 	@Override
-	public void setPath(Path path) {
-		this.path = path;
+	public void setPath(Route route) {
+		this.route = route;
 		waypoint = 0;
 		current = 0;
 		out = new Vector2(1,1);

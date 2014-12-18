@@ -17,8 +17,8 @@ import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Button;
 import com.turkishdelight.taxe.routing.AiSprite;
 import com.turkishdelight.taxe.routing.Carriage;
-import com.turkishdelight.taxe.routing.CurvedRoute;
-import com.turkishdelight.taxe.routing.Path;
+import com.turkishdelight.taxe.routing.CurvedPath;
+import com.turkishdelight.taxe.routing.Route;
 import com.turkishdelight.taxe.routing.Train;
 import com.turkishdelight.taxe.worldobjects.Location;
 
@@ -39,9 +39,7 @@ public class GameScene extends Scene {
 	private Location budapest;
 	private Location krakow;
 
-	private int k;											// fidelity of spline - TODO relate to curved route k value?
-	private Array<Vector2[]> pointsarray;					// stores array of collection of points that make up the map (used for drawing)
-	private ArrayList<CurvedRoute> curvedRoutes;
+	private ArrayList<CurvedPath> curvedPaths;				// collection of curved paths (only one way for wach path) for drawing
 
 	public static boolean collided;							// boolean to test whether a collision has occured in the game
 
@@ -79,7 +77,7 @@ public class GameScene extends Scene {
 		Add(map);
 
 		//Locations setup
-		curvedRoutes = new ArrayList<CurvedRoute>();
+		curvedPaths = new ArrayList<CurvedPath>();
 		london = createLocation(this, 210, 390);
 		rome = createLocation(this, 415, 168);
 		moscow = createLocation(this, 800, 450);
@@ -92,7 +90,7 @@ public class GameScene extends Scene {
 		System.out.println("Locations created");
 		
 		// setup connections
-		HashMap<String, CurvedRoute> paths = getPaths(); // returns all paths with their respective names
+		HashMap<String, CurvedPath> paths = getPaths(); // returns all paths with their respective names
 		connectLocations(london, paris, paths.get("LondonParis"), paths.get("ParisLondon")); // should be easier way to do this! pass in strings?
 		connectLocations(paris, rome, paths.get("ParisRome"), paths.get("RomeParis"));
 		connectLocations(rome, krakow, paths.get("RomeKrakow"), paths.get("KrakowRome"));
@@ -111,13 +109,13 @@ public class GameScene extends Scene {
 		// create route (with dotted line)
 		Texture text = new Texture("route.png");
 		final int divider = 10; // distance between 2 dots
-		// go to every x * divider, find closest distance value from curvedRoute array and use that to get corresponding position
-		for (CurvedRoute curvedRoute: curvedRoutes){
-			for (int i = 0; i < curvedRoute.getFinalDistance(); i+=divider) {
-				int x = curvedRoute.closestIndex(i, curvedRoute.getDistances());
+		// go to every x * divider, find closest distance value from curvedPath array and use that to get corresponding position
+		for (CurvedPath curvedPath: curvedPaths){
+			for (int i = 0; i < curvedPath.getFinalDistance(); i+=divider) {
+				int x = curvedPath.closestIndex(i, curvedPath.getDistances());
 				SpriteComponent route = new SpriteComponent(this, text, Game.mapZ);
 				route.setSize(2, 2);
-				Vector2 point = curvedRoute.getPoint(x);
+				Vector2 point = curvedPath.getPoint(x);
 				route.setPosition(point.x+2, point.y+2);
 				Add(route);
 			}
@@ -135,10 +133,10 @@ public class GameScene extends Scene {
 		Add(b);
 	}
 
-	private void createTrainAndCarriage(Texture trainTexture, int weight, Path path, Player player) {
-		Train train = new Train(this, trainTexture, path, weight);
+	private void createTrainAndCarriage(Texture trainTexture, int weight, Route route, Player player) {
+		Train train = new Train(this, trainTexture, route, weight);
 		Add(train);
-		Carriage carriage = new Carriage(this, trainTexture, path, train);
+		Carriage carriage = new Carriage(this, trainTexture, route, train);
 		Add(carriage);
 		player.addAiSprite(train);
 		player.addAiSprite(carriage);
@@ -232,57 +230,47 @@ public class GameScene extends Scene {
 		return location;
 	}	
 
-	private void connectLocations(Location l1, Location l2, CurvedRoute path1, CurvedRoute path2){
+	private void connectLocations(Location l1, Location l2, CurvedPath path1, CurvedPath path2){
 		if (!(l1.isConnected(l2))) {
 			l1.addConnection(l2, path1);
 			l2.addConnection(l1, path2); 
 		}
 	}
 
-	private Path getSpritePath(){
+	private Route getSpritePath(){
 		// random function that returns one of 2 given paths- used for testing
-		Path path;
-		path = new Path(moscow, krakow, madrid);
-		return path;
+		Route route;
+		route = new Route(moscow, krakow, madrid);
+		return route;
 	}
 
-	private Path getSpritePath2() {
+	private Route getSpritePath2() {
 		// random function that returns one of 2 given paths- used for testing
-		Path path;
-		path = new Path(madrid, krakow);
-		return path;
+		Route route;
+		route = new Route(lisbon, madrid, krakow);
+		return route;
 	}
 
-	private HashMap<String, CurvedRoute> getPaths() {
+	private HashMap<String, CurvedPath> getPaths() {
 		// this creates all of the paths on the map
-		// TODO currently requires making a path each way, clean up the process
-		HashMap<String, CurvedRoute> paths = new HashMap<String, CurvedRoute>();
-
-		k = 700; // spline fidelity (700 is a good arbitrary number)
-		pointsarray = new Array<Vector2[]>();
+		// TODO currently requires making a route each way, clean up the process
+		HashMap<String, CurvedPath> paths = new HashMap<String, CurvedPath>();
 
 		// first last control points must be same due to catmullromspline maths
-		Vector2[] dataSet1 = new Vector2[6];
+		Vector2[] dataSet1 = new Vector2[5];
 		dataSet1[0] = (new Vector2(210, 390));
 		dataSet1[1] = (new Vector2(210, 390));
-		dataSet1[2] = (new Vector2(255, 365));
-		dataSet1[3] = (new Vector2(270, 357));
+		dataSet1[2] = (new Vector2(255, 345));
+		dataSet1[3] = (new Vector2(300, 340));
 		dataSet1[4] = (new Vector2(300, 340));
-		dataSet1[5] = (new Vector2(300, 340));
-		CurvedRoute londonParis = new CurvedRoute(dataSet1, false);
-
-		Vector2[] points1 = new Vector2[k]; // collection of points on curve 
-		for (int i = 0; i <k; ++i) {
-			points1[i] = new Vector2();
-			londonParis.valueAt(points1[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath londonParis = new CurvedPath(dataSet1, false);
 		paths.put("LondonParis", londonParis);
-		pointsarray.add(points1);
-
+		curvedPaths.add(londonParis);
+		
 		Vector2[] rdataSet1 = reverseDataset(dataSet1);
-		CurvedRoute parisLondon = new CurvedRoute(rdataSet1, false);
+		CurvedPath parisLondon = new CurvedPath(rdataSet1, false);
 		paths.put("ParisLondon" , parisLondon);
-		curvedRoutes.add(londonParis);
+		
 
 
 		Vector2[] dataSet2 = new Vector2[6];
@@ -292,21 +280,15 @@ public class GameScene extends Scene {
 		dataSet2[3] = (new Vector2(360, 250));
 		dataSet2[4] = (new Vector2(415, 168));
 		dataSet2[5] = (new Vector2(415, 168));
-		CurvedRoute parisRome = new CurvedRoute(dataSet2, false);
-
-		Vector2[] points2 = new Vector2[k];
-		for (int i = 0; i <k; i++) {
-			points2[i] = new Vector2();
-			parisRome.valueAt(points2[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath parisRome = new CurvedPath(dataSet2, false);
 		paths.put("ParisRome", parisRome);
-		pointsarray.add(points2);
-
+		curvedPaths.add(parisRome);
+		
 		Vector2[] rdataSet2 = reverseDataset(dataSet2);	
-		CurvedRoute romeParis = new CurvedRoute(rdataSet2, false);
+		CurvedPath romeParis = new CurvedPath(rdataSet2, false);
 		paths.put("RomeParis", romeParis);
 
-		curvedRoutes.add(parisRome);
+		
 
 		Vector2[] dataSet3 = new Vector2[6];
 		dataSet3[0] = (new Vector2(415, 168));
@@ -315,21 +297,15 @@ public class GameScene extends Scene {
 		dataSet3[3] = (new Vector2(450, 270));
 		dataSet3[4] = (new Vector2(510, 290));
 		dataSet3[5] = (new Vector2(510, 290));
-		CurvedRoute romeKrakow = new CurvedRoute(dataSet3, false);
-
-		Vector2[] points3 = new Vector2[k];
-		for (int i = 0; i <k; ++i) {
-			points3[i] = new Vector2();
-			romeKrakow.valueAt(points3[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath romeKrakow = new CurvedPath(dataSet3, false);
 		paths.put("RomeKrakow", romeKrakow);
-		pointsarray.add(points3);
-
+		curvedPaths.add(romeKrakow);
+		
 		Vector2[] rdataSet3 = reverseDataset(dataSet3);
-		CurvedRoute krakowRome = new CurvedRoute(rdataSet3, false);
+		CurvedPath krakowRome = new CurvedPath(rdataSet3, false);
 		paths.put("KrakowRome", krakowRome);
 
-		curvedRoutes.add(romeKrakow);
+		
 
 		Vector2[] dataSet4 = new Vector2[7];
 		dataSet4[0] = (new Vector2(210, 390));
@@ -339,63 +315,45 @@ public class GameScene extends Scene {
 		dataSet4[4] = (new Vector2(80, 220));
 		dataSet4[5] = (new Vector2(30, 120));
 		dataSet4[6] = (new Vector2(30, 120));
-		CurvedRoute londonLisbon = new CurvedRoute(dataSet4, false);
-
-		Vector2[] points4 = new Vector2[k];
-		for (int i = 0; i <k; ++i) {
-			points4[i] = new Vector2();
-			londonLisbon.valueAt(points4[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath londonLisbon = new CurvedPath(dataSet4, false);
 		paths.put("LondonLisbon", londonLisbon);
-		pointsarray.add(points4);
-
+		curvedPaths.add(londonLisbon);
+		
 		Vector2[] rdataSet4 = reverseDataset(dataSet4);
-		CurvedRoute lisbonLondon = new CurvedRoute(rdataSet4, false);
+		CurvedPath lisbonLondon = new CurvedPath(rdataSet4, false);
 		paths.put("LisbonLondon", lisbonLondon);
-
-		curvedRoutes.add(londonLisbon);
+		
+		
 
 		Vector2[] dataSet5 = new Vector2[4];
 		dataSet5[0] = (new Vector2(520, 350));
 		dataSet5[1] = (new Vector2(520, 350));
 		dataSet5[2] = (new Vector2(120, 150));
 		dataSet5[3] = (new Vector2(120, 150));
-		CurvedRoute krakowMadrid = new CurvedRoute(dataSet5, false);
-
-		Vector2[] points5 = new Vector2[k];
-		for (int i = 0; i <k; ++i) {
-			points5[i] = new Vector2();
-			krakowMadrid.valueAt(points5[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath krakowMadrid = new CurvedPath(dataSet5, false);
 		paths.put("KrakowMadrid", krakowMadrid);
-		pointsarray.add(points5);
-
+		curvedPaths.add(krakowMadrid);
+		
 		Vector2[] rdataSet5 = reverseDataset(dataSet5);
-		CurvedRoute madridKrakow = new CurvedRoute(rdataSet5, false);
+		CurvedPath madridKrakow = new CurvedPath(rdataSet5, false);
 		paths.put("MadridKrakow", madridKrakow);
 
-		curvedRoutes.add(krakowMadrid);
+		
 
 		Vector2[] dataSet6 = new Vector2[4];
 		dataSet6[0] = (new Vector2(30, 120));
 		dataSet6[1] = (new Vector2(30, 120));
 		dataSet6[2] = (new Vector2(120, 150));
 		dataSet6[3] = (new Vector2(120, 150));
-		CurvedRoute lisbonMadrid = new CurvedRoute(dataSet6, false);
-
-		Vector2[] points6 = new Vector2[k];
-		for (int i = 0; i <k; ++i) {
-			points6[i] = new Vector2();
-			lisbonMadrid.valueAt(points6[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath lisbonMadrid = new CurvedPath(dataSet6, false);
 		paths.put("LisbonMadrid", lisbonMadrid);
-		pointsarray.add(points6);
-
+		curvedPaths.add(lisbonMadrid);
+		
 		Vector2[] rdataSet6 = reverseDataset(dataSet6);
-		CurvedRoute madridLisbon = new CurvedRoute(rdataSet6, false);
+		CurvedPath madridLisbon = new CurvedPath(rdataSet6, false);
 		paths.put("MadridLisbon", madridLisbon);
 
-		curvedRoutes.add(lisbonMadrid);
+		
 
 		Vector2[] dataSet7 = new Vector2[5];
 		dataSet7[0] = (new Vector2(300, 340));
@@ -403,42 +361,30 @@ public class GameScene extends Scene {
 		dataSet7[2] = (new Vector2(350, 340));
 		dataSet7[3] = (new Vector2(410,400));
 		dataSet7[4] = (new Vector2(410,400));
-		CurvedRoute parisBerlin = new CurvedRoute(dataSet7, false);
-
-		Vector2[] points7 = new Vector2[k];
-		for (int i = 0; i <k; ++i) {
-			points7[i] = new Vector2();
-			parisBerlin.valueAt(points7[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath parisBerlin = new CurvedPath(dataSet7, false);
 		paths.put("ParisBerlin", parisBerlin);
-		pointsarray.add(points7);
+		curvedPaths.add(parisBerlin);
 
 		Vector2[] rdataSet7 = reverseDataset(dataSet7);
-		CurvedRoute berlinParis = new CurvedRoute(rdataSet7, false);
+		CurvedPath berlinParis = new CurvedPath(rdataSet7, false);
 		paths.put("BerlinParis", berlinParis);
 
-		curvedRoutes.add(parisBerlin);
+		
 
 		Vector2[] dataSet8 = new Vector2[4];
 		dataSet8[0] = (new Vector2(410, 400));
 		dataSet8[1] = (new Vector2(410, 400));
 		dataSet8[2] = (new Vector2(510, 290));
 		dataSet8[3] = (new Vector2(510, 290));
-		CurvedRoute berlinBudapest = new CurvedRoute(dataSet8, false);
-
-		Vector2[] points8 = new Vector2[k];
-		for (int i = 0; i <k; ++i) {
-			points8[i] = new Vector2();
-			berlinBudapest.valueAt(points8[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath berlinBudapest = new CurvedPath(dataSet8, false);
 		paths.put("BerlinBudapest", berlinBudapest);
-		pointsarray.add(points8);
-
+		curvedPaths.add(berlinBudapest);
+		
 		Vector2[] rdataSet8 = reverseDataset(dataSet8);
-		CurvedRoute budapestBerlin = new CurvedRoute(rdataSet8, false);
+		CurvedPath budapestBerlin = new CurvedPath(rdataSet8, false);
 		paths.put("BudapestBerlin", budapestBerlin);
 
-		curvedRoutes.add(berlinBudapest);
+		
 
 		Vector2[] dataSet9 = new Vector2[5];
 		dataSet9[0] = (new Vector2(520, 350));
@@ -446,21 +392,15 @@ public class GameScene extends Scene {
 		dataSet9[2] = (new Vector2(700, 370));
 		dataSet9[3] = (new Vector2(800, 450));
 		dataSet9[4] = (new Vector2(800, 450));
-		CurvedRoute krakowMoscow = new CurvedRoute(dataSet9, false);
-
-		Vector2[] points9 = new Vector2[k];
-		for (int i = 0; i <k; ++i) {
-			points9[i] = new Vector2();
-			krakowMoscow.valueAt(points9[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath krakowMoscow = new CurvedPath(dataSet9, false);
 		paths.put("KrakowMoscow", krakowMoscow);
-		pointsarray.add(points9);
+		curvedPaths.add(krakowMoscow);
 
 		Vector2[] rdataSet9 = reverseDataset(dataSet9);
-		CurvedRoute moscowKrakow = new CurvedRoute(rdataSet9, false);
+		CurvedPath moscowKrakow = new CurvedPath(rdataSet9, false);
 		paths.put("MoscowKrakow", moscowKrakow);
 
-		curvedRoutes.add(moscowKrakow);
+		
 
 		Vector2[] dataSet10 = new Vector2[6];
 		dataSet10[0] = (new Vector2(510, 290));
@@ -469,21 +409,15 @@ public class GameScene extends Scene {
 		dataSet10[3] = (new Vector2(700, 420));
 		dataSet10[4] = (new Vector2(800, 450));
 		dataSet10[5] = (new Vector2(800, 450));
-		CurvedRoute budapestMoscow = new CurvedRoute(dataSet10, false);
-
-		Vector2[] points10 = new Vector2[k];
-		for (int i = 0; i <k; ++i) {
-			points10[i] = new Vector2();
-			budapestMoscow.valueAt(points10[i], ((float) i)/((float)k-1));
-		}
+		CurvedPath budapestMoscow = new CurvedPath(dataSet10, false);
 		paths.put("BudapestMoscow", budapestMoscow);
-		pointsarray.add(points10);
-
+		curvedPaths.add(budapestMoscow);
+		
 		Vector2[] rdataSet10 = reverseDataset(dataSet10);
-		CurvedRoute moscowBudapest = new CurvedRoute(rdataSet10, false);
+		CurvedPath moscowBudapest = new CurvedPath(rdataSet10, false);
 		paths.put("MoscowBudapest", moscowBudapest);
 		
-		curvedRoutes.add(budapestMoscow);
+		
 		return paths;
 	}
 
