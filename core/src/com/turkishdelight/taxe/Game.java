@@ -27,6 +27,7 @@ public class Game extends ApplicationAdapter {
 	public static final int guiZ = 3;
 	//The shop is displayed as the top layer
 	public static final int shopZ = 4;
+	public static final int mainZ =5;
 	
 	public void create () {
 		activeGame = this;
