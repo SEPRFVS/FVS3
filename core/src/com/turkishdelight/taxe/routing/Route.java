@@ -4,26 +4,27 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.turkishdelight.taxe.worldobjects.Location;
 
-public class Path {
-	// Contains information on path from location to another, possibly through multiple locations 
+public class Route {
+	// Contains information on route from location to another, possibly through multiple locations via multiple paths
+	
 	private Array<Connection> connections;			// collection of connections
-	private Location startLocation;					// starting location of path (is connected to second element in connections)
-	private int size = 0;
+	private Location startLocation;					// starting location of route (is connected to first location in connections)
+	private int size = 0;							// number of paths in route
 
-	public Path() {
+	public Route() {
 		this.connections = new Array<Connection>();
 	}
 
-	public Path(Location ... locations) { // note waypoints cannot be null
+	public Route(Location ... locations) { // note locations cannot be null
 		this.connections = new Array<Connection>();
 		Location previous = null;
-		// need to add start location first, then sort out connections.
+		// add start location first, then sort out connections.
 		for (Location location : locations){
 			if (size == 0) {
 				this.startLocation = location;
 			} else {
 				if (previous.isConnected(location)){
-					this.connections.add(new Connection(location, previous.getPath(location)));
+					this.connections.add(new Connection(location, previous.getCurvedRoute(location)));
 				} else {
 					System.out.println("NOT A VALID ROUTE"); // TODO be stricter here
 				}
@@ -33,7 +34,11 @@ public class Path {
 		}
 	}
 	
-	public Connection get(int i){
+	public int size(){
+		return size;
+	}
+	
+	public Connection getConnection(int i){
 		return connections.get(i);
 	}
 	
@@ -41,7 +46,7 @@ public class Path {
 		return this.startLocation;
 	}
 
-	public Array<Vector2> getPositions(){ // renaming from location?
+	public Array<Vector2> getLocationPositions(){ 
 		Array<Vector2> positions = new Array<Vector2>();
 		for (Connection connection:this.connections){
 			positions.add(connection.getLocation().getCoords());
@@ -49,11 +54,9 @@ public class Path {
 		return positions;
 	}
 
-	public void add(Connection connection){
+	public void addConnection(Connection connection){
 		connections.add(connection);
 		size+=1;
 	}
-	public int size(){
-		return size;
-	}
+	
 }

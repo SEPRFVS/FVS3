@@ -31,12 +31,13 @@ public class Game extends ApplicationAdapter {
 	public static final int goalsZ = 5;
 	//The current resources window is displayed as the top layer
 	public static final int currentResourcesZ = 6;
+	public static final int mainZ =5;
 	
 	public void create () {
 		activeGame = this;
 		batch = new SpriteBatch();
 		//By default we set out scene to the main menu
-		setLocalScene(new MainMenuScene());
+		setLocalScene(new GameScene(new Player(), new Player()));
 	}
 
 	public void setLocalScene(Scene newScene)
