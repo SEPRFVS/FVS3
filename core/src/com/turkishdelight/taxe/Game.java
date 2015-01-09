@@ -27,13 +27,17 @@ public class Game extends ApplicationAdapter {
 	public static final int guiZ = 3;
 	//The shop is displayed as the top layer
 	public static final int shopZ = 4;
+	//The goals window is displayed in the layer above the shop window
+	public static final int goalsZ = 5;
+	//The current resources window is displayed as the top layer
+	public static final int currentResourcesZ = 6;
 	public static final int mainZ =5;
 	
 	public void create () {
 		activeGame = this;
 		batch = new SpriteBatch();
 		//By default we set out scene to the main menu
-		setLocalScene(new GameScene(new Player(), new Player()));
+		setLocalScene(new MainMenuScene());
 	}
 
 	public void setLocalScene(Scene newScene)

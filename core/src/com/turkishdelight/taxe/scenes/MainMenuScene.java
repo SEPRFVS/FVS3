@@ -1,11 +1,13 @@
 package com.turkishdelight.taxe.scenes;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
+import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Button;
 
 public class MainMenuScene extends Scene {
-	
+	SpriteComponent bkg;
 	@Override
 	public void onCreate()
 	{	
