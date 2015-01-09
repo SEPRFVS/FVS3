@@ -9,9 +9,9 @@ import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Button;
 import com.turkishdelight.taxe.guiobjects.Label;
 
-public class ShopScene extends Scene {
-
-	SpriteComponent shop;
+public class GoalsScene extends Scene {
+	
+	SpriteComponent goals;
 	
 	SpriteComponent player1Money;
 	SpriteComponent player1Fuel;
@@ -31,23 +31,23 @@ public class ShopScene extends Scene {
 	
 	public void onCreate()
 	{
-		// Create background image for shop
-		Texture trainsText = new Texture("Shop_Trains.png");
-		shop = new SpriteComponent(this, trainsText, Game.shopZ);
-		shop.setPosition(0, 0);
-		shop.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
-		Add(shop);
+		// Create background image for goals
+		Texture currentText = new Texture("Goals_Current.png");
+		goals = new SpriteComponent(this, currentText, Game.goalsZ);
+		goals.setPosition(0, 0);
+		goals.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
+		Add(goals);
 		// ---------------------
 		
 		// Draw player 1 info on create
 		drawPlayer1Info();
-		
+				
 		// Draw player 2 info on create
 		drawPlayer2Info();
-		
-		// Draw window buttons (Trains, Obstacles and Resources) on create
+				
+		// Draw window buttons (Current, Incomplete and Complete) on create
 		drawWindowButtons();
-		
+				
 		// Draw toolbar buttons on create
 		drawToolbarButtons();
 		
@@ -57,7 +57,7 @@ public class ShopScene extends Scene {
 	{
 		// Create player 1 name label
 		Texture player1LabelText = new Texture("Clear_Button.png");
-		player1NameLabel = new Label(this, player1LabelText, Label.genericFont(Color.BLUE, 40));
+		player1NameLabel = new Label(this, player1LabelText, Label.genericFont(Color.BLUE, 40), Game.goalsZ);
 		player1NameLabel.setText("PLAYER 1");
 		player1NameLabel.setPosition(36, 730);
 		player1NameLabel.setAlignment(0);
@@ -66,7 +66,7 @@ public class ShopScene extends Scene {
 		
 		// Create player 1 active indicator icon
 		Texture player1ActiveText = new Texture("Active_Player1_Indicator.png");
-		activePlayer1Indicator = new SpriteComponent(this, player1ActiveText, Game.shopZ);
+		activePlayer1Indicator = new SpriteComponent(this, player1ActiveText, Game.goalsZ);
 		activePlayer1Indicator.setPosition(17, 707);
 		activePlayer1Indicator.setSize(10, 20);
 		activePlayer1Indicator.setAlpha(1);
@@ -74,7 +74,7 @@ public class ShopScene extends Scene {
 		// ---------------------
 		
 		// Create player 1 score label
-		player1ScoreLabel = new Label(this, player1LabelText, Label.genericFont(Color.BLUE, 20));
+		player1ScoreLabel = new Label(this, player1LabelText, Label.genericFont(Color.BLUE, 20), Game.goalsZ);
 		player1ScoreLabel.setText("Score: 12345");
 		player1ScoreLabel.setPosition(36, 683);
 		player1ScoreLabel.setAlignment(0);
@@ -83,7 +83,7 @@ public class ShopScene extends Scene {
 		
 		// Create player 1 money icon
 		Texture money1Text = new Texture("Money.png");
-		player1Money = new SpriteComponent(this, money1Text, Game.shopZ);
+		player1Money = new SpriteComponent(this, money1Text, Game.goalsZ);
 		player1Money.setPosition(34, 628);
 		player1Money.setSize(37, 27);
 		player1Money.setAlpha(1);
@@ -91,7 +91,7 @@ public class ShopScene extends Scene {
 		// ---------------------
 		
 		// Create player 1 money label
-		player1MoneyLabel = new Label(this, player1LabelText, Label.genericFont(Color.MAROON, 20));
+		player1MoneyLabel = new Label(this, player1LabelText, Label.genericFont(Color.MAROON, 20), Game.goalsZ);
 		player1MoneyLabel.setText("35353");
 		player1MoneyLabel.setPosition(player1Money.getX() + player1Money.getWidth() + 8, 648);
 		player1MoneyLabel.setAlignment(0);
@@ -100,7 +100,7 @@ public class ShopScene extends Scene {
 		
 		// Create player 1 fuel icon
 		Texture fuel1Text = new Texture("Fuel.png");
-		player1Fuel = new SpriteComponent(this, fuel1Text, Game.shopZ);
+		player1Fuel = new SpriteComponent(this, fuel1Text, Game.goalsZ);
 		TextBounds player1MoneyLabelBounds = player1MoneyLabel.getFont().getBounds(player1MoneyLabel.getText());
 		player1Fuel.setPosition(player1MoneyLabel.getX() + player1MoneyLabelBounds.width + 30, 630);
 		player1Fuel.setSize(20, 25);
@@ -109,7 +109,7 @@ public class ShopScene extends Scene {
 		// ---------------------
 		
 		// Create player 1 fuel label
-		player1FuelLabel = new Label(this, player1LabelText, Label.genericFont(Color.TEAL, 20));
+		player1FuelLabel = new Label(this, player1LabelText, Label.genericFont(Color.TEAL, 20), Game.goalsZ);
 		player1FuelLabel.setText("67543");
 		player1FuelLabel.setPosition(player1Fuel.getX() + player1Fuel.getWidth() + 8, 648);
 		player1FuelLabel.setAlignment(0);
@@ -121,7 +121,7 @@ public class ShopScene extends Scene {
 	{
 		// Create player 2 name label
 		Texture player2LabelText = new Texture("Clear_Button.png");
-		player2NameLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 40));
+		player2NameLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 40), Game.goalsZ);
 		player2NameLabel.setText("PLAYER 2");
 		player2NameLabel.setPosition(985, 730);
 		player2NameLabel.setAlignment(2);
@@ -131,7 +131,7 @@ public class ShopScene extends Scene {
 		
 		// Create player 2 active indicator icon
 		Texture player2ActiveText = new Texture("Active_Player2_Indicator.png");
-		activePlayer2Indicator = new SpriteComponent(this, player2ActiveText, Game.shopZ);
+		activePlayer2Indicator = new SpriteComponent(this, player2ActiveText, Game.goalsZ);
 		activePlayer2Indicator.setPosition(995, 707);
 		activePlayer2Indicator.setSize(10, 20);
 		activePlayer2Indicator.setAlpha((float) 0.4);
@@ -139,7 +139,7 @@ public class ShopScene extends Scene {
 		// ---------------------
 		
 		// Create player 2 score label
-		player2ScoreLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20));
+		player2ScoreLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20), Game.goalsZ);
 		player2ScoreLabel.setText("Score: 54321");
 		player2ScoreLabel.setPosition(985, 683);
 		player2ScoreLabel.setAlignment(2);
@@ -147,7 +147,7 @@ public class ShopScene extends Scene {
 		// ---------------------
 		
 		// Create player 2 fuel label
-		player2FuelLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20));
+		player2FuelLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20), Game.goalsZ);
 		player2FuelLabel.setText("67543");
 		player2FuelLabel.setPosition(985, 648);
 		player2FuelLabel.setAlignment(2);
@@ -156,7 +156,7 @@ public class ShopScene extends Scene {
 		
 		// Create player 2 fuel icon
 		Texture fuel2Text = new Texture("Fuel.png");
-		player2Fuel = new SpriteComponent(this, fuel2Text, Game.shopZ);
+		player2Fuel = new SpriteComponent(this, fuel2Text, Game.goalsZ);
 		player2Fuel.setSize(20, 25);
 		TextBounds player2FuelLabelBounds = player2FuelLabel.getFont().getBounds(player2FuelLabel.getText());
 		player2Fuel.setPosition(player2FuelLabel.getX() - player2FuelLabelBounds.width - player2Fuel.getWidth() - 8, 630);
@@ -165,7 +165,7 @@ public class ShopScene extends Scene {
 		// ---------------------
 		
 		// Create player 2 money label
-		player2MoneyLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20));
+		player2MoneyLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20), Game.goalsZ);
 		player2MoneyLabel.setText("98452");
 		int x = (int) player2Fuel.getX() - 30;
 		player2MoneyLabel.setPosition(x, 648);
@@ -175,7 +175,7 @@ public class ShopScene extends Scene {
 		
 		// Create player 2 money icon
 		Texture money2Text = new Texture("Money.png");
-		player2Money = new SpriteComponent(this, money2Text, Game.shopZ);
+		player2Money = new SpriteComponent(this, money2Text, Game.goalsZ);
 		player2Money.setSize(37, 27);
 		TextBounds player2MoneyLabelBounds = player2MoneyLabel.getFont().getBounds(player2MoneyLabel.getText());
 		player2Money.setPosition(player2MoneyLabel.getX() - player2MoneyLabelBounds.width - player2Money.getWidth() - 8, 628);
@@ -187,47 +187,47 @@ public class ShopScene extends Scene {
 	public void drawWindowButtons()
 
 	{
-		// Create Train button
-		Button trainButton = new Button(this) {
+		// Create current button
+		Button currentButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
-				trainPressed();
+				currentPressed();
 			}
 		};
-		trainButton.setPosition(418, 518);
-		trainButton.setSize(180, 70);
+		currentButton.setPosition(418, 518);
+		currentButton.setSize(180, 70);
 		Texture buttonText = new Texture("Clear_Button.png");
-		trainButton.setTexture(buttonText);
-		Add(trainButton);
+		currentButton.setTexture(buttonText);
+		Add(currentButton);
 		// ---------------------
 		
-		// Create Obstacle button
-		Button obstacleButton = new Button(this) {
+		// Create complete button
+		Button completeButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
-				obstaclePressed();
+				completePressed();
 			}
 		};
-		obstacleButton.setPosition(608, 518);
-		obstacleButton.setSize(180, 70);
-		obstacleButton.setTexture(buttonText);
-		Add(obstacleButton);
+		completeButton.setPosition(608, 518);
+		completeButton.setSize(180, 70);
+		completeButton.setTexture(buttonText);
+		Add(completeButton);
 		// ---------------------
 		
-		// Create Resource button
-		Button resourceButton = new Button(this) {
+		// Create incomplete button
+		Button incompleteButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
-				resourcePressed();
+				incompletePressed();
 			}
 		};
-		resourceButton.setPosition(798, 518);
-		resourceButton.setSize(180, 70);
-		resourceButton.setTexture(buttonText);
-		Add(resourceButton);
+		incompleteButton.setPosition(798, 518);
+		incompleteButton.setSize(180, 70);
+		incompleteButton.setTexture(buttonText);
+		Add(incompleteButton);
 		// ---------------------
 	}
 	
@@ -249,6 +249,20 @@ public class ShopScene extends Scene {
 		Add(nextGoButton);
 		// ---------------------
 		
+		// Create goals toolbar button
+		Button goalsToolbarButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				goalsToolbarPressed();
+			}
+		};
+		goalsToolbarButton.setPosition(428, 665);
+		goalsToolbarButton.setSize(55, 55);
+		goalsToolbarButton.setTexture(buttonText);
+		Add(goalsToolbarButton);
+		// ---------------------
+		
 		// Create Shop toolbar button
 		Button shopToolbarButton = new Button(this) {
 			@Override
@@ -263,26 +277,12 @@ public class ShopScene extends Scene {
 		Add(shopToolbarButton);
 		// ---------------------
 		
-		// Create Goals toolbar button
-		Button goalsToolbarButton = new Button(this) {
-			@Override
-			public void onClickEnd()
-			{
-				goalToolbarPressed();
-			}
-		};
-		goalsToolbarButton.setPosition(428, 665);
-		goalsToolbarButton.setSize(55, 55);
-		goalsToolbarButton.setTexture(buttonText);
-		Add(goalsToolbarButton);
-		// ---------------------
-		
-		// Create Resources toolbar button
+		// Create incompletes toolbar button
 		Button resourcesToolbarButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
-				resourceToolbarPressed();
+				resourcesToolbarPressed();
 			}
 		};
 		resourcesToolbarButton.setPosition(352, 665);
@@ -292,35 +292,35 @@ public class ShopScene extends Scene {
 		// ---------------------
 	}
 	
-	public void trainPressed()
+	public void currentPressed()
 	{
-		System.out.println("trainPressed");
+		System.out.println("currentPressed");
 		
-		// Create trains texture and set shop window background to be trains.
-		Texture trainsText = new Texture("Shop_Trains.png");
-		shop.setTexture(trainsText);
+		// Create current texture and set goals window background to be current.
+		Texture currentText = new Texture("Goals_Current.png");
+		goals.setTexture(currentText);
 		// ---------------------
 		
 	}
 	
-	public void obstaclePressed()
+	public void completePressed()
 	{
-		System.out.println("obstaclePressed");
+		System.out.println("completePressed");
 		
-		// Create obstacles texture and set shop window background to be obstacles.
-		Texture obstaclesText = new Texture("Shop_Obstacles.png");
-		shop.setTexture(obstaclesText);
+		// Create completes texture and set goals window background to be completes.
+		Texture completeText = new Texture("Goals_Incomplete.png");
+		goals.setTexture(completeText);
 		// ---------------------
 		
 	}
 	
-	public void resourcePressed()
+	public void incompletePressed()
 	{
-		System.out.println("resourcePressed");
+		System.out.println("incompletePressed");
 		
-		// Create resources texture and set shop window background to be resources.
-		Texture resourcesText = new Texture("Shop_Resources.png");
-		shop.setTexture(resourcesText);
+		// Create incompletes texture and set goals window background to be incompletes.
+		Texture incompletesText = new Texture("Goals_Complete.png");
+		goals.setTexture(incompletesText);
 		// ---------------------
 		
 	}
@@ -341,21 +341,21 @@ public class ShopScene extends Scene {
 		player1Go = !player1Go;
 	}
 	
+	public void goalsToolbarPressed() 
+	{
+		System.out.println("goalsToolbarPressed");
+	}
+	
 	public void shopToolbarPressed() 
 	{
 		System.out.println("shopToolbarPressed");
-	}
-	
-	public void goalToolbarPressed() 
-	{
-		System.out.println("goalToolbarPressed");
 		
-		Game.setScene(new GoalsScene());
+		Game.setScene(new ShopScene());
 	}
 	
-	public void resourceToolbarPressed() 
+	public void resourcesToolbarPressed() 
 	{
-		System.out.println("resourceToolbarPressed");
+		System.out.println("resourcesToolbarPressed");
 		
 		Game.setScene(new CurrentResourcesScene());
 	}

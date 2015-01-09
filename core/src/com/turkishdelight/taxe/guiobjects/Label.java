@@ -25,7 +25,10 @@ public class Label extends SpriteComponent {
 		super(parentScene, targText, Game.shopZ);
 		this.font = font;
 	}
-	
+	public Label(Scene parentScene, Texture targText, BitmapFont font, int z) {
+		super(parentScene, targText, z);
+		this.font = font;
+	}
 	//This method creates a new font object of a specific color and size for our default font file GOST.ttf
 	public static BitmapFont genericFont(Color fontColor, int fontSize)
 	{
@@ -85,7 +88,7 @@ public class Label extends SpriteComponent {
 	@Override
 	public void draw(Batch batch)
 	{
-		//We draw the texture first, then the text
+		// Draw the texture first, then the text
 		super.draw(batch);
 		
 		float originX = 0;
