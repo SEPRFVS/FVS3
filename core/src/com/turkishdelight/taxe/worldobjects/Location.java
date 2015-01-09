@@ -5,13 +5,14 @@ import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.turkishdelight.taxe.routing.Connection;
+import com.turkishdelight.taxe.routing.CurvedPath;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
 
 public class Location extends SpriteComponent {
 
-	// Class that is designed to hold information on locations- position and connections- connected locations and path to other locations 
+	// Class that is designed to hold information on locations- position and connections- connected locations and route to other locations 
 	static Texture text = new Texture("location.png");
 	private Vector2 coords;	      						  				// vector location of location
 	private Array<Connection> connections = new Array<Connection>();  	// connected locations
@@ -23,7 +24,7 @@ public class Location extends SpriteComponent {
 		coords = new Vector2(x, y);
 	}
 	
-	public void addConnection(Location location, CatmullRomSpline<Vector2> path) {
+	public void addConnection(Location location, CurvedPath path) {
 		this.connections.add(new Connection(location, path));
 		numConnections++;
 	}
@@ -42,8 +43,8 @@ public class Location extends SpriteComponent {
 		return false;
 	}
 	
-	public CatmullRomSpline<Vector2> getPath(Location location) {
-		// gets the path connecting this to location
+	public CurvedPath getCurvedRoute(Location location) {
+		// gets the route connecting this to location
 		// currently assumes location is connected
 		connections = getConnections();
 		for (Connection connection : connections) {
