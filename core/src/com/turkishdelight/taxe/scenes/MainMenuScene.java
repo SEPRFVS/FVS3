@@ -8,19 +8,65 @@ public class MainMenuScene extends Scene {
 	
 	@Override
 	public void onCreate()
-	{
-		//Set up a button that changes scene (to the new game scene)
-		Button b = new Button(this) {
+	{	
+		//Create background image game menu
+		Texture bkgText = new Texture("main.jpg");
+		bkg = new SpriteComponent(this, bkgText, Game.mainZ);
+		bkg.setPosition(0, 0);
+		bkg.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
+		Add(bkg);
+		
+		//Create new game button
+		Button newGameButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
-				Game.setScene(new ShopScene());
+				//goes to create profile scene
 			}
 		};
-		//Position the button
-		b.setPosition(Game.targetWindowsWidth / 2, Game.targetWindowsHeight / 2);		
-		//Add the button
-		Add(b);
+		//Position new game button
+		newGameButton.setPosition(632, 443);
+		newGameButton.setSize(302, 78);		
+		Add(newGameButton);
+		
+		//Create load game button
+		Button loadGameButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				Game.setScene(new LoadGameScene());
+			}
+		};
+		//Position load game button
+		loadGameButton.setPosition(631, 354);
+		loadGameButton.setSize(317, 75);		
+		Add(loadGameButton);
+		
+		//Create leaderborad button
+		Button viewLeaderboardButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				
+			}
+		};
+		//Position view leaderboard button
+		viewLeaderboardButton.setPosition(619, 229);
+		viewLeaderboardButton.setSize(340, 112);		
+		Add(viewLeaderboardButton);
+		
+		//Create new game scene
+		Button exitGameButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				
+			}
+		};
+		//Position view leaderboard button
+		exitGameButton.setPosition(641, 137);
+		exitGameButton.setSize(295, 73);		
+		Add(exitGameButton);
 		
 	}
 }
