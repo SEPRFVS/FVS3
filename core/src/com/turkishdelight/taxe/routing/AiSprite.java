@@ -57,11 +57,7 @@ public abstract class AiSprite extends SpriteComponent {
 	public abstract void updateTurn();
 	protected abstract void updatePosition();
 	public abstract void setPath(Route route);
-	
-	
-	public int getWeight(){
-		return weight;
-	}
+	public abstract int getWeight();
 	
 	public Polygon getPolygon(){
 		return polygon;

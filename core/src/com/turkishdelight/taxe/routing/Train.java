@@ -21,7 +21,7 @@ public class Train extends AiSprite {
 		this.weight = weight;
 	}
 
-	public void addCarriage(Carriage carriage){
+	public void setCarriage(Carriage carriage){
 		this.carriage = carriage;
 	}
 
@@ -31,6 +31,10 @@ public class Train extends AiSprite {
 
 	public int getSpeed(){
 		return (int) speed;
+	}
+	
+	public int getWeight(){
+		return weight + carriage.getWeight();
 	}
 	
 	public int getWaypoint() {
@@ -101,7 +105,5 @@ public class Train extends AiSprite {
 		if (!completed ) {
 			updatePosition(); 
 		}
-
 	}
-
 }

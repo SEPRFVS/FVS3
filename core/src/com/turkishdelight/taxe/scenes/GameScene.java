@@ -42,7 +42,7 @@ public class GameScene extends Scene {
 	private ArrayList<CurvedPath> curvedPaths;				// collection of curved paths (only one way for wach path) for drawing
 
 	public static boolean collided;							// boolean to test whether a collision has occured in the game
-
+	private ArrayList<AiSprite> previousCollisions;
 	public GameScene(Player player1In, Player player2In){
 		super();
 		player1 = player1In;
@@ -120,7 +120,8 @@ public class GameScene extends Scene {
 				Add(route);
 			}
 		}
-
+		previousCollisions = new ArrayList<AiSprite>();
+		
 		// add button for moving on to next turn
 		Button b = new Button(this) {
 			@Override
@@ -140,7 +141,7 @@ public class GameScene extends Scene {
 		Add(carriage);
 		player.addAiSprite(train);
 		player.addAiSprite(carriage);
-		train.addCarriage(carriage);
+		train.setCarriage(carriage);
 	}
 
 	public void nextTurn() {
@@ -159,52 +160,65 @@ public class GameScene extends Scene {
 			player2.updateTurn(false);
 		}
 		if (map != null && !collided)
-			if (getCollisions().size > 0) {
+			if (getCollisions().size() > 0) {
 				collided = true;
-				resolveCollisions();
+				calculateCollisions();
 				collided = false;		// TODO some way of only changing this back after collision has ended
 				// have an array of colliding trains to keep track of ones in the middle of a collision?
 			}
 	}
 
-	private void resolveCollisions() {
-		Array<AiSprite> collisions = getCollisions();
-		for (int i=0; i<collisions.size; i+=2){
+	private void calculateCollisions() {
+		// array of collided trains?
+		boolean previousCollision = false;
+		ArrayList<AiSprite> collisions = getCollisions();
+		for (int i=0; i<collisions.size(); i+=2){
 			AiSprite p1Train = collisions.get(i);
 			AiSprite p2Train = collisions.get(i+1);
-			if (p1Train.getClass() == Carriage.class) { // if player1's aiSprite is a carriage
-				((Carriage) p1Train).removeCarriage();
-			} else if (p2Train.getClass() == Carriage.class){ // if player2's aiSprite is a carriage
-				((Carriage) p2Train).removeCarriage();
-			} else { // 2 trains colliding
-				// TODO account for weight of carriages also!
-				if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
-					System.out.println("p1 wins!");
-					p2Train.stopSprite(); // TODO temporary to show collision has occured
-					Carriage carriage = ((Train) p2Train).getCarriage();
-					carriage.stopSprite();
-					carriage.removeCarriage();
-				} else if ((p1Train.getWeight()*p1Train.getSpeed()) > (p2Train.getWeight()*p2Train.getSpeed())){
-					System.out.println("p2 wins!");
-					p1Train.stopSprite();
-					Carriage carriage = ((Train) p1Train).getCarriage();
-					carriage.stopSprite(); // not neccessarily needed but more efficient
-					carriage.removeCarriage();
-				} else {
-					System.out.println("its a draw!");
+			for (int x=0; x<previousCollisions.size(); x+=2){
+				if (previousCollisions.get(x).equals(p1Train) && previousCollisions.get(x+1).equals(p2Train)){
+					previousCollision = true;
+				} 
+			}
+			if (!previousCollision){
+				if (p1Train.getClass() == Carriage.class) { // if player1's aiSprite is a carriage
+					((Carriage) p1Train).decreaseCarriageCount();
+				} else if (p2Train.getClass() == Carriage.class){ // if player2's aiSprite is a carriage
+					((Carriage) p2Train).decreaseCarriageCount();
+				} else { // 2 trains colliding
+					resolveTrainCollision(p1Train, p2Train);
 				}
 			}
 		}
+		previousCollisions = collisions;
 	}
-
-	private Array<AiSprite> getCollisions(){
+	
+	private void resolveTrainCollision(AiSprite p1Train, AiSprite p2Train){
+		if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
+			System.out.println("p1 wins!");
+			//p2Train.stopSprite(); // TODO temporary to show collision has occured
+			Carriage carriage = ((Train) p2Train).getCarriage();
+			//carriage.stopSprite();
+			carriage.decreaseCarriageCount();
+		} else if ((p1Train.getWeight()*p1Train.getSpeed()) > (p2Train.getWeight()*p2Train.getSpeed())){
+			System.out.println("p2 wins!");
+			//p1Train.stopSprite();
+			Carriage carriage = ((Train) p1Train).getCarriage();
+			//carriage.stopSprite(); // not neccessarily needed but more efficient
+			carriage.decreaseCarriageCount();
+		} else {
+			System.out.println("its a draw!");
+		}
+	}
+	
+	private ArrayList<AiSprite> getCollisions(){
 		// returns array where every even element is player1 collided train, odd element is player2 collided train
-		Array<AiSprite> collidedTrains = new Array<AiSprite>();
-		for (AiSprite aiSprite1: player1.getAiSprites()) {
-			for (AiSprite train2: player2.getAiSprites()) {
-				if (collisionOccured(aiSprite1, train2)){
-					collidedTrains.add(aiSprite1);
-					collidedTrains.add(train2);
+		ArrayList<AiSprite> collidedTrains = new ArrayList<AiSprite>();
+		for (AiSprite p1AiSprites: player1.getAiSprites()) {
+			for (AiSprite p2AiSprites: player2.getAiSprites()) {
+				if (collisionOccured(p1AiSprites, p2AiSprites)){
+					collidedTrains.add(p1AiSprites);
+					collidedTrains.add(p2AiSprites);
 				}
 			}
 		}
