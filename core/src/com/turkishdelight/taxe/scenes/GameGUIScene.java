@@ -31,6 +31,7 @@ public class GameGUIScene extends Scene{
 	Label player2ScoreLabel;
 	Label player2MoneyLabel;
 	Label player2FuelLabel;
+	Button nextGoButton;
 	
 	public GameGUIScene(Player p1, Player p2, boolean hasWindow)
 	{
@@ -72,7 +73,7 @@ public class GameGUIScene extends Scene{
 		Texture buttonText = new Texture("Clear_Button.png");
 		
 		// Create Next Go button
-		Button nextGoButton = new Button(this) {
+		nextGoButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{

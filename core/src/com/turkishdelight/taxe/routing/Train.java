@@ -44,16 +44,20 @@ public class Train extends AiSprite {
 	
 	public Location getStation() {
 		// returns current station the train is at, or null if not at one
+		// TODO needs checking.
 		if (route == null){
 			return startLocation;
 		}
-		if (current == 0){
+		else if (current == 0){
 			if (waypoint == 0){
 				return route.getStartLocation();
 			}
 			return route.getConnection((waypoint)-1).getLocation();
 		}
 		else if (current == 1){
+			if (waypoint == 0){
+				return route.getStartLocation();
+			}
 			return route.getConnection((waypoint)-1).getLocation();
 		}
 		return null;
@@ -87,7 +91,7 @@ public class Train extends AiSprite {
 				System.out.println("Final waypoint reached");
 				completed = true;
 				current = 1;
-				current=1;
+				waypoint++;
 			} else {// otherwise fix it to station, give it overshoot next turn
 				distance += (curvedPath.getDistanceFromT(1) - curvedPath.getDistanceFromT(previouscurrent));
 				overshoot = current-1;
