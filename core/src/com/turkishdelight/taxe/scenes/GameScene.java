@@ -23,7 +23,7 @@ import com.turkishdelight.taxe.routing.Route;
 import com.turkishdelight.taxe.routing.Train;
 import com.turkishdelight.taxe.worldobjects.Location;
 
-public class GameScene extends Scene {
+public class GameScene extends GameGUIScene {
 	Player activePlayer;
 	Player player1;
 	Player player2;
@@ -51,14 +51,29 @@ public class GameScene extends Scene {
 	private LabelButton confirmRouteSelectionButton;
 	private LabelButton routeSelectionButton;
 	private LabelButton routeDescriptionLabel;
+	SpriteComponent guiHeader;
+	public Scene goalsScene;
+	public Scene shopScene;
+	public Scene resourceScene;
 	
 	public GameScene(Player player1In, Player player2In){
-		super();
+		super(player1In, player2In, false);
 		player1 = player1In;
 		player2 = player2In;
 		activePlayer = player2;
 		nextTurn();
 		delayedCreate();
+	}
+	
+	@Override
+	public void drawGUIBackground()
+	{
+		// Create background image for goals
+		Texture currentText = new Texture("GUI_Header.png");
+		guiHeader = new SpriteComponent(this, currentText, Game.guiZ);
+		guiHeader.setSize(Game.targetWindowsWidth*0.98f, guiHeader.getHeight() * (guiHeader.getWidth() * 0.9f / Game.targetWindowsWidth));
+		guiHeader.setPosition((Game.targetWindowsWidth - guiHeader.getWidth()) / 2, Game.targetWindowsHeight - (guiHeader.getHeight() * 1.18f));
+		Add(guiHeader);
 	}
 	
 	@Override
@@ -80,7 +95,7 @@ public class GameScene extends Scene {
 	public void delayedCreate() {
 		// map setup
 		mapText = new Texture("map.png");
-		map = new SpriteComponent(this, mapText, Game.mapZ);
+		map = new SpriteComponent(this, mapText, Game.guiZ);
 		map.setPosition(0, 0);
 		map.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
 		Add(map);
@@ -125,7 +140,7 @@ public class GameScene extends Scene {
 		for (CurvedPath curvedPath: curvedPaths){
 			for (int i = 0; i < curvedPath.getFinalDistance(); i+=divider) {
 				int x = curvedPath.closestIndex(i, curvedPath.getDistances());
-				SpriteComponent route = new SpriteComponent(this, text, Game.mapZ);
+				SpriteComponent route = new SpriteComponent(this, text, Game.backgroundZ);
 				route.setSize(2, 2);
 				Vector2 point = curvedPath.getPoint(x);
 				route.setPosition(point.x+2, point.y+2);
@@ -292,6 +307,7 @@ public class GameScene extends Scene {
 		newRouteDistance = 0;
 	}
 	
+
 	private void updateRouteLabel(){
 		String string = "";
 		for (Location location : newRoute){
@@ -591,5 +607,56 @@ public class GameScene extends Scene {
 	public boolean isRouteSelecting() {
 		return isSelectingRoute;
 	}
+	
+
+	@Override
+	public void player1Active()
+	{
+		super.player1Active();
+		player1.updateTurn(true);
+		player2.updateTurn(false);
+	}
+	
+	@Override
+	public void player2Active()
+	{
+		super.player2Active();
+		player2.updateTurn(true);
+		player1.updateTurn(false);
+	}
+	
+	@Override
+	public void nextGoPressed()
+	{
+		super.nextGoPressed();
+		nextTurn();
+	}
+
+	@Override
+	public void goalsToolbarPressed() 
+	{
+		System.out.println("goalsToolbarPressed");
+		Game.popScene();
+		Game.pushScene(goalsScene);
+	}
+	
+	@Override
+	public void shopToolbarPressed() 
+	{
+		System.out.println("shopToolbarPressed");
+		//Switch to shop scene
+		Game.popScene();
+		Game.pushScene(shopScene);
+	}
+	
+	@Override
+	public void resourcesToolbarPressed() 
+	{
+		System.out.println("resourcesToolbarPressed");
+		Game.popScene();
+		Game.pushScene(resourceScene);
+	}
 
 }
+
+

@@ -1,10 +1,14 @@
 package com.turkishdelight.taxe;
 
+import java.util.EmptyStackException;
+import java.util.Stack;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.turkishdelight.taxe.scenes.*;
+import com.turkishdelight.taxe.scenes.GameScene;
+import com.turkishdelight.taxe.scenes.MainMenuScene;
 
 public class Game extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -18,7 +22,7 @@ public class Game extends ApplicationAdapter {
 	//The map is always the lowest layer
 	public static Game activeGame;
 	
-	public static final int mapZ = 0;
+	public static final int backgroundZ = 0;
 	//Locations and routes are displayed in the layer above the map
 	public static final int locationZ = 1;
 	//Trains and obstacles are displayed in the layer above the locations and routes
@@ -26,18 +30,26 @@ public class Game extends ApplicationAdapter {
 	//The gui is displayed in the layer above the objects
 	public static final int guiZ = 3;
 	//The shop is displayed as the top layer
-	public static final int shopZ = 4;
-	//The goals window is displayed in the layer above the shop window
-	public static final int goalsZ = 5;
-	//The current resources window is displayed as the top layer
-	public static final int currentResourcesZ = 6;
+	public static final int shopZ = 3;
+	//The goals window is displayed in the same layer
+	public static final int goalsZ = 3;
+	//The current resources window is displayed in the same layer
+	public static final int currentResourcesZ = 3;
 	public static final int mainZ =5;
 	
+	public static Stack<Scene> scenes = new Stack<Scene>();
+	
 	public void create () {
+		System.out.println("Game created");
 		activeGame = this;
 		batch = new SpriteBatch();
+		System.out.println("Setting intital scene");
 		//By default we set out scene to the main menu
+
 		setLocalScene(new GameScene(new Player(), new Player()));
+		setLocalScene(new MainMenuScene());
+		//setLocalScene(new ShopScene());
+
 	}
 
 	public void setLocalScene(Scene newScene)
@@ -50,6 +62,25 @@ public class Game extends ApplicationAdapter {
 	{
 		activeGame.setLocalScene(newScene);
 		System.out.println("Current Scene:" + newScene.getClass().getSimpleName().toString());
+	}
+	
+	public static void popScene()
+	{
+		try
+		{
+			setScene(scenes.pop());
+		}
+		catch(EmptyStackException e)
+		{
+			//We are at the bottom of the stack
+			setScene(activeGame.currentScene);
+		}
+	}
+	
+	public static void pushScene(Scene s)
+	{
+		scenes.push(s);
+		setScene(s);
 	}
 	
 	

@@ -10,7 +10,7 @@ public class Button extends Clickable {
 	//This class allows us to create objects that can be clicked in the GUI and game
 	
 	//We store a default button texture to use if no texture is passed
-	static Texture text = new Texture("Button.png");
+	public static Texture text = new Texture("Button.png");
 	
 	public Button(Scene parentScene) {
 		super(parentScene, text, Game.guiZ);

@@ -1,29 +1,42 @@
-package com.turkishdelight.taxe;
+package com.turkishdelight.taxe.guiobjects;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.turkishdelight.taxe.Clickable;
+import com.turkishdelight.taxe.ComponentBatch;
+import com.turkishdelight.taxe.Scene;
+import com.turkishdelight.taxe.SpriteComponent;
 
-public class Scene implements InputProcessor{
+public class Pane extends Clickable {
+	float previousX = 0;
+	float previousY = 0;
+	
+	public Pane(Scene parentScene, int z) {
+		super(parentScene, Button.text, z);
+		components = new ComponentBatch(){
+			@Override
+			public void Update()
+			{
+				super.Update();
+				if(getX() != previousX || getY() != previousY)
+				{
+					previousX = getX();
+					previousY = getY();
+					for(SpriteComponent c : this.spriteComponents)
+					{
+						c.setPosition(c.getLocalX() + getX(), c.getLocalY() + getY());
+					}
+				}
+			}
+		};
+	}
+
+
 	//This stores the active sprite components of the scene
-	ComponentBatch components = new ComponentBatch();
+	ComponentBatch components;
 	ArrayList<Clickable> clickAbleObjects = new ArrayList<Clickable>();
-	
-	private int mouseX = 0;
-	private int mouseY = 0;
-	
-	public Scene()
-	{
-		//When the scene is instantiated we call the on create method
-		onCreate();
-	}
-	
-	//This method can be overridden 
-	public void onCreate()
-	{
-		
-	}
 	
 	//This method is used to get the component batch
 	public ComponentBatch getComponents()
@@ -38,9 +51,10 @@ public class Scene implements InputProcessor{
 	}
 	
 	//This method draws the scene
-	public void Draw(SpriteBatch batch)
+	@Override
+	public void draw(Batch batch)
 	{
-		components.Draw(batch);
+		components.Draw((SpriteBatch)batch);
 	}
 	
 	//This method is used to add a sprite component to the game
@@ -81,16 +95,11 @@ public class Scene implements InputProcessor{
 		}
 	}
 	
-	//This method is called every frame. It is used to update the graphics
-	public void UpdateGraphics()
+	@Override
+	//This method is called every frame. It can be overridden with game logic
+	public void update()
 	{
 		components.Update();
-	}
-	
-	//This method is called every frame. It can be overridden with game logic
-	public void Update()
-	{
-		
 	}
 	
 	//This method is called if a sprite wishes to force a reorder (e.g. it's z order has changed) in the ComponentBatch
@@ -98,85 +107,35 @@ public class Scene implements InputProcessor{
 	{
 		components.Reorder();
 	}
-
-	@Override
-	public boolean keyDown(int keycode) {
-		//No Action
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		//No Action
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		//No Action
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		//We register this as an onclick start event
-		onClickStart(screenX, Game.targetWindowsHeight - screenY);
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		mouseX = screenX;
-		mouseY = screenY;
-		//No Action
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		mouseX = screenX;
-		mouseY = screenY;
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		//No Action
-		return false;
-	}
 	
 	@Override
-	   public boolean touchUp (int x, int y, int pointer, int button) {
-		  //We register this as an onclick end event
-		  onClickEnd(x, Game.targetWindowsHeight - y);
-	      return false;
-	   }
-	
 	//This method is called when the mouse is clicked up. The location of the mouse click is sent to the method as parameters
-	public void onClickEnd(int posX, int posY)
+	public boolean clickEnd(int posX, int posY)
 	{
+		boolean click = false;
 		for(Clickable item : clickAbleObjects)
 		{
-			item.clickEnd(posX, posY);
+			if(item.clickEnd(posX, posY))
+			{
+				click = true;
+			}
 		}
+		return click;
 	}
 	
+	@Override
 	//This method is called when the mouse is clicked down. The location of the mouse click is sent to the method as parameters
-	public void onClickStart(int posX, int posY)
+	public boolean clickStart(int posX, int posY)
 	{
+		boolean click = false;
 		for(Clickable item : clickAbleObjects)
 		{
-			item.clickStart(posX, posY);
+			if(item.clickStart(posX, posY))
+			{
+				click = true;
+			}
 		}
+		return click;
 	}
 	
-	public int getMouseX()
-	{
-		return mouseX;
-	}
-	
-	public int getMouseY()
-	{
-		return mouseY;
-	}
 }

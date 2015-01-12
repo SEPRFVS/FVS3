@@ -77,5 +77,36 @@ public class SpriteComponent extends Sprite{
 		
 	}
 	
+	//This method is called based on the game ticks
+	public void update()
+	{
+		
+	}
+	
+	//Local positions are used for when a sprite component is within another pane, not at the top level of a scene
+	
+	private int localX = 0;
+	private int localY = 0;
+	
+	public void setLocalPosition(int x, int y)
+	{
+		localX = x;
+		localY = y;
+	}
+	
+	public int getLocalX()
+	{
+		return localX;
+	}
+	
+	public int getLocalY()
+	{
+		return localY;
+	}
+	
+	public Scene getParentScene()
+	{
+		return parentScene;
+	}
 
 }
