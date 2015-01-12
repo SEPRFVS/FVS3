@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
+import com.turkishdelight.taxe.scenes.GameScene;
+import com.turkishdelight.taxe.worldobjects.Location;
 
 public class Train extends AiSprite {
 	// train class takes a route, follows route by going through paths individually. 
@@ -15,12 +17,22 @@ public class Train extends AiSprite {
 	protected boolean completed;					// has train completed entire route?
 	protected float overshoot;						// amount that the train passes the station by
 	protected float previouscurrent = 0;			// the previous current value for the previous turn- used for distance calculation
+	GameScene parentScene;
+	Location startLocation;
 	
-	public Train(Scene parentScene, Texture text, Route route, int weight) {
+	public Train(GameScene parentScene, Texture text, Route route, int weight) {
 		super(parentScene, text, route);
 		this.weight = weight;
+		this.parentScene = parentScene;
 	}
-
+	
+	public Train(GameScene parentScene, Texture text, Location location, int weight) {
+		super(parentScene, text, location);
+		this.weight = weight;
+		this.parentScene = parentScene;
+		startLocation = location;
+	}
+	
 	public void setCarriage(Carriage carriage){
 		this.carriage = carriage;
 	}
@@ -40,15 +52,25 @@ public class Train extends AiSprite {
 	public int getWaypoint() {
 		return waypoint;
 	}
-
-	public void setPath(Route route) {
-		// ASSUMES GIVEN PATH FROM STATION ALREADY AT
-		this.route = route;
-		waypoint = 0;
-		completed = false;
-		current = 0;
-		out = new Vector2(1,1);
+	
+	public Location getStation() {
+		// returns current statiuon the train is at, or null if not at one
+		if (route == null){
+			return startLocation;
+		}
+		if (current == 0){
+			if (waypoint == 0){
+				return route.getStartLocation();
+			}
+			return route.getConnection((waypoint)-1).getLocation();
+		}
+		else if (current == 1){
+			return route.getConnection((waypoint)-1).getLocation();
+		}
+		return null;
 	}
+
+	
 	
 	protected void updatePosition() {
 		// TODO overshoot shouldnt use current, if going small route ->  long, a big jump occurs - use route distance somehow?
@@ -102,8 +124,22 @@ public class Train extends AiSprite {
 			stopped = false;
 			return;
 		}
-		if (!completed ) {
+		if (!completed && route != null) {
 			updatePosition(); 
 		}
+	}
+	
+	public void setPath(Route route) {
+		// ASSUMES GIVEN PATH FROM STATION ALREADY AT
+		this.route = route;
+		waypoint = 0;
+		completed = false;
+		current = 0;
+		out = new Vector2(1,1);
+		connection= route.getConnection(waypoint);
+		curvedPath = connection.getPath();
+		previouscurrent = 0;
+		distance = 0;
+		carriage.setPath(route);
 	}
 }

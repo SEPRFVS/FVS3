@@ -1,22 +1,17 @@
 package com.turkishdelight.taxe.routing;
 
-import sun.org.mozilla.javascript.internal.ast.ParenthesizedExpression;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.CatmullRomSpline;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.turkishdelight.taxe.Scene;
-import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Label;
+import com.turkishdelight.taxe.worldobjects.Location;
 
 public class Carriage extends AiSprite {
 	private static final int CARRIAGE_WEIGHT = 1;
 	// carriage moves 50 pxs behind the train it is connected to.
 	private Train train;							// train that the carriage is connected to
-	private int carriageCount = 1; 					// counts of number of carriages currently carrying ( >= 0)
+	private int carriageCount = 3; 					// counts of number of carriages currently carrying ( >= 0)
 	private boolean nextRoute;						// boolean to test whether train is on next route 
 	private float prevDistances = 0f;				// the distance of the routes that the train has completed
 	private Scene parentScene;
@@ -30,10 +25,20 @@ public class Carriage extends AiSprite {
 		Texture player1LabelText = new Texture("Clear_Button.png");
 		carriageCountLabel = new Label(parentScene, player1LabelText, Label.genericFont(Color.MAROON, 20));
 	}
-
+	
+	public Carriage(Scene parentScene, Texture text, Location location, Train train) {
+		super(parentScene, text, location);
+		this.parentScene = parentScene;
+		this.weight = 1;
+		this.train = train;	
+		Texture player1LabelText = new Texture("Clear_Button.png");
+		carriageCountLabel = new Label(parentScene, player1LabelText, Label.genericFont(Color.MAROON, 20));
+	}
 	@Override
 	public void updateTurn() {
-		updatePosition();
+		if (route != null) {
+			updatePosition(); 
+		}
 	}
 	
 	@Override
@@ -51,13 +56,13 @@ public class Carriage extends AiSprite {
 			if (train.getCurrent() != 0){ // if train isnt at start of a waypoint
 				current = curvedPath.getTFromDistance(train.getDistance()-prevDistances-50f);	// carriage is always 50 pixels behind train
 			} else if (train.getCurrent() == 0 && train.getWaypoint() >= 1) { // if at an intermediate waypoint/ final waypoint
-				current = curvedPath.getTFromDistance(curvedPath.getFinalDistance() - 75f); // work out 50 pixels behind waypoint (on previous route)
+				current = curvedPath.getTFromDistance(curvedPath.getFinalDistance() - 50f); // work out 50 pixels behind waypoint (on previous route)
 				nextRoute = true;
 			}
 			move();
 		}
 		
-		Vector2 point = curvedPath.getPointFromT(curvedPath.getTFromDistance(train.getDistance()-prevDistances-50f));
+		Vector2 point = curvedPath.getPointFromT(curvedPath.getTFromDistance(train.getDistance()-prevDistances-60f));
 		
 		carriageCountLabel.setText(Integer.toString(getCarriageCount()));
 		carriageCountLabel.setPosition(point.x, point.y);
@@ -91,5 +96,10 @@ public class Carriage extends AiSprite {
 		waypoint = 0;
 		current = 0;
 		out = new Vector2(1,1);
+		connection = route.getConnection(waypoint);
+		curvedPath = connection.getPath();
+		distance = 0;
+		prevDistances = 0f;
+		nextRoute = false;
 	}
 }
