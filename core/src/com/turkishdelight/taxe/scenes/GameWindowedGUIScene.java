@@ -10,6 +10,12 @@ public class GameWindowedGUIScene extends GameGUIScene{
 	public GameWindowedGUIScene(GameScene parent, Player p1, Player p2) {
 		super(p1, p2, true);
 		parentGame = parent;
+	}
+	
+	@Override
+	public void onFocusGained()
+	{
+		super.onFocusGained();
 		this.player1Go = parentGame.player1Go;
 		if(this.player1Go)
 		{

@@ -42,7 +42,7 @@ public class Location extends SpriteComponent{
 				}
 			}
 		};
-		lbutton.setPosition(x, y);
+		lbutton.setPosition(x, y-15);
 		lbutton.setText(locationName);
 		parentScene.Add(lbutton);
 		

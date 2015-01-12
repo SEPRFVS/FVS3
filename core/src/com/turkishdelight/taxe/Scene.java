@@ -2,6 +2,8 @@ package com.turkishdelight.taxe;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -108,7 +110,16 @@ public class Scene implements InputProcessor{
 	@Override
 	public boolean keyUp(int keycode) {
 		//No Action
+		if(keycode == Keys.ESCAPE)
+		{
+			onEscPressed();
+		}
 		return false;
+	}
+	
+	public void onEscPressed()
+	{
+		Game.popScene();
 	}
 
 	@Override
@@ -178,5 +189,15 @@ public class Scene implements InputProcessor{
 	public int getMouseY()
 	{
 		return mouseY;
+	}
+	
+	public void onFocusGained()
+	{
+		
+	}
+	
+	public void onFocusLost()
+	{
+		
 	}
 }

@@ -12,7 +12,6 @@ import com.turkishdelight.taxe.scenes.MainMenuScene;
 
 public class Game extends ApplicationAdapter {
 	SpriteBatch batch;
-	private Scene currentScene;
 	//These values are used to conform the width and height of the window across both this application and the taxe-desktop application
 	public static final int targetWindowsWidth = 1024;
 	public static final int targetWindowsHeight = 768;
@@ -20,7 +19,6 @@ public class Game extends ApplicationAdapter {
 	//The values store the z values of various layers in the game. SpriteComponents are then sorted by the zorder before being drawn
 	//To create layering
 	//The map is always the lowest layer
-	public static Game activeGame;
 	
 	public static final int backgroundZ = 0;
 	//Locations and routes are displayed in the layer above the map
@@ -36,51 +34,55 @@ public class Game extends ApplicationAdapter {
 	//The current resources window is displayed in the same layer
 	public static final int currentResourcesZ = 3;
 	public static final int mainZ =5;
-	
+	public static Scene topScene;
+	public static Scene currentScene;
 	public static Stack<Scene> scenes = new Stack<Scene>();
 	
 	public void create () {
 		System.out.println("Game created");
-		activeGame = this;
 		batch = new SpriteBatch();
 		System.out.println("Setting intital scene");
 		//By default we set out scene to the main menu
-
-		setLocalScene(new GameScene(new Player(), new Player()));
-		setLocalScene(new MainMenuScene());
-		//setLocalScene(new ShopScene());
+		setScene(new GameScene(new Player(), new Player()));
+		//setScene(new ShopScene());
 
 	}
 
-	public void setLocalScene(Scene newScene)
+	public static void setPushedScene(Scene newScene)
 	{
-		this.currentScene = newScene;
+		currentScene = newScene;
+		newScene.onFocusGained();
 		Gdx.input.setInputProcessor(newScene);
+		System.out.println("Current Scene:" + newScene.getClass().getSimpleName().toString());
 	}
 	
 	public static void setScene(Scene newScene)
 	{
-		activeGame.setLocalScene(newScene);
-		System.out.println("Current Scene:" + newScene.getClass().getSimpleName().toString());
+		topScene = newScene;
+		setPushedScene(newScene);
 	}
 	
 	public static void popScene()
 	{
 		try
 		{
-			setScene(scenes.pop());
+			currentScene.onFocusLost();
+			setPushedScene(scenes.pop());
 		}
 		catch(EmptyStackException e)
 		{
 			//We are at the bottom of the stack
-			setScene(activeGame.currentScene);
+			setScene(topScene);
 		}
 	}
 	
 	public static void pushScene(Scene s)
 	{
-		scenes.push(s);
-		setScene(s);
+		if(currentScene != topScene)
+		{
+			scenes.push(currentScene);
+		}
+		setPushedScene(s);
 	}
 	
 	
