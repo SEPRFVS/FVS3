@@ -5,17 +5,14 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+import com.turkishdelight.taxe.Game;
+import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Label;
 import com.turkishdelight.taxe.guiobjects.LabelButton;
 import com.turkishdelight.taxe.routing.Connection;
 import com.turkishdelight.taxe.routing.CurvedPath;
 import com.turkishdelight.taxe.scenes.GameScene;
-import com.turkishdelight.taxe.Game;
-import com.turkishdelight.taxe.Scene;
-import com.turkishdelight.taxe.SpriteComponent;
 
 public class Location extends SpriteComponent{
 
@@ -26,7 +23,6 @@ public class Location extends SpriteComponent{
 	private int numConnections = 0;										// number of connected locations
 	private LabelButton lbutton;
 	private String locationName;
-	private Boolean selected = false;
 	private Boolean selectingRoute = false;
 	
 	public Location(final GameScene parentScene, String locationName, int x, int y) {
@@ -76,7 +72,7 @@ public class Location extends SpriteComponent{
 	public boolean isConnected(Location location) {
 		connections = getConnections();
 		for (Connection connection : connections) {
-			if (connection.getLocation().equals(location)){ // TODO need to check .equals works there!
+			if (connection.getLocation().equals(location)){ 
 				return true;
 			}
 		}
@@ -88,7 +84,7 @@ public class Location extends SpriteComponent{
 		// currently assumes location is connected
 		connections = getConnections();
 		for (Connection connection : connections) {
-			if (connection.getLocation().equals(location)){ // TODO need to check .equals works there!
+			if (connection.getLocation().equals(location)){ 
 				return connection.getPath();
 			}
 		}
@@ -103,7 +99,7 @@ public class Location extends SpriteComponent{
 		return this.connections;
 	}
 
-	public void setRouteSelecting(Boolean selectingRoute) {
+	public void setSelectingRoute(Boolean selectingRoute) {
 		this.selectingRoute = selectingRoute;
 	}
 }

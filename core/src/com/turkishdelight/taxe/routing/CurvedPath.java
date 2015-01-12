@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 public class CurvedPath extends CatmullRomSpline<Vector2> {
 	// a curved route is a curve from one location to another. represented by t values (depends on curve, speed etc), 

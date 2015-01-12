@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.turkishdelight.taxe.Clickable;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
-import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.worldobjects.Location;
 
 public abstract class AiSprite extends Clickable {

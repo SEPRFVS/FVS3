@@ -3,7 +3,6 @@ package com.turkishdelight.taxe;
 import java.util.ArrayList;
 
 import com.turkishdelight.taxe.routing.AiSprite;
-import com.turkishdelight.taxe.routing.Train;
 
 public class Player {
 	private int money = 0;

@@ -1,12 +1,7 @@
 package com.turkishdelight.taxe.routing;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
-import com.turkishdelight.taxe.Game;
-import com.turkishdelight.taxe.Scene;
-import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.scenes.GameScene;
 import com.turkishdelight.taxe.worldobjects.Location;
 
@@ -17,14 +12,8 @@ public class Train extends AiSprite {
 	protected boolean completed;					// has train completed entire route?
 	protected float overshoot;						// amount that the train passes the station by
 	protected float previouscurrent = 0;			// the previous current value for the previous turn- used for distance calculation
-	GameScene parentScene;
-	Location startLocation;
-	
-	public Train(GameScene parentScene, Texture text, Route route, int weight) {
-		super(parentScene, text, route);
-		this.weight = weight;
-		this.parentScene = parentScene;
-	}
+	GameScene parentScene;							// the gamescene the train is in
+	Location startLocation;							// The initial location that the trains starts at, when route == null
 	
 	public Train(GameScene parentScene, Texture text, Location location, int weight) {
 		super(parentScene, text, location);
@@ -32,7 +21,7 @@ public class Train extends AiSprite {
 		this.parentScene = parentScene;
 		startLocation = location;
 	}
-	
+
 	public void setCarriage(Carriage carriage){
 		this.carriage = carriage;
 	}
@@ -54,7 +43,7 @@ public class Train extends AiSprite {
 	}
 	
 	public Location getStation() {
-		// returns current statiuon the train is at, or null if not at one
+		// returns current station the train is at, or null if not at one
 		if (route == null){
 			return startLocation;
 		}
@@ -71,7 +60,6 @@ public class Train extends AiSprite {
 	}
 
 	
-	
 	protected void updatePosition() {
 		// TODO overshoot shouldnt use current, if going small route ->  long, a big jump occurs - use route distance somehow?
 		// add on, then clear any overshoot if the train stopped at the station previous turn 
@@ -84,7 +72,6 @@ public class Train extends AiSprite {
 		Vector2 prevout = new Vector2();
 		curvedPath.derivativeAt(prevout, current);
 
-		//curvedPath.derivativeAt(out, current);
 		current += speed*30/prevout.len();    // 30 is just an arbitrary number, works well- increase to increase distance travelled each turn
 
 		// for variable velocity (curves affect movement)
@@ -96,7 +83,7 @@ public class Train extends AiSprite {
 		if(current >= 0.95) {// if a waypoint is reached (0.95 means no tiny movements!)
 			System.out.println("Waypoint reached");
 
-			if(waypoint+2 >= route.size()) { // if reached final waypoint, fix it to final waypoint
+			if(waypoint+2 >= route.numLocations()) { // if reached final waypoint, fix it to final waypoint
 				System.out.println("Final waypoint reached");
 				completed = true;
 				current = 1;

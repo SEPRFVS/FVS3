@@ -17,15 +17,6 @@ public class Carriage extends AiSprite {
 	private Scene parentScene;
 	Label carriageCountLabel;
 	
-	public Carriage(Scene parentScene, Texture text, Route route, Train train) {
-		super(parentScene, text, route);
-		this.parentScene = parentScene;
-		this.weight = 1;
-		this.train = train;	
-		Texture player1LabelText = new Texture("Clear_Button.png");
-		carriageCountLabel = new Label(parentScene, player1LabelText, Label.genericFont(Color.MAROON, 20));
-	}
-	
 	public Carriage(Scene parentScene, Texture text, Location location, Train train) {
 		super(parentScene, text, location);
 		this.parentScene = parentScene;
@@ -34,6 +25,7 @@ public class Carriage extends AiSprite {
 		Texture player1LabelText = new Texture("Clear_Button.png");
 		carriageCountLabel = new Label(parentScene, player1LabelText, Label.genericFont(Color.MAROON, 20));
 	}
+	
 	@Override
 	public void updateTurn() {
 		if (route != null) {
@@ -72,6 +64,22 @@ public class Carriage extends AiSprite {
 		parentScene.Add(carriageCountLabel);
 	}
 	
+	@Override
+	public void setPath(Route route) {
+		this.route = route;
+		waypoint = 0;
+		current = 0;
+		out = new Vector2(1,1);
+		connection = route.getConnection(waypoint);
+		curvedPath = connection.getPath();
+		distance = 0;
+		prevDistances = 0f;
+		nextRoute = false;
+	}
+	
+	public int getCarriageCount() {
+		return carriageCount;
+	}
 	public void increaseCarriageCount(){
 		carriageCount+=1;
 	}
@@ -86,20 +94,4 @@ public class Carriage extends AiSprite {
 		return carriageCount * CARRIAGE_WEIGHT;
 	}
 	
-	public int getCarriageCount() {
-		return carriageCount;
-	}
-
-	@Override
-	public void setPath(Route route) {
-		this.route = route;
-		waypoint = 0;
-		current = 0;
-		out = new Vector2(1,1);
-		connection = route.getConnection(waypoint);
-		curvedPath = connection.getPath();
-		distance = 0;
-		prevDistances = 0f;
-		nextRoute = false;
-	}
 }

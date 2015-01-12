@@ -1,23 +1,18 @@
 package com.turkishdelight.taxe.scenes;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
-import com.turkishdelight.taxe.guiobjects.Button;
 import com.turkishdelight.taxe.guiobjects.Label;
 import com.turkishdelight.taxe.guiobjects.LabelButton;
 import com.turkishdelight.taxe.routing.AiSprite;
@@ -45,9 +40,8 @@ public class GameScene extends Scene {
 	private Location budapest;
 	private Location krakow;
 	private ArrayList<Location> locations;
-	private ArrayList<CurvedPath> curvedPaths;				// collection of curved paths (only one way for wach path) for drawing
+	private ArrayList<CurvedPath> curvedPaths;				// collection of curved paths (only one way for each path) for drawing
 
-	//public static boolean collided;							// boolean to test whether a collision has occured in the game
 	private ArrayList<AiSprite> previousCollisions;
 	private LabelButton nextTurnButton;
 	protected boolean isSelectingRoute;
@@ -106,7 +100,7 @@ public class GameScene extends Scene {
 		System.out.println("Locations created");
 		
 		// setup connections
-		connectLocations(london, paris); // should be easier way to do this! pass in strings?
+		connectLocations(london, paris);
 		connectLocations(paris, rome);
 		connectLocations(rome, budapest);
 		connectLocations(london, lisbon);
@@ -137,8 +131,9 @@ public class GameScene extends Scene {
 			}
 		}
 		
+		
+		// add buttons
 		Texture buttonTexture = new Texture("Button.png");
-		// add button for moving on to next turn
 		nextTurnButton  = new LabelButton(this, buttonTexture, 100 , 40, Label.genericFont(Color.WHITE, 20));
 		nextTurnButton = new LabelButton(this, buttonTexture, 100 , 40, Label.genericFont(Color.WHITE, 20)) {
 			@Override
@@ -189,90 +184,6 @@ public class GameScene extends Scene {
 		Add(confirmRouteSelectionButton);
 	}
 
-	protected void startSelectingRoute() {
-		newRoute = new ArrayList<Location>();
-		nextTurnButton.setSize(0, 0);
-		confirmRouteSelectionButton.setSize(100, 40);
-		for (Location location:locations){
-			location.setRouteSelecting(true);
-		}	
-		routeSelectionButton.setText("Cancel Routing");
-		
-		Player otherPlayer;
-		if (activePlayer == player1){
-			otherPlayer = player2;
-		} else {
-			otherPlayer = player1;
-		}
-		
-		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
-		for (AiSprite aiSprite : otherAiSprites){
-			aiSprite.setColor(Color.LIGHT_GRAY);
-		}
-	}
-
-	private void endSelectingRoute(){
-		// reverse everything, wipe locations array
-		newRoute = new ArrayList<Location>();
-		nextTurnButton.setSize(100, 40);
-		confirmRouteSelectionButton.setSize(0,0);
-		for (Location location:locations){
-			location.setRouteSelecting(false);
-			location.setFont(Label.genericFont(Color.BLACK, 20));
-		}	
-		newRoute = new ArrayList<Location>();
-		routeSelectionButton.setText("Select Route");
-		
-		Player otherPlayer;
-		if (activePlayer == player1){
-			otherPlayer = player2;
-		} else {
-			otherPlayer = player1;
-		}
-		
-		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
-		for (AiSprite aiSprite : otherAiSprites){
-			aiSprite.setColor(Color.WHITE);
-		}
-	}
-	
-	public void selectLocation(Location location){
-		if ((newRoute.size() > 0) && (location.isConnected(newRoute.get(newRoute.size()-1)) && !newRoute.contains(location))){
-			newRoute.add(location);
-			location.setFont(Label.genericFont(Color.BLUE, 20));
-			
-			ArrayList<Connection> connections = location.getConnections();
-			for (Connection connection: connections) {
-				Location connectedLocation = connection.getLocation();
-				if (!newRoute.contains(connectedLocation)){
-					connectedLocation.setFont(Label.genericFont(Color.RED, 20));
-				}
-			}
-			
-		}
-	}
-	
-	private void createTrainAndCarriage(Texture trainTexture, int weight, Location location, final Player player) {
-		Train train = new Train(this, trainTexture, location, weight) {
-			@Override
-			public void onClickEnd()
-			{
-				if (isRouteSelecting() && activePlayer.equals(player) && (getStation()!= null)){
-					selectedTrain = this;
-					Location startLocation = getStation();
-					newRoute.add(startLocation);
-					startLocation.setFont(Label.genericFont(Color.BLUE, 20));
-				}
-			}
-		};
-		Add(train);
-		Carriage carriage = new Carriage(this, trainTexture, location, train);
-		Add(carriage);
-		player.addAiSprite(train);
-		player.addAiSprite(carriage);
-		train.setCarriage(carriage);
-	}
-
 	public void nextTurn() {
 		if(activePlayer == player1)
 		{
@@ -293,9 +204,104 @@ public class GameScene extends Scene {
 				calculateCollisions();
 			}
 	}
+	
+	protected void startSelectingRoute() {
+		// change buttons accordingly
+		nextTurnButton.setSize(0, 0);
+		confirmRouteSelectionButton.setSize(100, 40);
+		routeSelectionButton.setText("Cancel Routing");
+		
+		// enable the locations to be clickable
+		newRoute = new ArrayList<Location>();
+		for (Location location:locations){
+			location.setSelectingRoute(true);
+		}	
+		
+		// fade other players trains, carriages
+		Player otherPlayer;
+		if (activePlayer == player1){
+			otherPlayer = player2;
+		} else {
+			otherPlayer = player1;
+		}
+		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
+		for (AiSprite aiSprite : otherAiSprites){
+			aiSprite.setColor(Color.LIGHT_GRAY);
+		}
+	}
+	
+	public void selectLocation(Location location){
+		if ((newRoute.size() > 0) && (location.isConnected(newRoute.get(newRoute.size()-1)) && !newRoute.contains(location))){
+			// if the starting location/ train has been selected, if the location is connected to the previous location
+			// and if the new location isnt already selected, select the location
+			newRoute.add(location);
+			location.setFont(Label.genericFont(Color.BLUE, 20));
+			ArrayList<Connection> connections = location.getConnections();
+			// give any selectable, connected locations red text
+			for (Connection connection: connections) {
+				Location connectedLocation = connection.getLocation();
+				if (!newRoute.contains(connectedLocation)){
+					connectedLocation.setFont(Label.genericFont(Color.RED, 20));
+				}
+			}
+		}
+	}
+
+	private void endSelectingRoute(){
+		// reverse everything changed in startSelectingRoute wipe locations array
+		// reset buttons
+		nextTurnButton.setSize(100, 40);
+		confirmRouteSelectionButton.setSize(0,0);
+		routeSelectionButton.setText("Select Route");
+		// reset locations
+		for (Location location:locations){
+			location.setSelectingRoute(false);
+			location.setFont(Label.genericFont(Color.BLACK, 20));
+		}	
+		
+		// reset train colours
+		Player otherPlayer;
+		if (activePlayer == player1){
+			otherPlayer = player2;
+		} else {
+			otherPlayer = player1;
+		}
+		
+		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
+		for (AiSprite aiSprite : otherAiSprites){
+			aiSprite.setColor(Color.WHITE);
+		}
+		
+		newRoute = new ArrayList<Location>();
+	}
+	
+	
+	private void createTrainAndCarriage(Texture trainTexture, int weight, Location location, final Player player) {
+		// create a train, carriage and connect the 2
+		Train train = new Train(this, trainTexture, location, weight) {
+			@Override
+			public void onClickEnd()
+			{
+				if (isRouteSelecting() && activePlayer.equals(player) && (this.getStation()!= null)){
+					// if the train is clicked on when at a station and in route selection mode, start the route from here
+					selectedTrain = this;
+					Location startLocation = getStation();
+					newRoute.add(startLocation);
+					startLocation.setFont(Label.genericFont(Color.BLUE, 20));
+				}
+			}
+		};
+		Add(train);
+		Carriage carriage = new Carriage(this, trainTexture, location, train);
+		Add(carriage);
+		player.addAiSprite(train);
+		player.addAiSprite(carriage);
+		train.setCarriage(carriage);
+	}
+
 
 	private void calculateCollisions() {
-		// array of collided trains?
+		// main method which gets any collisions, decides what to do with collisions
 		boolean previousCollision = false;
 		ArrayList<AiSprite> collisions = getCollisions();
 		for (int i=0; i<collisions.size(); i+=2){
@@ -320,6 +326,7 @@ public class GameScene extends Scene {
 	}
 	
 	private void resolveTrainCollision(AiSprite p1Train, AiSprite p2Train){
+		//special method for resolving train-train collisions only
 		if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
 			System.out.println("p1 wins!");
 			Carriage carriage = ((Train) p2Train).getCarriage();
@@ -337,19 +344,20 @@ public class GameScene extends Scene {
 	
 	private ArrayList<AiSprite> getCollisions(){
 		// returns array where every even element is player1 collided train, odd element is player2 collided train
-		ArrayList<AiSprite> collidedTrains = new ArrayList<AiSprite>();
+		ArrayList<AiSprite> collidedAiSprites = new ArrayList<AiSprite>();
 		for (AiSprite p1AiSprite: player1.getAiSprites()) {
 			for (AiSprite p2AiSprite: player2.getAiSprites()) {
 				if (collisionOccured(p1AiSprite, p2AiSprite)){
-					collidedTrains.add(p1AiSprite);
-					collidedTrains.add(p2AiSprite);
+					collidedAiSprites.add(p1AiSprite);
+					collidedAiSprites.add(p2AiSprite);
 				}			}
 		}
-		return collidedTrains;
+		return collidedAiSprites;
 	}
 
 	private boolean collisionOccured(AiSprite aiSprite1, AiSprite aiSprite2) {
-		// tests whether 2 trains have collided
+		// tests whether 2 aiSprites have collided using their respective polygons
+		// TODO change so that number-based system used?
 		Polygon poly1 = aiSprite1.getPolygon();
 		Polygon poly2 = aiSprite2.getPolygon();
 		if (!(aiSprite1.getClass() == Carriage.class && aiSprite2.getClass() == Carriage.class)){ // collision cannot occur between 2 carriages
@@ -365,7 +373,6 @@ public class GameScene extends Scene {
 		location.setPosition(x, y);
 		Add(location);
 		locations.add(location);
-		// set up fake button 
 		return location;
 	}	
 
@@ -377,26 +384,12 @@ public class GameScene extends Scene {
 		l2.addConnection(l1, path2); 
 	}
 
-	private Route getSpritePath(){
-		// random function that returns one of 2 given paths- used for testing
-		Route route;
-		route = new Route(moscow, krakow, madrid);
-		return route;
-	}
-
-	private Route getSpritePath2() {
-		// random function that returns one of 2 given paths- used for testing
-		Route route;
-		route = new Route(lisbon, madrid, krakow);
-		return route;
-	}
-
 	private HashMap<String, CurvedPath> getPaths() {
 		// this creates all of the paths on the map
 		// TODO currently requires making a newRoute each way, clean up the process
 		HashMap<String, CurvedPath> paths = new HashMap<String, CurvedPath>();
 
-		// first last control points must be same due to catmullromspline maths
+		// first, last control points must be same due to catmullromspline maths
 		Vector2[] dataSet1 = new Vector2[5];
 		dataSet1[0] = (new Vector2(210, 390));
 		dataSet1[1] = (new Vector2(210, 390));
