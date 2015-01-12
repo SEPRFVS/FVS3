@@ -107,6 +107,7 @@ public class Train extends AiSprite {
 
 	@Override
 	public void updateTurn() {
+		//TODO change to loop over update position for moving in an animation?
 		if (stopped){
 			stopped = false;
 			return;

@@ -3,6 +3,7 @@ package com.turkishdelight.taxe.routing;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.guiobjects.Label;
 import com.turkishdelight.taxe.worldobjects.Location;
@@ -23,7 +24,7 @@ public class Carriage extends AiSprite {
 		this.weight = 1;
 		this.train = train;	
 		Texture player1LabelText = new Texture("Clear_Button.png");
-		carriageCountLabel = new Label(parentScene, player1LabelText, Label.genericFont(Color.MAROON, 20));
+		carriageCountLabel = new Label(parentScene, player1LabelText, Label.genericFont(Color.MAROON, 20), Game.guiZ);
 	}
 	
 	@Override

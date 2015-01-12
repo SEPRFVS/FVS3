@@ -42,13 +42,15 @@ public class GameScene extends Scene {
 	private ArrayList<Location> locations;
 	private ArrayList<CurvedPath> curvedPaths;				// collection of curved paths (only one way for each path) for drawing
 
-	private ArrayList<AiSprite> previousCollisions;
-	private LabelButton nextTurnButton;
+	private ArrayList<AiSprite> previousCollisions;			// list of all the previous collisions
+	private LabelButton nextTurnButton;						
 	protected boolean isSelectingRoute;
-	private ArrayList<Location> newRoute;
+	private ArrayList<Location> newRoute;					
+	private int newRouteDistance;							// TODO currently only used to print- should be diplayed
 	private Train selectedTrain;
 	private LabelButton confirmRouteSelectionButton;
 	private LabelButton routeSelectionButton;
+	private LabelButton routeDescriptionLabel;
 	
 	public GameScene(Player player1In, Player player2In){
 		super();
@@ -182,6 +184,14 @@ public class GameScene extends Scene {
 		confirmRouteSelectionButton.setText("Confirm route");
 		confirmRouteSelectionButton.setAlignment(0);
 		Add(confirmRouteSelectionButton);
+		
+		Texture clearButtonTexture = new Texture("Clear_Button.png");
+		routeDescriptionLabel = new LabelButton(this, clearButtonTexture, 20, 40, Label.genericFont(Color.BLACK, 20));
+		routeDescriptionLabel.setAlignment(0);
+		routeDescriptionLabel.setSize(0, 0);
+		routeDescriptionLabel.setText(" ");
+		routeDescriptionLabel.setPosition(Game.targetWindowsWidth-200, 200);
+		Add(routeDescriptionLabel);
 	}
 
 	public void nextTurn() {
@@ -210,7 +220,7 @@ public class GameScene extends Scene {
 		nextTurnButton.setSize(0, 0);
 		confirmRouteSelectionButton.setSize(100, 40);
 		routeSelectionButton.setText("Cancel Routing");
-		
+		routeDescriptionLabel.setSize(500, 200);
 		// enable the locations to be clickable
 		newRoute = new ArrayList<Location>();
 		for (Location location:locations){
@@ -236,14 +246,19 @@ public class GameScene extends Scene {
 			// and if the new location isnt already selected, select the location
 			newRoute.add(location);
 			location.setFont(Label.genericFont(Color.BLUE, 20));
+			updateRouteLabel();
 			ArrayList<Connection> connections = location.getConnections();
 			// give any selectable, connected locations red text
 			for (Connection connection: connections) {
 				Location connectedLocation = connection.getLocation();
+				if (connectedLocation.equals(newRoute.get(newRoute.size()-2))){
+					newRouteDistance += connection.getPath().getFinalDistance();
+				}
 				if (!newRoute.contains(connectedLocation)){
 					connectedLocation.setFont(Label.genericFont(Color.RED, 20));
 				}
 			}
+			System.out.println("Current route distance = " + newRouteDistance);
 		}
 	}
 
@@ -253,6 +268,7 @@ public class GameScene extends Scene {
 		nextTurnButton.setSize(100, 40);
 		confirmRouteSelectionButton.setSize(0,0);
 		routeSelectionButton.setText("Select Route");
+		routeDescriptionLabel.setText("");
 		// reset locations
 		for (Location location:locations){
 			location.setSelectingRoute(false);
@@ -273,8 +289,17 @@ public class GameScene extends Scene {
 		}
 		
 		newRoute = new ArrayList<Location>();
+		newRouteDistance = 0;
 	}
 	
+	private void updateRouteLabel(){
+		String string = "";
+		for (Location location : newRoute){
+			string += location.getName() + "\n";
+		}
+		System.out.println(string);
+		routeDescriptionLabel.setText(string);
+	}
 	
 	private void createTrainAndCarriage(Texture trainTexture, int weight, Location location, final Player player) {
 		// create a train, carriage and connect the 2
@@ -288,6 +313,7 @@ public class GameScene extends Scene {
 					Location startLocation = getStation();
 					newRoute.add(startLocation);
 					startLocation.setFont(Label.genericFont(Color.BLUE, 20));
+					updateRouteLabel();
 				}
 			}
 		};
