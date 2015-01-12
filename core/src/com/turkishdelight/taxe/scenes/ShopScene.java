@@ -25,6 +25,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		Add(shop);
 	}
 	
+	
 	@Override
 	public void drawWindowButtons()
 
