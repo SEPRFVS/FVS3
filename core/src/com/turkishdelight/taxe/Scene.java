@@ -9,6 +9,10 @@ public class Scene implements InputProcessor{
 	//This stores the active sprite components of the scene
 	ComponentBatch components = new ComponentBatch();
 	ArrayList<Clickable> clickAbleObjects = new ArrayList<Clickable>();
+	
+	private int mouseX = 0;
+	private int mouseY = 0;
+	
 	public Scene()
 	{
 		//When the scene is instantiated we call the on create method
@@ -122,13 +126,16 @@ public class Scene implements InputProcessor{
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		mouseX = screenX;
+		mouseY = screenY;
 		//No Action
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		//No Action
+		mouseX = screenX;
+		mouseY = screenY;
 		return false;
 	}
 
@@ -150,7 +157,7 @@ public class Scene implements InputProcessor{
 	{
 		for(Clickable item : clickAbleObjects)
 		{
-			item.clickStart(posX, posY);
+			item.clickEnd(posX, posY);
 		}
 	}
 	
@@ -159,7 +166,17 @@ public class Scene implements InputProcessor{
 	{
 		for(Clickable item : clickAbleObjects)
 		{
-			item.clickEnd(posX, posY);
+			item.clickStart(posX, posY);
 		}
+	}
+	
+	public int getMouseX()
+	{
+		return mouseX;
+	}
+	
+	public int getMouseY()
+	{
+		return mouseY;
 	}
 }

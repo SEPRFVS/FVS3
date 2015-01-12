@@ -1,7 +1,6 @@
 package com.turkishdelight.taxe.scenes;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -22,13 +21,14 @@ import com.turkishdelight.taxe.routing.Route;
 import com.turkishdelight.taxe.routing.Train;
 import com.turkishdelight.taxe.worldobjects.Location;
 
-public class GameScene extends Scene {
-	Player activePlayer;
-	Player player1;
-	Player player2;
+public class GameScene extends GameGUIScene {
+
 	Texture mapText;
 	SpriteComponent map;
-
+	public ShopScene shopScene;
+	public GoalsScene goalsScene;
+	public CurrentResourcesScene resourceScene;
+	
 	private Location london;
 	private Location rome;
 	private Location moscow;
@@ -44,12 +44,23 @@ public class GameScene extends Scene {
 	public static boolean collided;							// boolean to test whether a collision has occured in the game
 
 	public GameScene(Player player1In, Player player2In){
-		super();
-		player1 = player1In;
-		player2 = player2In;
-		activePlayer = player2;
+		super(player1In, player2In, false);
 		nextTurn();
+		player1Go = true;
 		delayedCreate();
+	}
+	
+	SpriteComponent guiHeader;
+	
+	@Override
+	public void drawGUIBackground()
+	{
+		// Create background image for goals
+		Texture currentText = new Texture("GUI_Header.png");
+		guiHeader = new SpriteComponent(this, currentText, Game.guiZ);
+		guiHeader.setSize(Game.targetWindowsWidth * 0.98f, guiHeader.getHeight() * (guiHeader.getWidth() * 0.9f / Game.targetWindowsWidth));
+		guiHeader.setPosition((Game.targetWindowsWidth - guiHeader.getWidth()) / 2, Game.targetWindowsHeight - (guiHeader.getHeight() * 1.18f));
+		Add(guiHeader);
 	}
 	
 	@Override
@@ -71,7 +82,7 @@ public class GameScene extends Scene {
 	public void delayedCreate() {
 		// map setup
 		mapText = new Texture("map.png");
-		map = new SpriteComponent(this, mapText, Game.mapZ);
+		map = new SpriteComponent(this, mapText, Game.backgroundZ);
 		map.setPosition(0, 0);
 		map.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
 		Add(map);
@@ -113,7 +124,7 @@ public class GameScene extends Scene {
 		for (CurvedPath curvedPath: curvedPaths){
 			for (int i = 0; i < curvedPath.getFinalDistance(); i+=divider) {
 				int x = curvedPath.closestIndex(i, curvedPath.getDistances());
-				SpriteComponent route = new SpriteComponent(this, text, Game.mapZ);
+				SpriteComponent route = new SpriteComponent(this, text, Game.backgroundZ);
 				route.setSize(2, 2);
 				Vector2 point = curvedPath.getPoint(x);
 				route.setPosition(point.x+2, point.y+2);
@@ -121,16 +132,9 @@ public class GameScene extends Scene {
 			}
 		}
 
-		// add button for moving on to next turn
-		Button b = new Button(this) {
-			@Override
-			public void onClickEnd()
-			{
-				nextTurn();
-			}
-		};
-		b.setPosition(Game.targetWindowsWidth / 2, Game.targetWindowsHeight / 2);
-		Add(b);
+		shopScene = new ShopScene(this, this.player1, this.player2);
+		goalsScene = new GoalsScene(this, this.player1, this.player2);
+		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
 	}
 
 	private void createTrainAndCarriage(Texture trainTexture, int weight, Route route, Player player) {
@@ -144,20 +148,6 @@ public class GameScene extends Scene {
 	}
 
 	public void nextTurn() {
-		if(activePlayer == player1)
-		{
-			//System.out.println("ActivePlayer = 1");
-			activePlayer = player2;
-			player2.updateTurn(true);
-			player1.updateTurn(false);
-		}
-		else if(activePlayer == player2)
-		{
-			//System.out.println("ActivePlayer = 2");
-			activePlayer = player1;
-			player1.updateTurn(true);
-			player2.updateTurn(false);
-		}
 		if (map != null && !collided)
 			if (getCollisions().size > 0) {
 				collided = true;
@@ -428,5 +418,52 @@ public class GameScene extends Scene {
 		}
 		return rdataSet1;
 	}
+	
+	@Override
+	public void player1Active()
+	{
+		super.player1Active();
+		player1.updateTurn(true);
+		player2.updateTurn(false);
+	}
+	
+	@Override
+	public void player2Active()
+	{
+		super.player2Active();
+		player2.updateTurn(true);
+		player1.updateTurn(false);
+	}
+	
+	@Override
+	public void nextGoPressed()
+	{
+		super.nextGoPressed();
+		nextTurn();
+	}
 
+	@Override
+	public void goalsToolbarPressed() 
+	{
+		System.out.println("goalsToolbarPressed");
+		Game.popScene();
+		Game.pushScene(goalsScene);
+	}
+	
+	@Override
+	public void shopToolbarPressed() 
+	{
+		System.out.println("shopToolbarPressed");
+		//Switch to shop scene
+		Game.popScene();
+		Game.pushScene(shopScene);
+	}
+	
+	@Override
+	public void resourcesToolbarPressed() 
+	{
+		System.out.println("resourcesToolbarPressed");
+		Game.popScene();
+		Game.pushScene(resourceScene);
+	}
 }

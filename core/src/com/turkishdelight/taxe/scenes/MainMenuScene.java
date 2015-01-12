@@ -23,7 +23,7 @@ public class MainMenuScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				//goes to create profile scene
+				Game.setScene(new NewGameScene());
 			}
 		};
 		//Position new game button
@@ -62,7 +62,7 @@ public class MainMenuScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				
+				System.exit(0);
 			}
 		};
 		//Position view leaderboard button

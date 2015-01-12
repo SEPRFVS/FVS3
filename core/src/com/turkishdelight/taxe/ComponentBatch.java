@@ -9,24 +9,29 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ComponentBatch {
 	//This array list stores all the active sprite components of the game
-	private List<SpriteComponent> spriteComponents = new ArrayList<SpriteComponent>();
+	protected List<SpriteComponent> spriteComponents = new ArrayList<SpriteComponent>();
 	
 	//This boolean 
 	private boolean reorderZ = false;
 	public void Reorder()
 	{
 		//To reorder, we set reorderZ so that the sprites will be reordered next instance
-		reorderZ = true;
+		setReorderZ(true);
 	}
 	
 	//This update method is called at the start of a Game's render() method so that the sprites are correctly reordered before they are first shown
 	public void Update()
 	{
 		//If indicated, sort the components so that zorders work
-		if(reorderZ)
+		if(getReorderZ())
 		{
 			sort();
-			reorderZ = false;
+			setReorderZ(false);
+		}
+		//Update each sprite component
+		for(SpriteComponent c : spriteComponents)
+		{
+			c.update();
 		}
 	}
 	
@@ -34,7 +39,7 @@ public class ComponentBatch {
 	public void Add(SpriteComponent newComponent)
 	{
 		spriteComponents.add(newComponent);
-		reorderZ = true;
+		setReorderZ(true);
 	}
 	
 	//This method is used to remove an active sprite component from the game
@@ -55,7 +60,7 @@ public class ComponentBatch {
 		}
 	}
 	
-	private void sort()
+	public void sort()
 	{
 		//Sorting method that reorders our spriteComponents list by z order
 		//We let java do our sorting, so we simply create a comparator that allows java to tell which value is greater of 2 sprites z values
@@ -69,5 +74,13 @@ public class ComponentBatch {
 		            return  Integer.valueOf(sprite1.getZ()).compareTo(Integer.valueOf(sprite2.getZ()));
 		        }
 		    });
+	}
+
+	public boolean getReorderZ() {
+		return reorderZ;
+	}
+
+	public void setReorderZ(boolean reorderZ) {
+		this.reorderZ = reorderZ;
 	}
 }

@@ -22,11 +22,14 @@ public class Clickable extends SpriteComponent {
 		float maxY = this.getY() + this.getHeight();
 		
 		//Then we check for the touch location between the bounds
-		if(posX > minX && posX < maxX && posY > minY && posY > maxY)
+		if(posX > minX && posX < maxX)
 		{
-			//If we are with in the bounds we register a click event 
-			onClickStart();
+			if(posY > minY && posY < maxY)
+			{
+				//If we are with in the bounds we register a click event 
+				onClickStart();
 			return true;
+			}
 		}
 		return false;
 	}
