@@ -77,8 +77,8 @@ public class LabelButton extends Button {
 		super.draw(batch);
 		
 		float originX = 0;
-		float originY = this.getY();
 		TextBounds bounds = font.getBounds(text);
+		float originY = this.getY() + (this.getHeight() / 2) - (bounds.height / 2);
 		
 		// Left Alignment
 		if (alignment == 0) {

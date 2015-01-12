@@ -50,19 +50,6 @@ public class GameScene extends GameGUIScene {
 		delayedCreate();
 	}
 	
-	SpriteComponent guiHeader;
-	
-	@Override
-	public void drawGUIBackground()
-	{
-		// Create background image for goals
-		Texture currentText = new Texture("GUI_Header.png");
-		guiHeader = new SpriteComponent(this, currentText, Game.guiZ);
-		guiHeader.setSize(Game.targetWindowsWidth * 0.98f, guiHeader.getHeight() * (guiHeader.getWidth() * 0.9f / Game.targetWindowsWidth));
-		guiHeader.setPosition((Game.targetWindowsWidth - guiHeader.getWidth()) / 2, Game.targetWindowsHeight - (guiHeader.getHeight() * 1.18f));
-		Add(guiHeader);
-	}
-	
 	@Override
 	public void Draw(SpriteBatch batch) {
 		super.Draw(batch);
@@ -446,7 +433,6 @@ public class GameScene extends GameGUIScene {
 	public void goalsToolbarPressed() 
 	{
 		System.out.println("goalsToolbarPressed");
-		Game.popScene();
 		Game.pushScene(goalsScene);
 	}
 	
@@ -455,7 +441,6 @@ public class GameScene extends GameGUIScene {
 	{
 		System.out.println("shopToolbarPressed");
 		//Switch to shop scene
-		Game.popScene();
 		Game.pushScene(shopScene);
 	}
 	
@@ -463,7 +448,6 @@ public class GameScene extends GameGUIScene {
 	public void resourcesToolbarPressed() 
 	{
 		System.out.println("resourcesToolbarPressed");
-		Game.popScene();
 		Game.pushScene(resourceScene);
 	}
 }

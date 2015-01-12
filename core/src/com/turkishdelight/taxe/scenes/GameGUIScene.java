@@ -40,6 +40,12 @@ public class GameGUIScene extends Scene{
 		initialiseGUI(hasWindow);
 	}
 	
+	@Override
+	public void onFocusGained()
+	{
+		this.updateValues();
+	}
+	
 	public void initialiseGUI(boolean hasWindow)
 	{
 		//Draw background
