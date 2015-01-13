@@ -22,7 +22,7 @@ public abstract class AiSprite extends Clickable {
 	protected int midSpritex;
 	protected int midSpritey;						// halfway of sprite, used to correct into middle of route
 
-	protected int speed = 1; 						// speed to travel - TODO probably only use in train
+	protected int speed = 10; 						// speed to travel - TODO probably only use in train
 	protected float current = 0; 					// 'time' passed (between 0 and 1)
 	protected Vector2 out = new Vector2(1,1);		// vector to output current location at (set at (1,1) to stop jumping when starting a new route)
 
@@ -30,8 +30,8 @@ public abstract class AiSprite extends Clickable {
 	protected int weight;							// weight of aiSprite
 	protected boolean stopped;						// determines if train has stopped due to collision
 
-	protected float distance = 0;					// actual distance in pixels travelled along entire route
-
+	protected float routeDistance = 0;					// actual routeDistance in pixels travelled along entire route
+	protected float pathDistance = 0; 
 
 	public AiSprite(Scene parentScene, Texture texture, Route route) {
 
@@ -85,11 +85,11 @@ public abstract class AiSprite extends Clickable {
 	public float getCurrent(){
 		return current;
 	}
-
-	public float getDistance(){
-		return distance;
+	
+	public float getRouteDistance(){
+		return routeDistance;
 	}
-
+	
 	public int getSpeed() {
 		return speed;
 	}

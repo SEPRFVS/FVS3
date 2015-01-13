@@ -323,7 +323,7 @@ public class GameGUIScene extends Scene{
 	
 	public void nextGoPressed()
 	{
-		System.out.println("nextGoPressed");
+		//System.out.println("nextGoPressed");
 		
 		if (player1Go) {	
 			player2Active(); 

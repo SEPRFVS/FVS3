@@ -11,15 +11,15 @@ public class Train extends AiSprite {
 	Carriage carriage;								// carriage train is currently connected to - CANNOT BE NULL
 	protected boolean completed;					// has train completed entire route?
 	protected float overshoot;						// amount that the train passes the station by
-	protected float previouscurrent = 0;			// the previous current value for the previous turn- used for distance calculation
-	GameScene parentScene;							// the gamescene the train is in
 	Location startLocation;							// The initial location that the trains starts at, when route == null
+	private boolean atStation;
+	
 	
 	public Train(GameScene parentScene, Texture text, Location location, int weight) {
 		super(parentScene, text, location);
 		this.weight = weight;
-		this.parentScene = parentScene;
 		startLocation = location;
+		atStation = true;
 	}
 
 	public void setCarriage(Carriage carriage){
@@ -32,6 +32,10 @@ public class Train extends AiSprite {
 
 	public int getSpeed(){
 		return (int) speed;
+	}
+	
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 	
 	public int getWeight(){
@@ -48,90 +52,74 @@ public class Train extends AiSprite {
 		if (route == null){
 			return startLocation;
 		}
-		else if (current == 0){
+		else if (atStation){
 			if (waypoint == 0){
 				return route.getStartLocation();
 			}
 			return route.getConnection((waypoint)-1).getLocation();
 		}
-		else if (current == 1){
-			if (waypoint == 0){
-				return route.getStartLocation();
-			}
-			return route.getConnection((waypoint)-1).getLocation();
-		}
+		
 		return null;
 	}
 
 	
 	protected void updatePosition() {
-		// TODO overshoot shouldnt use current, if going small route ->  long, a big jump occurs - use route distance somehow?
-		// add on, then clear any overshoot if the train stopped at the station previous turn 
-		if (overshoot != 0) {
-			current += overshoot;
-			overshoot = 0;
-		}
-		
-		// for constant velocity, ignoring effect of curves
-		Vector2 prevout = new Vector2();
-		curvedPath.derivativeAt(prevout, current);
-
-		current += speed*30/prevout.len();    // 30 is just an arbitrary number, works well- increase to increase distance travelled each turn
-
-		// for variable velocity (curves affect movement)
-		//current += speed;
-
-		// for testing with animation only
-		//current += Gdx.graphics.getDeltaTime() * speed / out.len() * 100;
-
-		if(current >= 0.95) {// if a waypoint is reached (0.95 means no tiny movements!)
-			System.out.println("Waypoint reached");
-
-			if(waypoint+2 >= route.numLocations()) { // if reached final waypoint, fix it to final waypoint
+		atStation = false;
+		//System.out.println((pathDistance + speed) + " " + curvedPath.getFinalDistance());
+		if ((pathDistance + speed) >= curvedPath.getFinalDistance()){
+			// if going to get to waypoint or beyond, set it to next waypoint
+			float distanceToStation = (curvedPath.getFinalDistance() - pathDistance);
+			overshoot = pathDistance+(speed) - distanceToStation;						// currently unused
+			routeDistance += distanceToStation;
+			if (waypoint+2 == route.numLocations()){
+				// if at final waypoint, fix to that waypoint
 				System.out.println("Final waypoint reached");
 				completed = true;
 				current = 1;
 				waypoint++;
-			} else {// otherwise fix it to station, give it overshoot next turn
-				distance += (curvedPath.getDistanceFromT(1) - curvedPath.getDistanceFromT(previouscurrent));
-				overshoot = current-1;
+				pathDistance += distanceToStation;
+			} else {
+				// if at intermediate waypoint
+				System.out.println("Waypoint reached");
 				waypoint++; 								// move to next waypoint
 				connection = route.getConnection(waypoint);	// get next connection in route
 				curvedPath = connection.getPath();			// get next route in route
 				current = 0;
-				previouscurrent = 0;						// reset variables
+				pathDistance = 0;
 			}
+			atStation = true;
+		} else {
+			current = curvedPath.getTFromDistance(pathDistance+speed); 
+			pathDistance += speed;
+			routeDistance += speed;
+			//System.out.println("Distance travelled = " + routeDistance);
 		}
-		distance+= (curvedPath.getDistanceFromT(current) - curvedPath.getDistanceFromT(previouscurrent));
-		previouscurrent = current;
-
-		System.out.println("Distance travelled = " + distance);
 		move();
 	}
 
 	@Override
 	public void updateTurn() {
-		//TODO change to loop over update position for moving in an animation?
 		if (stopped){
 			stopped = false;
 			return;
 		}
-		if (!completed && route != null) {
-			updatePosition(); 
+		if (route != null && !completed) {
+			updatePosition();
 		}
 	}
 	
 	public void setPath(Route route) {
 		// ASSUMES GIVEN PATH FROM STATION ALREADY AT
+		System.out.print("path set");
 		this.route = route;
 		waypoint = 0;
-		completed = false;
 		current = 0;
 		out = new Vector2(1,1);
 		connection= route.getConnection(waypoint);
 		curvedPath = connection.getPath();
-		previouscurrent = 0;
-		distance = 0;
+		routeDistance = 0;
+		pathDistance =0;
+		completed = false;
 		carriage.setPath(route);
 	}
 }

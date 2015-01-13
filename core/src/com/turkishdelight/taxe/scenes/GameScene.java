@@ -88,6 +88,10 @@ public class GameScene extends GameGUIScene {
 		map.setPosition(0, 0);
 		map.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
 		Add(map);
+		
+		shopScene = new ShopScene(this, this.player1, this.player2);
+		goalsScene = new GoalsScene(this, this.player1, this.player2);
+		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
 
 		locations = new ArrayList<Location>();
 		previousCollisions = new ArrayList<AiSprite>();
@@ -125,8 +129,8 @@ public class GameScene extends GameGUIScene {
 		
 		// create route (with dotted line)
 		Texture text = new Texture("route.png");
-		final int divider = 10; // distance between 2 dots
-		// go to every x * divider, find closest distance value from curvedPath array and use that to get corresponding position
+		final int divider = 10; // routeDistance between 2 dots
+		// go to every x * divider, find closest routeDistance value from curvedPath array and use that to get corresponding position
 		for (CurvedPath curvedPath: curvedPaths){
 			for (int i = 0; i < curvedPath.getFinalDistance(); i+=divider) {
 				int x = curvedPath.closestIndex(i, curvedPath.getDistances());
@@ -137,10 +141,6 @@ public class GameScene extends GameGUIScene {
 				Add(route);
 			}
 		}
-
-		shopScene = new ShopScene(this, this.player1, this.player2);
-		goalsScene = new GoalsScene(this, this.player1, this.player2);
-		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
 		
 		Texture clearButtonTexture = new Texture("Clear_Button.png");
 		routeSelectionButton = new LabelButton(this, clearButtonTexture , 100 , 40, Label.genericFont(Color.WHITE, 20)) {
@@ -168,7 +168,9 @@ public class GameScene extends GameGUIScene {
 				if (isSelectingRoute) {
 					if (newRoute.size() > 1) {
 						selectedTrain.setPath(new Route(newRoute));
+						System.out.println("Route completed: " + newRoute.toString());
 						endSelectingRoute();
+						isSelectingRoute = false;
 					}
 				} 
 			}
@@ -214,7 +216,6 @@ public class GameScene extends GameGUIScene {
 	}
 	
 	public void selectLocation(Location location){
-		// TODO change the location colours when selected also
 		if ((newRoute.size() > 0) && (location.isConnected(newRoute.get(newRoute.size()-1)) && !newRoute.contains(location))){
 			// if the starting location/ train has been selected, if the location is connected to the previous location
 			// and if the new location isnt already selected, select the location
@@ -244,7 +245,7 @@ public class GameScene extends GameGUIScene {
 					previousConnections.add(connectedLocation);
 				}
 			}
-			System.out.println("Current route distance = " + newRouteDistance);
+			System.out.println("Current route routeDistance = " + newRouteDistance);
 		}
 	}
 
