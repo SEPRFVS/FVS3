@@ -2,7 +2,8 @@ package com.turkishdelight.taxe.routing;
 
 import java.util.ArrayList;
 
-import com.turkishdelight.taxe.worldobjects.Location;
+import com.turkishdelight.taxe.worldobjects.RouteLocation;
+import com.turkishdelight.taxe.worldobjects.Station;
 
 public class Route {
 	// Contains information on route from location to another, possibly through multiple locations via multiple paths
@@ -11,20 +12,20 @@ public class Route {
 	// TODO take location strings and get 
 	
 	private ArrayList<Connection> connections =new ArrayList<Connection>();		// collection of connections
-	private Location startLocation;												// starting location of route (is connected to first location in connections)
+	private Station startStation;												// starting location of route (is connected to first location in connections)
 	private int size = 0;														// number of paths in route
 
 	public Route() {
 		this.connections = new ArrayList<Connection>();
 	}
 	
-	public Route(ArrayList<Location> locations){
+	public Route(ArrayList<RouteLocation> locations){
 		// takes an arraylist of locations, creates a route if all locations are connected. 
 		// TODO ensure that list is correct size
-		Location previousLocation = null;
-		for (Location location : locations){
+		RouteLocation previousLocation = null;
+		for (RouteLocation location : locations){
 			if (size == 0) {
-				this.startLocation = location;
+				this.startStation = (Station) location;
 			} else {
 				if (previousLocation.isConnected(location)){
 					this.connections.add(new Connection(location, previousLocation.getCurvedRoute(location)));
@@ -45,8 +46,8 @@ public class Route {
 		return connections.get(i);
 	}
 	
-	public Location getStartLocation(){
-		return this.startLocation;
+	public Station getStartLocation(){
+		return this.startStation;
 	}
 
 	public void addConnection(Connection connection){

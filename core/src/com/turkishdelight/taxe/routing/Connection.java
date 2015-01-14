@@ -1,18 +1,18 @@
 package com.turkishdelight.taxe.routing;
 
-import com.turkishdelight.taxe.worldobjects.Location;
+import com.turkishdelight.taxe.worldobjects.RouteLocation;
 
 public class Connection {
 
-	private final Location endLocation;
+	private final RouteLocation endLocation;
 	private CurvedPath curvedPath;
 
-	public Connection(Location endLocation, CurvedPath curvedPath) {
+	public Connection(RouteLocation endLocation, CurvedPath curvedPath) {
 		this.endLocation = endLocation;
 		this.curvedPath = curvedPath;
 	}
 
-	public Location getLocation() { 
+	public RouteLocation getTargetLocation() { 
 		return endLocation; 
 	}
 
@@ -33,7 +33,7 @@ public class Connection {
 			return false;
 		}
 		Connection pair = (Connection) o;
-		return this.endLocation.equals(pair.getLocation()) && this.curvedPath.equals(pair.getPath());
+		return this.endLocation.equals(pair.getTargetLocation()) && this.curvedPath.equals(pair.getPath());
 	}
 
 }

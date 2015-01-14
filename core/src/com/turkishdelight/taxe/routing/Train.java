@@ -3,7 +3,8 @@ package com.turkishdelight.taxe.routing;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.turkishdelight.taxe.scenes.GameScene;
-import com.turkishdelight.taxe.worldobjects.Location;
+import com.turkishdelight.taxe.worldobjects.Junction;
+import com.turkishdelight.taxe.worldobjects.Station;
 
 public class Train extends AiSprite {
 	// train class takes a route, follows route by going through paths individually. 
@@ -13,19 +14,18 @@ public class Train extends AiSprite {
 	// TODO allow to be partly along route
 	// TODO getRoute() function
 	// TODO send event when reaching station
-	// TODO junctions
 	
 	Carriage carriage;								// carriage train is currently connected to - CANNOT BE NULL
 	protected boolean completed;					// has train completed entire route?
-	protected float overshoot;						// amount that the train passes the station by
-	Location startLocation;							// The initial location that the trains starts at, when route == null
+	protected float overshootDistance;						// amount that the train passes the station by
+	Station startLocation;							// The initial location that the trains starts at, when route == null
 	private boolean atStation;
 	
 	
-	public Train(GameScene parentScene, Texture text, Location location, int weight) {
-		super(parentScene, text, location);
+	public Train(GameScene parentScene, Texture text, Station station, int weight) {
+		super(parentScene, text, station);
 		this.weight = weight;
-		startLocation = location;
+		startLocation = station;
 		atStation = true;
 	}
 
@@ -53,7 +53,7 @@ public class Train extends AiSprite {
 		return waypoint;
 	}
 	
-	public Location getStation() {
+	public Station getStation() {
 		// returns current station the train is at, or null if not at one
 		// TODO needs checking.
 		if (route == null){
@@ -63,7 +63,7 @@ public class Train extends AiSprite {
 			if (waypoint == 0){
 				return route.getStartLocation();
 			}
-			return route.getConnection((waypoint)-1).getLocation();
+			return (Station) route.getConnection((waypoint)-1).getTargetLocation();
 		}
 		
 		return null;
@@ -76,8 +76,8 @@ public class Train extends AiSprite {
 		if ((pathDistance + speed) >= curvedPath.getFinalDistance()){
 			// if going to get to waypoint or beyond, set it to next waypoint
 			float distanceToStation = (curvedPath.getFinalDistance() - pathDistance);
-			overshoot = pathDistance+(speed) - distanceToStation;						// currently unused
-			routeDistance += distanceToStation;
+			overshootDistance = (pathDistance+speed)- curvedPath.getFinalDistance();						// currently unused
+			
 			if (waypoint+2 == route.numLocations()){
 				// if at final waypoint, fix to that waypoint
 				System.out.println("Final waypoint reached");
@@ -85,16 +85,31 @@ public class Train extends AiSprite {
 				current = 1;
 				waypoint++;
 				pathDistance += distanceToStation;
+				routeDistance += distanceToStation;
+				atStation = true;
 			} else {
 				// if at intermediate waypoint
 				System.out.println("Waypoint reached");
-				waypoint++; 								// move to next waypoint
-				connection = route.getConnection(waypoint);	// get next connection in route
-				curvedPath = connection.getPath();			// get next route in route
-				current = 0;
-				pathDistance = 0;
+				if (connection.getTargetLocation().getClass() == Junction.class){
+					// if a junction, <TODO test whether route changes to a different route based on reliability>, do not stop at junction
+					waypoint++;
+					connection = route.getConnection(waypoint);	// get next connection in route
+					curvedPath = connection.getPath();			// get next route in route
+					current = curvedPath.getTFromDistance(overshootDistance);
+					routeDistance += speed;
+					pathDistance = overshootDistance;
+				} else {
+					// if the routeLocation currently at is a station, fix to station for that turn
+					waypoint++; 								// move to next waypoint
+					connection = route.getConnection(waypoint);	// get next connection in route
+					curvedPath = connection.getPath();			// get next route in route
+					current = 0;
+					pathDistance = 0;
+					routeDistance += distanceToStation;
+					atStation = true;
+				}
 			}
-			atStation = true;
+			
 		} else {
 			current = curvedPath.getTFromDistance(pathDistance+speed); 
 			pathDistance += speed;

@@ -20,7 +20,9 @@ import com.turkishdelight.taxe.routing.Connection;
 import com.turkishdelight.taxe.routing.CurvedPath;
 import com.turkishdelight.taxe.routing.Route;
 import com.turkishdelight.taxe.routing.Train;
-import com.turkishdelight.taxe.worldobjects.Location;
+import com.turkishdelight.taxe.worldobjects.Junction;
+import com.turkishdelight.taxe.worldobjects.RouteLocation;
+import com.turkishdelight.taxe.worldobjects.Station;
 
 public class GameScene extends GameGUIScene {
 
@@ -30,26 +32,18 @@ public class GameScene extends GameGUIScene {
 	public GoalsScene goalsScene;
 	public CurrentResourcesScene resourceScene;
 	
-	private Location london;
-	private Location rome;
-	private Location moscow;
-	private Location lisbon;
-	private Location paris;
-	private Location berlin;
-	private Location madrid;
-	private Location budapest;
-	private Location krakow;
-	protected boolean isSelectingRoute;
-	private ArrayList<Location> newRoute;					
-	private int newRouteDistance;							// TODO currently only used to print- should be diplayed
-	private Train selectedTrain;
+	private ArrayList<CurvedPath> curvedPaths = new ArrayList<CurvedPath>();						// collection of curved paths (only one way for each path) for drawing
+	private ArrayList<RouteLocation> routeLocations = new ArrayList<RouteLocation>();			// collection of routelocations (junction/station)
+	
+	private ArrayList<AiSprite> previousCollisions;												// used for remembering the collisions that occured in the previous turn, ensures not multiple collisions detected
+	
 	private LabelButton confirmRouteSelectionButton;
 	private LabelButton routeSelectionButton;
-
-	private ArrayList<CurvedPath> curvedPaths;				// collection of curved paths (only one way for wach path) for drawing
-	private ArrayList<Location> locations;
-	private ArrayList<AiSprite> previousCollisions;
-	private ArrayList<Location> previousConnections;
+	protected boolean isSelectingRoute = false;													// boolean that says whether the playyer is currently in route selection mode
+	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode -- TODO change to array for multiple trains on same location
+	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
+	private int newRouteDistance;																// TODO currently only used to print- should be diplayed
+	private ArrayList<RouteLocation> previousConnectedLocations = new ArrayList<RouteLocation>();
 
 	public GameScene(Player player1In, Player player2In){
 		super(player1In, player2In, false);
@@ -58,20 +52,12 @@ public class GameScene extends GameGUIScene {
 		delayedCreate();
 	}
 	
-	@Override
-	public void Draw(SpriteBatch batch) {
-		super.Draw(batch);
-
-		// for testing collision detection by drawing hitbox
-		/*ShapeRenderer sr = new ShapeRenderer();
-
-		Polygon p = train1.getPolygon();
-		Polygon p2 = train2.getPolygon();
-
-		sr.begin(ShapeType.Line);
-		sr.polygon(p.getTransformedVertices());
-		sr.polygon(p2.getTransformedVertices());
-		sr.end();*/
+	public Train getSelectedTrain(){
+		if (selectedTrains.size() > 0){
+			return selectedTrains.get(0);
+		} else {
+			return null;
+		}
 	}
 	
 	public void nextTurn() {
@@ -79,6 +65,13 @@ public class GameScene extends GameGUIScene {
 			if (getCollisions().size() > 0) {
 				calculateCollisions();
 			}
+	}
+	
+	@Override
+	public void Update() {
+		if (selectedTrains.size()  > 1){
+			// send dialog to select trains
+		}
 	}
 	
 	public void delayedCreate() {
@@ -93,34 +86,35 @@ public class GameScene extends GameGUIScene {
 		goalsScene = new GoalsScene(this, this.player1, this.player2);
 		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
 
-		locations = new ArrayList<Location>();
-		previousCollisions = new ArrayList<AiSprite>();
-		isSelectingRoute = false;
-		previousConnections = new ArrayList<Location>();
 		//Locations setup
 		curvedPaths = new ArrayList<CurvedPath>();
-		london = createLocation(this, "London", 210, 390);
-		rome = createLocation(this, "Rome", 415, 168);
-		moscow = createLocation(this, "Moscow", 800, 450);
-		lisbon = createLocation(this, "Lisbon", 30, 120);
-		paris = createLocation(this, "Paris", 300, 340);
-		berlin = createLocation(this, "Berlin", 410, 400);
-		madrid = createLocation(this, "Madrid", 120, 150);
-		budapest = createLocation(this, "Budapest", 510, 290);
-		krakow = createLocation(this, "Krakow", 520, 350);
+		Station london = createStation(this, "London", 210, 390);
+		Station rome = createStation(this, "Rome", 415, 168);
+		Station moscow = createStation(this, "Moscow", 800, 450);
+		Station lisbon = createStation(this, "Lisbon", 30, 120);
+		Station paris = createStation(this, "Paris", 300, 340);
+		Station berlin = createStation(this, "Berlin", 410, 400);
+		Station madrid = createStation(this, "Madrid", 120, 150);
+		Station budapest = createStation(this, "Budapest", 510, 290);
+		Station krakow = createStation(this, "Krakow", 520, 350);
 		System.out.println("Locations created");
+		Junction junction1 = createJunction(this, "Junction1", 352, 268);
+		Junction junction2 = createJunction(this, "Junction2", 479, 331);
 		
 		// setup connections
-		connectLocations(london, paris); 
-		connectLocations(paris, rome);
-		connectLocations(rome, budapest);
-		connectLocations(london, lisbon);
-		connectLocations(madrid, krakow);
-		connectLocations(lisbon, madrid);
-		connectLocations(paris, berlin);
-		connectLocations(berlin, budapest);
-		connectLocations(krakow, moscow);
-		connectLocations(moscow, budapest);
+		connectRouteLocations(london, paris); 
+		connectRouteLocations(paris, junction1);
+		connectRouteLocations(rome, junction1);
+		connectRouteLocations(rome, budapest);
+		connectRouteLocations(london, lisbon);
+		connectRouteLocations(madrid, junction1);
+		connectRouteLocations(junction1, junction2);
+		connectRouteLocations(krakow, junction2);
+		connectRouteLocations(paris, berlin);
+		connectRouteLocations(berlin, junction2);
+		connectRouteLocations(budapest, junction2);
+		connectRouteLocations(moscow, krakow);
+		connectRouteLocations(moscow, berlin);
 
 		// add trains
 		Texture trainTexture = new Texture("traincropped.png"); // traincropped added to allow more accurate collision detection
@@ -129,8 +123,8 @@ public class GameScene extends GameGUIScene {
 		
 		// create route (with dotted line)
 		Texture text = new Texture("route.png");
-		final int divider = 10; // routeDistance between 2 dots
-		// go to every x * divider, find closest routeDistance value from curvedPath array and use that to get corresponding position
+		final int divider = 10; // distance between 2 dots
+		// go to every x * divider, find closest distance value from curvedPath array and use that to get corresponding position
 		for (CurvedPath curvedPath: curvedPaths){
 			for (int i = 0; i < curvedPath.getFinalDistance(); i+=divider) {
 				int x = curvedPath.closestIndex(i, curvedPath.getDistances());
@@ -166,8 +160,8 @@ public class GameScene extends GameGUIScene {
 			public void onClickEnd()
 			{
 				if (isSelectingRoute) {
-					if (newRoute.size() > 1) {
-						selectedTrain.setPath(new Route(newRoute));
+					if (newRoute.size() > 1 && (newRoute.get(newRoute.size()-1).getClass() == Station.class)) {
+						selectedTrains.get(0).setPath(new Route(newRoute));
 						System.out.println("Route completed: " + newRoute.toString());
 						endSelectingRoute();
 						isSelectingRoute = false;
@@ -177,148 +171,58 @@ public class GameScene extends GameGUIScene {
 		};
 		confirmRouteSelectionButton.setPosition(Game.targetWindowsWidth -150, Game.targetWindowsHeight -200);
 		confirmRouteSelectionButton.setSize(0, 0);
-		confirmRouteSelectionButton.setText(" ");
+		confirmRouteSelectionButton.setText("");
 		confirmRouteSelectionButton.setAlignment(0);
 		Add(confirmRouteSelectionButton);
 	}
 	
-	private Player activePlayer() {
-		if (player1Go){
-			return player1;
-		} else {
-			return player2;
-		}
-	}
-
-	protected void startSelectingRoute() {
-		// change buttons accordingly
-		nextGoButton.setSize(0,0);
-		confirmRouteSelectionButton.setText("Confirm Route");
-		confirmRouteSelectionButton.setSize(100, 40);
-		routeSelectionButton.setText("Cancel Routing");
-		// enable the locations to be clickable
-		newRoute = new ArrayList<Location>();
-		for (Location location:locations){
-			location.setSelectingRoute(true);
-		}	
-		
-		// fade other players trains, carriages
-		Player otherPlayer;
-		if (activePlayer() == player1){
-			otherPlayer = player2;
-		} else {
-			otherPlayer = player1;
-		}
-		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
-		for (AiSprite aiSprite : otherAiSprites){
-			aiSprite.setColor(Color.LIGHT_GRAY);
-		}
-	}
-	
-	public void selectLocation(Location location){
-		if ((newRoute.size() > 0) && (location.isConnected(newRoute.get(newRoute.size()-1)) && !newRoute.contains(location))){
-			// if the starting location/ train has been selected, if the location is connected to the previous location
-			// and if the new location isnt already selected, select the location
-			Texture locationTexture = new Texture("location.png");
-			for (Location tempLocation: previousConnections){
-				tempLocation.setTexture(locationTexture);
-				tempLocation.setFont(Label.genericFont(Color.BLACK, 20));
-			}
-			newRoute.add(location);
-			location.setFont(Label.genericFont(Color.BLUE, 20));
-			updateRouteLabel(location);
-			Texture blueLocationTexture = new Texture("blueLocation.png");
-			location.setTexture(blueLocationTexture);
-			
-			ArrayList<Connection> connections = location.getConnections();
-			previousConnections = new ArrayList<Location>();
-			Texture redLocationTexture = new Texture("redLocation.png");
-			// give any selectable, connected locations red text
-			for (Connection connection: connections) {
-				Location connectedLocation = connection.getLocation();
-				if (connectedLocation.equals(newRoute.get(newRoute.size()-2))){
-					newRouteDistance += connection.getPath().getFinalDistance();
-				}
-				if (!newRoute.contains(connectedLocation)){
-					connectedLocation.setFont(Label.genericFont(Color.RED, 20));
-					connectedLocation.setTexture(redLocationTexture);
-					previousConnections.add(connectedLocation);
-				}
-			}
-			System.out.println("Current route routeDistance = " + newRouteDistance);
-		}
-	}
-
-	private void endSelectingRoute(){
-		// reverse everything changed in startSelectingRoute wipe locations array
-		// reset buttons
-		nextGoButton.setSize(83, 44);
-		confirmRouteSelectionButton.setText(" ");
-		confirmRouteSelectionButton.setSize(0, 0);
-		routeSelectionButton.setText("Select Route");
-		// reset locations
-		Texture locationTexture = new Texture("location.png");
-		for (Location location:locations){
-			location.setSelectingRoute(false);
-			location.setFont(Label.genericFont(Color.BLACK, 20));
-			location.setTexture(locationTexture);
-		}	
-		
-		// reset train colours
-		Player otherPlayer;
-		if (player1Go){
-			otherPlayer = player2;
-		} else {
-			otherPlayer = player1;
-		}
-		
-		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
-		for (AiSprite aiSprite : otherAiSprites){
-			aiSprite.setColor(Color.WHITE);
-		}
-		
-		newRoute = new ArrayList<Location>();
-		newRouteDistance = 0;
-	}
-	
-	private void updateRouteLabel(Location location){
-		Label label = new Label(this, new Texture("Clear_Button.png"), Label.genericFont(Color.BLACK, 20));
-		label.setText(location.getName());
-		label.setPosition(Game.targetWindowsWidth - 100, ((Game.targetWindowsHeight - 200) - (newRoute.size()*30)));
-		Add(label);
-	}
-	
-	public boolean isRouteSelecting() {
-		return isSelectingRoute;
-	}
-	
-	private void createTrainAndCarriage(Texture trainTexture, int weight, Location location, final Player player) {
+	private void createTrainAndCarriage(Texture trainTexture, int weight, Station station, final Player player) {
 		// create a train, carriage and connect the 2
-		// select multiple trains on same location, arraylist of trains, check in update if the arraylist is >1
-		Train train = new Train(this, trainTexture, location, weight) {
+		// TODO have the train take a player variable
+		Train train = new Train(this, trainTexture, station, weight) {
 			@Override
 			public void onClickEnd()
 			{
 				if (isRouteSelecting() && activePlayer().equals(player) && (this.getStation()!= null) && newRoute.size() == 0){
 					// if the train is clicked on when at a station and in route selection mode, start the route from here
-					selectedTrain = this;
-					Location startLocation = getStation();
-					newRoute.add(startLocation);
-					startLocation.setFont(Label.genericFont(Color.BLUE, 20));
-					updateRouteLabel(startLocation);
+					System.out.println("train selected");
+					selectedTrains.add(this);
+					selectStartingLocation(getStation());
 				}
 			}
 		};
 		Add(train);
-		Carriage carriage = new Carriage(this, trainTexture, location, train);
+		Carriage carriage = new Carriage(this, trainTexture, station, train);
 		Add(carriage);
 		player.addAiSprite(train);
 		player.addAiSprite(carriage);
 		train.setCarriage(carriage);
 	}
 
+	private Station createStation(GameScene parentScene, String locationName, int x , int y) {
+		Station routeLocation = new Station(parentScene, locationName, x,y);
+		Add(routeLocation);
+		routeLocations.add(routeLocation);
+		return (Station) routeLocation;
+		
+	}	
 	
-
+	private Junction createJunction(GameScene parentScene, String locationName, int x , int y) {
+		Junction routeLocation = new Junction(parentScene, locationName, x,y);
+		Add(routeLocation);
+		routeLocations.add(routeLocation);
+		return (Junction) routeLocation;
+		}
+	
+	private void connectRouteLocations(RouteLocation l1, RouteLocation l2){
+		// connects 2 routelocations (junctions + stations) 
+		HashMap<String, CurvedPath> paths = getPaths();
+		CurvedPath path1 = paths.get(l1.getName() + l2.getName());
+		CurvedPath path2 = paths.get(l2.getName() + l1.getName());
+		l1.addConnection(l2, path1);
+		l2.addConnection(l1, path2); 
+	}
+	
 	private void calculateCollisions() {
 		// main method which gets any collisions, decides what to do with collisions
 		boolean previousCollision = false;
@@ -366,7 +270,7 @@ public class GameScene extends GameGUIScene {
 		ArrayList<AiSprite> collidedAiSprites = new ArrayList<AiSprite>();
 		for (AiSprite p1AiSprite: player1.getAiSprites()) {
 			for (AiSprite p2AiSprite: player2.getAiSprites()) {
-				if (collisionOccured(p1AiSprite, p2AiSprite)){
+				if (hasCollisionOccured(p1AiSprite, p2AiSprite)){
 					collidedAiSprites.add(p1AiSprite);
 					collidedAiSprites.add(p2AiSprite);
 				}
@@ -375,7 +279,7 @@ public class GameScene extends GameGUIScene {
 		return collidedAiSprites;
 	}
 
-	private boolean collisionOccured(AiSprite aiSprite1, AiSprite aiSprite2) {
+	private boolean hasCollisionOccured(AiSprite aiSprite1, AiSprite aiSprite2) {
 		// tests whether 2 aiSprites have collided using their respective polygons
 		// TODO change so that number-based system used?
 		Polygon poly1 = aiSprite1.getPolygon();
@@ -387,30 +291,160 @@ public class GameScene extends GameGUIScene {
 		}
 		return false;
 	}
-
-	private Location createLocation(GameScene parentScene, String locationName, int x , int y) {
-		Location location = new Location(parentScene, locationName, x,y);
-		location.setPosition(x, y);
-		Add(location);
-		locations.add(location);
-		return location;
-	}	
-
-	private void connectLocations(Location l1, Location l2){
-		HashMap<String, CurvedPath> paths = getPaths();
-		CurvedPath path1 = paths.get(l1.getName() + l2.getName());
-		CurvedPath path2 = paths.get(l2.getName() + l1.getName());
-		l1.addConnection(l2, path1);
-		l2.addConnection(l1, path2); 
+	
+	protected void startSelectingRoute() {
+		// change buttons accordingly
+		nextGoButton.setSize(0,0);
+		confirmRouteSelectionButton.setText("Confirm Route");
+		confirmRouteSelectionButton.setSize(100, 40);
+		routeSelectionButton.setText("Cancel Routing");
+		// enable the routeLocations to be clickable
+		newRoute = new ArrayList<RouteLocation>();
+		for (RouteLocation routeLocation:routeLocations){
+			routeLocation.setSelectingRoute(true);
+		}	
+		
+		// fade other players trains, carriages
+		Player otherPlayer;
+		if (activePlayer() == player1){
+			otherPlayer = player2;
+		} else {
+			otherPlayer = player1;
+		}
+		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
+		for (AiSprite aiSprite : otherAiSprites){
+			aiSprite.setColor(Color.LIGHT_GRAY);
+		}
 	}
 	
+	public boolean isRouteSelecting() {
+		return isSelectingRoute;
+	}
+	
+	public void selectStartingLocation(RouteLocation startLocation){
+		// used when the initial train has been selecting, giving the attahed starting location
+		newRoute.add(startLocation);
+		((Station) startLocation).setFont(Label.genericFont(Color.BLUE, 20));
+		Texture blueLocationTexture = new Texture("blueLocation.png");
+		startLocation.setTexture(blueLocationTexture);
+
+		// set up connected location's graphical cues
+		ArrayList<Connection> connections = startLocation.getConnections();
+		Texture redLocationTexture = new Texture("redLocation.png");
+		// give any selectable, connected routeLocations red text
+		for (Connection connection: connections) {
+			RouteLocation connectedLocation = connection.getTargetLocation();
+			previousConnectedLocations.add(connectedLocation);
+			connectedLocation.setTexture(redLocationTexture);
+			if (connectedLocation.getClass() == Station.class){
+				((Station) connectedLocation).setFont(Label.genericFont(Color.RED, 20));
+			}
+		}
+	}
+	
+	
+	public void selectLocation(RouteLocation routeLocation){
+		if ((routeLocation.isConnected(newRoute.get(newRoute.size()-1)) && !newRoute.contains(routeLocation))){
+			// if the starting location/ train has been selected, if the location is connected to the previous location
+			// and if the new location isnt already selected, select the location
+			
+			// set any old connections to black text
+			Texture locationTexture = new Texture("location.png");
+			Texture junctionTexture = new Texture("location.png");
+			for (RouteLocation tempLocation: previousConnectedLocations){
+				if (tempLocation.getClass() == Station.class){
+					tempLocation.setTexture(locationTexture);
+					((Station) tempLocation).setFont(Label.genericFont(Color.BLACK, 20));
+				} else {
+					tempLocation.setTexture(junctionTexture);
+				}
+			}
+			previousConnectedLocations = new ArrayList<RouteLocation>();
+			
+			// set up new locations graphical cues
+			if (routeLocation.getClass() == Station.class){
+				((Station) routeLocation).setFont(Label.genericFont(Color.BLUE, 20));
+				Texture blueLocationTexture = new Texture("blueLocation.png");
+				routeLocation.setTexture(blueLocationTexture);
+			} else {
+				Texture blueJunctionTexture = new Texture("blueLocation.png");
+				routeLocation.setTexture(blueJunctionTexture);
+			}
+			
+			// set up connected locations graphical cues
+			ArrayList<Connection> connections = routeLocation.getConnections();
+			Texture redLocationTexture = new Texture("redLocation.png");
+			Texture redJunctionTexture = new Texture("redLocation.png");
+			// give any selectable, connected routeLocations red text
+			for (Connection connection: connections) {
+				RouteLocation connectedLocation = connection.getTargetLocation();
+				if (connectedLocation == newRoute.get(newRoute.size()-1)){
+					// if the connected location is the previous location, calculate route distance using the path distance
+					newRouteDistance += connection.getPath().getFinalDistance();
+				}
+				if (!(newRoute.contains(connectedLocation))){
+					// if the connected location isnt already in newRoute, show the graphical cue
+					previousConnectedLocations.add(connectedLocation);
+					if (connectedLocation.getClass() == Station.class){
+						((Station) connectedLocation).setFont(Label.genericFont(Color.RED, 20));
+						connectedLocation.setTexture(redLocationTexture);
+					} else {
+						connectedLocation.setTexture(redJunctionTexture);
+					}
+				}
+			}
+			newRoute.add(routeLocation);
+			System.out.println("Current route routeDistance = " + newRouteDistance);
+		}
+	}
+
+	private void endSelectingRoute(){
+		// reverse everything changed in startSelectingRoute wipe routeLocations array
+		// reset buttons
+		nextGoButton.setSize(83, 44);
+		confirmRouteSelectionButton.setText(" ");
+		confirmRouteSelectionButton.setSize(0, 0);
+		routeSelectionButton.setText("Select Route");
+		// reset routeLocations
+		Texture locationTexture = new Texture("location.png");
+		Texture junctionTexture = new Texture("location.png");
+		for (RouteLocation routeLocation:routeLocations){
+			routeLocation.setSelectingRoute(false);
+			if (routeLocation.getClass() == Station.class) {
+				((Station) routeLocation).setFont(Label.genericFont(Color.BLACK, 20));
+				routeLocation.setTexture(locationTexture);
+			} else {
+				routeLocation.setTexture(junctionTexture);
+			}
+		}	
+		
+		// reset train colours
+		Player otherPlayer;
+		if (player1Go){
+			otherPlayer = player2;
+		} else {
+			otherPlayer = player1;
+		}
+		
+		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
+		for (AiSprite aiSprite : otherAiSprites){
+			aiSprite.setColor(Color.WHITE);
+		}
+		
+		previousConnectedLocations = new ArrayList<RouteLocation>();
+		newRoute = new ArrayList<RouteLocation>();
+		newRouteDistance = 0;
+		selectedTrains = null;
+	}
 
 	private HashMap<String, CurvedPath> getPaths() {
-		// this creates all of the paths on the map
-		// TODO currently requires making a route each way, clean up the process
+		// this creates all of the paths on the map and returns them
 		HashMap<String, CurvedPath> paths = new HashMap<String, CurvedPath>();
-
-		// first last control points must be same due to catmullromspline maths
+		// the string key is the two routelocation string representations concaenated int he order that correspons to the path
+		// eg key "ParisRome" corresponds to path that goes from paris to rome
+		// used to make route creation easier
+		
+		// first, last control points must be same due to catmullromspline maths
 		Vector2[] dataSet1 = new Vector2[5];
 		dataSet1[0] = (new Vector2(210, 390));
 		dataSet1[1] = (new Vector2(210, 390));
@@ -426,72 +460,67 @@ public class GameScene extends GameGUIScene {
 		paths.put("ParisLondon" , parisLondon);
 		
 
-
-		Vector2[] dataSet2 = new Vector2[6];
+		Vector2[] dataSet2 = new Vector2[5];
 		dataSet2[0] = (new Vector2(300, 340));
 		dataSet2[1] = (new Vector2(300, 340));
 		dataSet2[2] = (new Vector2(320, 300));
-		dataSet2[3] = (new Vector2(360, 250));
-		dataSet2[4] = (new Vector2(415, 168));
-		dataSet2[5] = (new Vector2(415, 168));
-		CurvedPath parisRome = new CurvedPath(dataSet2, false);
-		paths.put("ParisRome", parisRome);
-		curvedPaths.add(parisRome);
+		dataSet2[3] = (new Vector2(352, 268));
+		dataSet2[4] = (new Vector2(352, 268));
+		CurvedPath parisJunction1 = new CurvedPath(dataSet2, false);
+		paths.put("ParisJunction1", parisJunction1);
+		curvedPaths.add(parisJunction1);
 		
 		Vector2[] rdataSet2 = reverseDataset(dataSet2);	
-		CurvedPath romeParis = new CurvedPath(rdataSet2, false);
-		paths.put("RomeParis", romeParis);
+		CurvedPath junction1Paris = new CurvedPath(rdataSet2, false);
+		paths.put("Junction1Paris", junction1Paris);
 
 		
+		Vector2[] dataSet3 = new Vector2[5];
+		dataSet3[0] = (new Vector2(415,168));
+		dataSet3[1] = (new Vector2(415,168));
+		dataSet3[2] = (new Vector2(382,238));
+		dataSet3[3] = (new Vector2(352,268));
+		dataSet3[4] = (new Vector2(352,268));
+		CurvedPath romeJunction1 = new CurvedPath(dataSet3, false);
+		paths.put("RomeJunction1", romeJunction1);
+		curvedPaths.add(romeJunction1);
+		
+		Vector2[] rdataSet3 = reverseDataset(dataSet3);	
+		CurvedPath junction1Rome = new CurvedPath(rdataSet3, false);
+		paths.put("Junction1Rome", junction1Rome);
 
-		Vector2[] dataSet3 = new Vector2[6];
-		dataSet3[0] = (new Vector2(415, 168));
-		dataSet3[1] = (new Vector2(415, 168));
-		dataSet3[2] = (new Vector2(405, 245));
-		dataSet3[3] = (new Vector2(450, 270));
-		dataSet3[4] = (new Vector2(510, 290));
-		dataSet3[5] = (new Vector2(510, 290));
-		CurvedPath romeBudapest = new CurvedPath(dataSet3, false);
+		Vector2[] dataSet4 = new Vector2[6];
+		dataSet4[0] = (new Vector2(415, 168));
+		dataSet4[1] = (new Vector2(415, 168));
+		dataSet4[2] = (new Vector2(405, 245));
+		dataSet4[3] = (new Vector2(450, 270));
+		dataSet4[4] = (new Vector2(510, 290));
+		dataSet4[5] = (new Vector2(510, 290));
+		CurvedPath romeBudapest = new CurvedPath(dataSet4, false);
 		paths.put("RomeBudapest", romeBudapest);
 		curvedPaths.add(romeBudapest);
 		
-		Vector2[] rdataSet3 = reverseDataset(dataSet3);
-		CurvedPath budapestRome = new CurvedPath(rdataSet3, false);
+		Vector2[] rdataSet4 = reverseDataset(dataSet4);
+		CurvedPath budapestRome = new CurvedPath(rdataSet4, false);
 		paths.put("BudapestRome", budapestRome);
 
 		
 
-		Vector2[] dataSet4 = new Vector2[7];
-		dataSet4[0] = (new Vector2(210, 390));
-		dataSet4[1] = (new Vector2(210, 390));
-		dataSet4[2] = (new Vector2(210, 365));
-		dataSet4[3] = (new Vector2(180, 200));
-		dataSet4[4] = (new Vector2(80, 220));
-		dataSet4[5] = (new Vector2(30, 120));
-		dataSet4[6] = (new Vector2(30, 120));
-		CurvedPath londonLisbon = new CurvedPath(dataSet4, false);
+		Vector2[] dataSet5 = new Vector2[7];
+		dataSet5[0] = (new Vector2(210, 390));
+		dataSet5[1] = (new Vector2(210, 390));
+		dataSet5[2] = (new Vector2(210, 365));
+		dataSet5[3] = (new Vector2(180, 200));
+		dataSet5[4] = (new Vector2(80, 220));
+		dataSet5[5] = (new Vector2(30, 120));
+		dataSet5[6] = (new Vector2(30, 120));
+		CurvedPath londonLisbon = new CurvedPath(dataSet5, false);
 		paths.put("LondonLisbon", londonLisbon);
 		curvedPaths.add(londonLisbon);
 		
-		Vector2[] rdataSet4 = reverseDataset(dataSet4);
-		CurvedPath lisbonLondon = new CurvedPath(rdataSet4, false);
-		paths.put("LisbonLondon", lisbonLondon);
-		
-		
-
-		Vector2[] dataSet5 = new Vector2[4];
-		dataSet5[0] = (new Vector2(520, 350));
-		dataSet5[1] = (new Vector2(520, 350));
-		dataSet5[2] = (new Vector2(120, 150));
-		dataSet5[3] = (new Vector2(120, 150));
-		CurvedPath krakowMadrid = new CurvedPath(dataSet5, false);
-		paths.put("KrakowMadrid", krakowMadrid);
-		curvedPaths.add(krakowMadrid);
-		
 		Vector2[] rdataSet5 = reverseDataset(dataSet5);
-		CurvedPath madridKrakow = new CurvedPath(rdataSet5, false);
-		paths.put("MadridKrakow", madridKrakow);
-
+		CurvedPath lisbonLondon = new CurvedPath(rdataSet5, false);
+		paths.put("LisbonLondon", lisbonLondon);
 		
 
 		Vector2[] dataSet6 = new Vector2[4];
@@ -528,50 +557,99 @@ public class GameScene extends GameGUIScene {
 		Vector2[] dataSet8 = new Vector2[4];
 		dataSet8[0] = (new Vector2(410, 400));
 		dataSet8[1] = (new Vector2(410, 400));
-		dataSet8[2] = (new Vector2(510, 290));
-		dataSet8[3] = (new Vector2(510, 290));
-		CurvedPath berlinBudapest = new CurvedPath(dataSet8, false);
-		paths.put("BerlinBudapest", berlinBudapest);
-		curvedPaths.add(berlinBudapest);
+		dataSet8[2] = (new Vector2(479, 331));
+		dataSet8[3] = (new Vector2(479, 331));
+		CurvedPath berlinJunction2 = new CurvedPath(dataSet8, false);
+		paths.put("BerlinJunction2", berlinJunction2);
+		curvedPaths.add(berlinJunction2);
 		
 		Vector2[] rdataSet8 = reverseDataset(dataSet8);
-		CurvedPath budapestBerlin = new CurvedPath(rdataSet8, false);
-		paths.put("BudapestBerlin", budapestBerlin);
+		CurvedPath junction2Berlin = new CurvedPath(rdataSet8, false);
+		paths.put("Junction2Berlin", junction2Berlin);
 
+		Vector2[] dataSet9 = new Vector2[4];
+		dataSet9[0] = (new Vector2(479, 331));
+		dataSet9[1] = (new Vector2(479, 331));
+		dataSet9[2] = (new Vector2(510, 290));
+		dataSet9[3] = (new Vector2(510, 290));
+		CurvedPath Junction2Budapest = new CurvedPath(dataSet9, false);
+		paths.put("Junction2Budapest", Junction2Budapest);
+		curvedPaths.add(Junction2Budapest);
 		
-
-		Vector2[] dataSet9 = new Vector2[5];
-		dataSet9[0] = (new Vector2(520, 350));
-		dataSet9[1] = (new Vector2(520, 350));
-		dataSet9[2] = (new Vector2(700, 370));
-		dataSet9[3] = (new Vector2(800, 450));
-		dataSet9[4] = (new Vector2(800, 450));
-		CurvedPath krakowMoscow = new CurvedPath(dataSet9, false);
+		Vector2[] rdataSet9 = reverseDataset(dataSet8);
+		CurvedPath budapestJunction2 = new CurvedPath(rdataSet9, false);
+		paths.put("BudapestJunction2", budapestJunction2);
+		
+		
+		Vector2[] dataSet10 = new Vector2[6];
+		dataSet10[0] = (new Vector2(520, 350));
+		dataSet10[1] = (new Vector2(520, 350));
+		dataSet10[2] = (new Vector2(602, 370));
+		dataSet10[3] = (new Vector2(705, 383));
+		dataSet10[4] = (new Vector2(800, 450));
+		dataSet10[5] = (new Vector2(800, 450));
+		CurvedPath krakowMoscow = new CurvedPath(dataSet10, false);
 		paths.put("KrakowMoscow", krakowMoscow);
 		curvedPaths.add(krakowMoscow);
 
-		Vector2[] rdataSet9 = reverseDataset(dataSet9);
-		CurvedPath moscowKrakow = new CurvedPath(rdataSet9, false);
+		Vector2[] rdataSet10 = reverseDataset(dataSet10);
+		CurvedPath moscowKrakow = new CurvedPath(rdataSet10, false);
 		paths.put("MoscowKrakow", moscowKrakow);
 
 		
-
-		Vector2[] dataSet10 = new Vector2[6];
-		dataSet10[0] = (new Vector2(510, 290));
-		dataSet10[1] = (new Vector2(510, 290));
-		dataSet10[2] = (new Vector2(600, 290));
-		dataSet10[3] = (new Vector2(700, 420));
-		dataSet10[4] = (new Vector2(800, 450));
-		dataSet10[5] = (new Vector2(800, 450));
-		CurvedPath budapestMoscow = new CurvedPath(dataSet10, false);
-		paths.put("BudapestMoscow", budapestMoscow);
-		curvedPaths.add(budapestMoscow);
+		Vector2[] dataSet11 = new Vector2[5];
+		dataSet11[0] = (new Vector2(410, 400));
+		dataSet11[1] = (new Vector2(410, 400));
+		dataSet11[2] = (new Vector2(550, 420));
+		dataSet11[3] = (new Vector2(800, 450));
+		dataSet11[4] = (new Vector2(800, 450));
+		CurvedPath berlinMoscow = new CurvedPath(dataSet11, false);
+		paths.put("BerlinMoscow", berlinMoscow);
+		curvedPaths.add(berlinMoscow);
 		
-		Vector2[] rdataSet10 = reverseDataset(dataSet10);
-		CurvedPath moscowBudapest = new CurvedPath(rdataSet10, false);
-		paths.put("MoscowBudapest", moscowBudapest);
+		Vector2[] rdataSet11 = reverseDataset(dataSet11);
+		CurvedPath moscowBerlin = new CurvedPath(rdataSet11, false);
+		paths.put("MoscowBerlin", moscowBerlin);
 		
 		
+		Vector2[] dataSet12 = new Vector2[4];
+		dataSet12[0] = (new Vector2(520, 350));
+		dataSet12[1] = (new Vector2(520, 350));
+		dataSet12[2] = (new Vector2(479, 331));
+		dataSet12[3] = (new Vector2(479, 331));
+		CurvedPath krakowJunction2 = new CurvedPath(dataSet12, false);
+		paths.put("KrakowJunction2", krakowJunction2);
+		curvedPaths.add(krakowJunction2);
+		
+		Vector2[] rdataSet12 = reverseDataset(dataSet12);
+		CurvedPath junction2Krakow = new CurvedPath(rdataSet12, false);
+		paths.put("Junction2Krakow", junction2Krakow);
+		
+		Vector2[] dataSet13 = new Vector2[4];
+		dataSet13[0] = (new Vector2(479, 331));
+		dataSet13[1] = (new Vector2(479, 331));
+		dataSet13[2] = (new Vector2(352, 268));
+		dataSet13[3] = (new Vector2(352, 268));
+		CurvedPath junction2Junction1 = new CurvedPath(dataSet13, false);
+		paths.put("Junction2Junction1", junction2Junction1);
+		curvedPaths.add(junction2Junction1);
+		
+		Vector2[] rdataSet13 = reverseDataset(dataSet13);
+		CurvedPath junction1Junction2 = new CurvedPath(rdataSet13, false);
+		paths.put("Junction1Junction2", junction1Junction2);
+		
+		Vector2[] dataSet14 = new Vector2[4];
+		dataSet14[0] = (new Vector2(352, 268));
+		dataSet14[1] = (new Vector2(352, 268));
+		dataSet14[2] = (new Vector2(120, 150));
+		dataSet14[3] = (new Vector2(120, 150));
+		CurvedPath junction1Madrid = new CurvedPath(dataSet14, false);
+		paths.put("Junction1Madrid", junction1Madrid);
+		curvedPaths.add(junction1Madrid);
+		
+		Vector2[] rdataSet14 = reverseDataset(dataSet14);
+		CurvedPath madridJunction1 = new CurvedPath(rdataSet14, false);
+		paths.put("MadridJunction1", madridJunction1);
 		return paths;
 	}
 
@@ -597,6 +675,14 @@ public class GameScene extends GameGUIScene {
 		super.player2Active();
 		player2.updateTurn(true);
 		player1.updateTurn(false);
+	}
+	
+	private Player activePlayer() {
+		if (player1Go){
+			return player1;
+		} else {
+			return player2;
+		}
 	}
 	
 	@Override
@@ -631,5 +717,21 @@ public class GameScene extends GameGUIScene {
 		System.out.println("resourcesToolbarPressed");
 		if (!isSelectingRoute)
 			Game.pushScene(resourceScene);
+	}
+	
+	@Override
+	public void Draw(SpriteBatch batch) {
+		super.Draw(batch);
+
+		// for testing collision detection by drawing hitbox
+		/*ShapeRenderer sr = new ShapeRenderer();
+
+		Polygon p = train1.getPolygon();
+		Polygon p2 = train2.getPolygon();
+
+		sr.begin(ShapeType.Line);
+		sr.polygon(p.getTransformedVertices());
+		sr.polygon(p2.getTransformedVertices());
+		sr.end();*/
 	}
 }

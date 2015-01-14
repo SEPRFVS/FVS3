@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.turkishdelight.taxe.Clickable;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
-import com.turkishdelight.taxe.worldobjects.Location;
+import com.turkishdelight.taxe.worldobjects.Station;
 
 public abstract class AiSprite extends Clickable {
 	// abstract class for anything that follows a path on every turn (extended by carriage, train)
@@ -33,13 +33,15 @@ public abstract class AiSprite extends Clickable {
 	protected float routeDistance = 0;					// actual routeDistance in pixels travelled along entire route
 	protected float pathDistance = 0; 
 
-	public AiSprite(Scene parentScene, Texture texture, Route route) {
-
+	public AiSprite(Scene parentScene, Texture texture, Route route, float current, int waypoint) {
+		// TODO test this
 		super(parentScene, texture, Game.objectsZ);
 		setSize(SPRITEWIDTH, SPRTEHEIGHT);	
-		setOriginCenter();			// used for rotation
+		setOriginCenter();			
 		this.route = route;
-		Vector2 startLocation = route.getStartLocation().getCoords(); // set Location to start of route
+		this.current = current;
+		this.waypoint = waypoint;
+		Vector2 startLocation = route.getStartLocation().getCoords(); // set Station to start of route
 		connection = route.getConnection(waypoint);
 		curvedPath = connection.getPath();
 
@@ -54,12 +56,12 @@ public abstract class AiSprite extends Clickable {
 		this.polygon.setPosition(startLocation.x-midSpritex, startLocation.y-midSpritey);
 	}
 
-	public AiSprite(Scene parentScene, Texture texture, Location location) {
+	public AiSprite(Scene parentScene, Texture texture, Station station) {
 
 		super(parentScene, texture, Game.objectsZ);
 		setSize(SPRITEWIDTH, SPRTEHEIGHT);	
 		setOriginCenter();			// used for rotation
-		Vector2 startLocation = location.getCoords();
+		Vector2 startLocation = station.getCoords();
 
 		midSpritex = (int) SPRITEWIDTH/2;  
 		midSpritey = (int) SPRTEHEIGHT/2;

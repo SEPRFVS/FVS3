@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.guiobjects.Label;
-import com.turkishdelight.taxe.worldobjects.Location;
+import com.turkishdelight.taxe.worldobjects.Station;
 
 public class Carriage extends AiSprite {
 	private static final int CARRIAGE_WEIGHT = 1;
@@ -17,8 +17,8 @@ public class Carriage extends AiSprite {
 	Label carriageCountLabel;
 	private boolean completed;
 	
-	public Carriage(Scene parentScene, Texture text, Location location, Train train) {
-		super(parentScene, text, location);
+	public Carriage(Scene parentScene, Texture text, Station station, Train train) {
+		super(parentScene, text, station);
 		this.weight = 1;
 		this.train = train;	
 		Texture player1LabelText = new Texture("Clear_Button.png");
@@ -48,14 +48,13 @@ public class Carriage extends AiSprite {
 					current = curvedPath.getTFromDistance(curvedPath.getFinalDistance()-50f);
 					completed = true;
 				} else {
-					// if carriage at intermediate waypoint, move to next path and calculate overshoot into next route
+					// if carriage at intermediate waypoint, move to next path and calculate overshootDistance into next route
 					System.out.println("Carriage reached waypoint");
 					float overshootDistance = nextDistance- curvedPath.getFinalDistance();
 					waypoint++;
 					connection = route.getConnection(waypoint);
 					curvedPath = connection.getPath();
 					current = curvedPath.getTFromDistance(overshootDistance);
-					System.out.println(overshootDistance);
 				}
 			}  else {
 				// if nothing special, just set to nextDistance
