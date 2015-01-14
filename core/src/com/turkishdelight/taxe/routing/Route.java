@@ -8,6 +8,8 @@ public class Route {
 	// Contains information on route from location to another, possibly through multiple locations via multiple paths
 	// Has start location, then array of connections. 
 	
+	// TODO take location strings and get 
+	
 	private ArrayList<Connection> connections =new ArrayList<Connection>();		// collection of connections
 	private Location startLocation;												// starting location of route (is connected to first location in connections)
 	private int size = 0;														// number of paths in route

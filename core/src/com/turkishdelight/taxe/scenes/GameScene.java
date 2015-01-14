@@ -294,6 +294,7 @@ public class GameScene extends GameGUIScene {
 	
 	private void createTrainAndCarriage(Texture trainTexture, int weight, Location location, final Player player) {
 		// create a train, carriage and connect the 2
+		// select multiple trains on same location, arraylist of trains, check in update if the arraylist is >1
 		Train train = new Train(this, trainTexture, location, weight) {
 			@Override
 			public void onClickEnd()

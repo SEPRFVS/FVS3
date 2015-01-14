@@ -8,6 +8,13 @@ import com.turkishdelight.taxe.worldobjects.Location;
 public class Train extends AiSprite {
 	// train class takes a route, follows route by going through paths individually. 
 	
+	// TODO introduce chance of breaking down, fuel efficiency
+	// TODO if no fuel, alert dialog for out of fuel
+	// TODO allow to be partly along route
+	// TODO getRoute() function
+	// TODO send event when reaching station
+	// TODO junctions
+	
 	Carriage carriage;								// carriage train is currently connected to - CANNOT BE NULL
 	protected boolean completed;					// has train completed entire route?
 	protected float overshoot;						// amount that the train passes the station by
