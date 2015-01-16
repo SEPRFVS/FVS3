@@ -3,7 +3,6 @@ package com.turkishdelight.taxe.scenes;
 import com.turkishdelight.taxe.Scene;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.SpriteComponent;
