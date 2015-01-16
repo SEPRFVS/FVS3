@@ -111,6 +111,7 @@ public class Carriage extends AiSprite {
 	}
 	
 	public void restoreRoute(Route route, int trainWaypoint, float current) {
+		// called from train, restores the carriage to the right distance behind the train
 		this.route = route;
 		if (train.pathDistance < 50 && train.routeDistance > 50){
 			// check if the carriage would be on the previous path of the route

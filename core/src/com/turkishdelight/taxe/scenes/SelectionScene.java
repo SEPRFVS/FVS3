@@ -15,9 +15,9 @@ public abstract class SelectionScene extends Scene {
 	private static final int FONTSIZE = 35;
 	private SpriteComponent selectionBackground;
 	private Button confirmButton;
-	protected int selectedElementIndex = -1;
-	protected ArrayList<?> elements;
-	private ArrayList<LabelButton> labelButtons = new ArrayList<LabelButton>();
+	protected int selectedElementIndex = -1;											// the index ot use in elements/labelbuttons to get the corresponding object
+	protected ArrayList<?> elements;													// the elements that will be displayed
+	private ArrayList<LabelButton> labelButtons = new ArrayList<LabelButton>();			// arraylist of labelbuttons- index corresponds to same labelbuttons element in elements
 	// Generic Scene that displays an arraylist, with each element being selectable
 	
 	public SelectionScene(){
@@ -53,13 +53,16 @@ public abstract class SelectionScene extends Scene {
 	}
 
 	public abstract void onSelectionEnd();
+	// needs implementing in scene to affect the scene fields
 
 	public void setElements(ArrayList<?> elements){
+		// set he elements to display
 		this.elements = elements;
 		createLabelButtons();
 	}
 	
 	private void createLabelButtons() {
+		/// create a labelbutton for each element in elements
 		if (elements == null){
 			return;
 		}
@@ -81,6 +84,7 @@ public abstract class SelectionScene extends Scene {
 	}
 
 	protected void elementSelected(Object element) {
+		// called when element in arraylist selected, show graphical cues
 		System.out.println(element.toString());
 		if (selectedElementIndex >= 0){
 			labelButtons.get(selectedElementIndex).setFont(Label.genericFont(Color.LIGHT_GRAY, FONTSIZE));

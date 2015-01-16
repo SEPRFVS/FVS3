@@ -120,7 +120,9 @@ public class Train extends AiSprite {
 	protected void updatePosition() {
 		float totalReliability = (float) ((reliabilityUpgrade) ? reliability*RELIABILITY_UPGRADE : reliability);
 		if (MathUtils.randomBoolean(totalReliability)) {
-			// TODO send a dialog here
+			DialogueScene dialogueScene = new DialogueScene("Broken down train!");
+			dialogueScene.setText("Broken down train!");
+			Game.pushScene(dialogueScene);
 			System.out.println("Train broken down for turn due to reliability");
 			return;
 		}

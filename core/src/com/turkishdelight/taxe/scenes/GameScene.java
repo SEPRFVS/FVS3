@@ -31,6 +31,7 @@ public class GameScene extends GameGUIScene {
 	public ShopScene shopScene;
 	public GoalsScene goalsScene;
 	public CurrentResourcesScene resourceScene;
+	private SelectionScene trainSelectionScene;
 	
 	public int numberTurns = 0;
 	private ArrayList<CurvedPath> curvedPaths = new ArrayList<CurvedPath>();					// collection of curved paths (only one way for each path) for drawing
@@ -44,9 +45,8 @@ public class GameScene extends GameGUIScene {
 	protected boolean isSelectingRoute = false;													// boolean that says whether the playyer is currently in route selection mode
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
-	private int newRouteDistance;																// TODO currently only used to print- should be displayed
-	//private DialogueScene dialogueScene;
-	private SelectionScene trainSelectionScene;
+	private int newRouteDistance;			
+	
 	
 
 	public GameScene(Player player1In, Player player2In){
@@ -150,7 +150,7 @@ public class GameScene extends GameGUIScene {
 		createTrainAndCarriage(player1, "train1", london, trainTexture, carriageTexture, 1, 20, 1 , 0.0001f);
 		createTrainAndCarriage(player1, "train2", london, trainTexture, carriageTexture, 1, 50, 1 , 0.0001f);
 		Train train = createTrainAndCarriage(player2, "train3", lisbon, trainTexture, carriageTexture, 2, 100, 1 , 0.0001f);
-		Route route1 = createRouteFromString("LondonParisBerlin");
+		Route route1 = restoreRoute("LondonParisBerlin");
 		train.restoreRoute(route1, 1, 1f);
 		
 		// create route (with dotted line)
@@ -245,7 +245,7 @@ public class GameScene extends GameGUIScene {
 		l2.addConnection(l1, path2); 
 	}
 	
-	private Route createRouteFromString(String string) {
+	private Route restoreRoute(String string) {
 		// creates a route from a string of form "Routelocation1Routelocation2"
 		// Assumes valid input string
 		if (string.length() == 0){

@@ -59,6 +59,7 @@ public class Route {
 	}
 
 	public String getName() {
+		// get the name of the route- of form LocationLocationLocation
 		return this.name;
 	}
 	

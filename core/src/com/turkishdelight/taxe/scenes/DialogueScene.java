@@ -14,6 +14,7 @@ public class DialogueScene extends Scene {
 	Label dialLabel;
 	String text;
 	
+	// seems to currently require seperate setText method to set the text correctly, as OnCreate called before text assignment
 	public DialogueScene(String text)
 	{
 		super();
