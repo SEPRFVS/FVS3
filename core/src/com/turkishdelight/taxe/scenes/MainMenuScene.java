@@ -49,7 +49,7 @@ public class MainMenuScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				
+				Game.setScene(new LeaderboardScene());
 			}
 		};
 		//Position view leaderboard button

@@ -43,7 +43,6 @@ public class Game extends ApplicationAdapter {
 		System.out.println("Setting intital scene");
 		//By default we set out scene to the main menu
 		setScene(new MainMenuScene());
-		//setLocalScene(new ShopScene());
 	}
 
 	public static void setPushedScene(Scene newScene)

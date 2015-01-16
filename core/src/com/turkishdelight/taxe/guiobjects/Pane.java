@@ -14,8 +14,8 @@ public class Pane extends Clickable {
 	float previousX = 0;
 	float previousY = 0;
 	
-	public Pane(Scene parentScene, Texture t, int z) {
-		super(parentScene, t, z);
+	public Pane(Scene parentScene, int z) {
+		super(parentScene, Button.text, z);
 		components = new ComponentBatch(){
 			@Override
 			public void Update()
@@ -61,7 +61,6 @@ public class Pane extends Clickable {
 	//This method is used to add a sprite component to the game
 	public void Add(SpriteComponent spriteComp)
 	{
-		System.out.println("Pane item added: " + spriteComp.getClass().getSimpleName());
 		components.Add(spriteComp);
 		if(spriteComp.isClickAble())
 		{

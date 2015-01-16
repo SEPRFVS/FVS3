@@ -16,7 +16,7 @@ public class DefaultScene extends Scene{
 		map.setPosition(0, 0);
 		map.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
 		Add(map);
-		final Pane c = new Pane(this, null, Game.guiZ);
+		final Pane c = new Pane(this,  Game.guiZ);
 		Button b = new Button(this) {
 			@Override
 			public void onClickEnd()
