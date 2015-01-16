@@ -61,6 +61,7 @@ public class Pane extends Clickable {
 	//This method is used to add a sprite component to the game
 	public void Add(SpriteComponent spriteComp)
 	{
+		System.out.println("Pane item added: " + spriteComp.getClass().getSimpleName());
 		components.Add(spriteComp);
 		if(spriteComp.isClickAble())
 		{

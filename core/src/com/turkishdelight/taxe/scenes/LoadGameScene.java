@@ -96,6 +96,7 @@ public class LoadGameScene extends Scene {
 		// Fetches a list of files in the 'local' path with the extension .taxe
 		// Local path is the one the .jar file is located in
 		// Propagates an array
+		System.out.println("Working directory " + Gdx.files.getLocalStoragePath());
 		final FileHandle[] files = Gdx.files.local("/").list(".taxe");
 		
 		
@@ -117,7 +118,6 @@ public class LoadGameScene extends Scene {
 		
 		// Set default game to load as most recently modified (helps user and you, the coder)
 		gameToLoad = files[0];
-		labelSelected = g1;
 		
 		// Clear button overlay
 		Texture label = new Texture("Clear_Button.png");
@@ -140,6 +140,7 @@ public class LoadGameScene extends Scene {
 		
 		//Draw label
 		Add(g1);
+		labelSelected = g1;
 		
 		//The rest follow a v. similar pattern!!
 		
@@ -257,10 +258,10 @@ public class LoadGameScene extends Scene {
 	
 	//Changes the colour of the selected save game
 	public void selectLoad(LabelButton label){
-		//labelSelected.setColor(Color.BLACK); << code needs enabling when setColor is back working
-		label.setColor(Color.GREEN);
+		labelSelected.getFont().setColor(Color.BLACK);
 		labelSelected = label;
-		
+		label.getFont().setColor(Color.GREEN);
+		labelSelected = label;
 	}
 	
 	//Creates a JFileChooser so the user may choose a file that isn't listed

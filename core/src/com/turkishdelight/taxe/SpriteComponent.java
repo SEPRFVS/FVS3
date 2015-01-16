@@ -108,5 +108,7 @@ public class SpriteComponent extends Sprite{
 	{
 		return parentScene;
 	}
+	
+	
 
 }

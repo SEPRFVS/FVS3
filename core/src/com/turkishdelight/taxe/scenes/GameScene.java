@@ -45,6 +45,7 @@ public class GameScene extends GameGUIScene {
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
 	private int newRouteDistance;																// TODO currently only used to print- should be displayed
+	private DialogueScene dialogueScene;
 	
 
 	public GameScene(Player player1In, Player player2In){
@@ -102,6 +103,7 @@ public class GameScene extends GameGUIScene {
 		shopScene = new ShopScene(this, this.player1, this.player2);
 		goalsScene = new GoalsScene(this, this.player1, this.player2);
 		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
+		dialogueScene = new DialogueScene(null);
 
 		//Locations setup
 		curvedPaths = new ArrayList<CurvedPath>();
@@ -583,7 +585,6 @@ public class GameScene extends GameGUIScene {
 		selectedTrains = new ArrayList<Train>();
 		newRoute = new ArrayList<RouteLocation>();
 		newRouteDistance = 0;
-		
 	}
 
 	private HashMap<String, CurvedPath> getPaths() {

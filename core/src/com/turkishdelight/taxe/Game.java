@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turkishdelight.taxe.scenes.MainMenuScene;
+import com.turkishdelight.taxe.scenes.ShopScene;
 
 public class Game extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -83,7 +84,7 @@ public class Game extends ApplicationAdapter {
 		setPushedScene(s);
 	}
 	
-	
+	 
 	//LibGdxs default update method is named render, it calls an update method before rendering the game
 	@Override
 	public void render () {
@@ -94,7 +95,19 @@ public class Game extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		//draw our components object
+		//Draw the scene underneath
+		try
+		{
+			scenes.peek().Draw(batch);
+		}
+		catch(EmptyStackException e)
+		{
+			//We are at the bottom of the stack
+			topScene.Draw(batch);
+		}
+		//Draw the current scene
 		currentScene.Draw(batch);
+		
 		batch.end();
 	}
 	
