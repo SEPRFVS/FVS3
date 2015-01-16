@@ -36,7 +36,7 @@ public class MainMenuScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				Game.setScene(new LoadGameScene());
+				Game.pushScene(new LoadGameScene());
 			}
 		};
 		//Position load game button

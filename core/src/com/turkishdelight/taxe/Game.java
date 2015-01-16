@@ -8,7 +8,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turkishdelight.taxe.scenes.GameScene;
+import com.turkishdelight.taxe.scenes.LoadGameScene;
 import com.turkishdelight.taxe.scenes.MainMenuScene;
+import com.turkishdelight.taxe.scenes.PlayerDetails;
 
 public class Game extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -43,7 +45,7 @@ public class Game extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		System.out.println("Setting intital scene");
 		//By default we set out scene to the main menu
-		setScene(new GameScene(new Player(), new Player()));
+		setScene(new MainMenuScene());
 		//setLocalScene(new ShopScene());
 	}
 
