@@ -13,11 +13,14 @@ public class DialogueScene extends Scene {
 	SpriteComponent dialogue;
 	Label dialLabel;
 	String text;
+	
 	public DialogueScene(String text)
 	{
 		super();
 		this.text = text;
+		System.out.println(this.text);
 	}
+	
 	@Override
 	public void onCreate()
 	{	// Create background image for dialogue
@@ -26,9 +29,9 @@ public class DialogueScene extends Scene {
 		dialogue.setPosition(380, 400);
 		dialogue.setSize(Game.targetWindowsWidth/4, Game.targetWindowsHeight/5);
 		Add(dialogue);
-		// ---------------------
-	drawDialogueButtons();
+		drawDialogueButtons();
 	}
+	
 	public void drawDialogueButtons()
 	{
 		//Create Dialogue Button
@@ -36,8 +39,7 @@ public class DialogueScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				System.out.println(Game.scenes.pop().getClass().getSimpleName());
-				System.out.println(Game.scenes.pop().getClass().getSimpleName());
+				//System.out.println(Game.scenes.pop().getClass().getSimpleName());
 				Game.popScene();
 				
 			}
@@ -52,7 +54,7 @@ public class DialogueScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				//onOkayButton();
+				Game.popScene();
 				
 			}
 		};
@@ -64,11 +66,15 @@ public class DialogueScene extends Scene {
 		
 		Texture dialLabelText  = new Texture("Clear_Button.png");
 		dialLabel = new Label(this, dialLabelText, Label.genericFont(Color.LIGHT_GRAY, 30), Game.goalsZ);
-		dialLabel.setText("Are You Sure");
-		dialLabel.setPosition(573, 528);
-		dialLabel.setAlignment(2);
+		dialLabel.setText(text);
+		dialLabel.setPosition(508, 519);
+		dialLabel.setAlignment(1);
 		dialLabel.setAlpha((float) 0.4);
 		Add(dialLabel);
+	}
+	
+	public void setText(String labelText){
+		dialLabel.setText(this.text = labelText);
 	}
 	
 	}

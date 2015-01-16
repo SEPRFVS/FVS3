@@ -45,7 +45,8 @@ public class GameScene extends GameGUIScene {
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
 	private int newRouteDistance;																// TODO currently only used to print- should be displayed
-	private DialogueScene dialogueScene;
+	//private DialogueScene dialogueScene;
+	private SelectionScene trainSelectionScene;
 	
 
 	public GameScene(Player player1In, Player player2In){
@@ -53,7 +54,6 @@ public class GameScene extends GameGUIScene {
 		nextTurn();
 		player1Go = true;
 		player1In.setFuel(700);
-		player2In.setFuel(700);
 		delayedCreate();
 	}
 	
@@ -83,7 +83,8 @@ public class GameScene extends GameGUIScene {
 	@Override
 	public void Update() {
 		if (selectedTrains.size() > 1){
-			// more than 1 train on location, show dialog to select trains
+			trainSelectionScene.setElements(selectedTrains);
+			Game.pushScene(trainSelectionScene);
 			
 		} 
 		if (newRoute.size() == 0 && selectedTrains.size() > 0){
@@ -103,8 +104,15 @@ public class GameScene extends GameGUIScene {
 		shopScene = new ShopScene(this, this.player1, this.player2);
 		goalsScene = new GoalsScene(this, this.player1, this.player2);
 		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
-		dialogueScene = new DialogueScene(null);
-
+		trainSelectionScene = new SelectionScene() {
+			@Override
+			public void onSelectionEnd() {
+				selectedTrains = new ArrayList<Train>();
+				selectedTrains.add(0, (Train) elements.get(selectedElementIndex));
+				Game.popScene();
+			}
+		};
+	
 		//Locations setup
 		curvedPaths = new ArrayList<CurvedPath>();
 		Station london = createStation(this, "London", 210, 390);
@@ -137,10 +145,11 @@ public class GameScene extends GameGUIScene {
 		connectRouteLocations(lisbon, madrid);
 
 		// add trains
-		Texture trainTexture = new Texture("traincropped.png"); // traincropped added to allow more accurate collision detection
-		createTrainAndCarriage(player1, rome,  trainTexture, 1, 20, 1 , 0.0001f);
-		createTrainAndCarriage(player1, london,trainTexture, 1, 50, 1 , 0.0001f);
-		Train train = createTrainAndCarriage(player2, lisbon, trainTexture, 2, 100, 1 , 0.0001f);
+		Texture trainTexture = new Texture("elec1.png"); 
+		Texture carriageTexture = new Texture("elec1Carriage.png");
+		createTrainAndCarriage(player1, "train1", london, trainTexture, carriageTexture, 1, 20, 1 , 0.0001f);
+		createTrainAndCarriage(player1, "train2", london, trainTexture, carriageTexture, 1, 50, 1 , 0.0001f);
+		Train train = createTrainAndCarriage(player2, "train3", lisbon, trainTexture, carriageTexture, 2, 100, 1 , 0.0001f);
 		Route route1 = createRouteFromString("LondonParisBerlin");
 		train.restoreRoute(route1, 1, 1f);
 		
@@ -200,11 +209,11 @@ public class GameScene extends GameGUIScene {
 		Add(confirmRouteSelectionButton);
 	}
 
-	private Train createTrainAndCarriage(final Player player, Station station, Texture trainTexture, int weight, int speed, int fuelEfficiency, float reliability) {
+	private Train createTrainAndCarriage(final Player player, String trainName, Station station, Texture trainTexture, Texture carriageTexture, int weight, int speed, int fuelEfficiency, float reliability) {
 		// create a train, carriage and connect them
-		Train train = new Train(this, player, trainTexture, station, weight, speed, fuelEfficiency, reliability) ;
+		Train train = new Train(this, player, trainName, trainTexture, station, weight, speed, fuelEfficiency, reliability) ;
 		Add(train);
-		Carriage carriage = new Carriage(this, trainTexture, player, station, train);
+		Carriage carriage = new Carriage(this, carriageTexture, player, station, train);
 		Add(carriage);
 		player.addAiSprite(train);
 		player.addAiSprite(carriage);

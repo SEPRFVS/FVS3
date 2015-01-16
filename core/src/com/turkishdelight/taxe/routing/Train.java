@@ -3,7 +3,9 @@ package com.turkishdelight.taxe.routing;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
+import com.turkishdelight.taxe.scenes.DialogueScene;
 import com.turkishdelight.taxe.scenes.GameScene;
 import com.turkishdelight.taxe.worldobjects.Junction;
 import com.turkishdelight.taxe.worldobjects.Station;
@@ -29,8 +31,9 @@ public class Train extends AiSprite {
 	private boolean reliabilityUpgrade = false;
 	private boolean speedUpgrade = false;
 	private GameScene parentScene;
+	private String name;
 	
-	public Train(GameScene parentScene, Player player, Texture text, Station station, int weight, int speed, int fuelEfficiency, float reliability) {
+	public Train(GameScene parentScene, Player player, String trainName, Texture text, Station station, int weight, int speed, int fuelEfficiency, float reliability) {
 		super(parentScene, text, player, station);
 		this.parentScene = parentScene;
 		this.weight = weight;
@@ -39,6 +42,7 @@ public class Train extends AiSprite {
 		this.speed = speed;
 		this.fuelEfficiency = fuelEfficiency;
 		this.reliability = reliability;
+		this.name = trainName;
 	}
 	
 	@Override
@@ -183,7 +187,11 @@ public class Train extends AiSprite {
 				updatePosition();
 			} else {
 				// TODO if theres not enough fuel, send a dialog
-				System.out.println("Not enough fuel!");
+				System.out.println("No fuel!");
+				String noFuelText = "You need fuel to move!";
+				DialogueScene scene = new DialogueScene(noFuelText);
+				scene.setText(noFuelText);
+				Game.pushScene(scene);
 			}
 		}
 	}
@@ -226,5 +234,10 @@ public class Train extends AiSprite {
 		}
 		move();
 		carriage.restoreRoute(route, waypoint, current);
+	}
+	
+	@Override 
+	public String toString(){
+		return this.name;
 	}
 }

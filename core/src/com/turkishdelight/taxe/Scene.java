@@ -173,6 +173,7 @@ public class Scene implements InputProcessor{
 	//This method is called when the mouse is clicked up. The location of the mouse click is sent to the method as parameters
 	public void onClickEnd(int posX, int posY)
 	{
+		//System.out.println(posX + ", " + posY);
 		for(Clickable item : clickAbleObjects)
 		{
 			item.clickEnd(posX, posY);

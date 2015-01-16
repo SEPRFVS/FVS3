@@ -27,7 +27,7 @@ public class Station extends RouteLocation{
 				}
 			}
 		};
-		lbutton.setPosition(x, y-15);
+		lbutton.setPosition(x, y-30);
 		lbutton.setText(locationName);
 		lbutton.setSize(30, 30);
 		parentScene.Add(lbutton);

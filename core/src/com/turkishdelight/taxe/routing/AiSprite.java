@@ -14,7 +14,7 @@ public abstract class AiSprite extends Clickable {
 	// abstract class for anything that follows a path on every turn (extended by carriage, train)
 	protected Player player; 
 	protected static final int SPRITEWIDTH = 50;		// could change to widths/ heights of corresponding trains
-	protected static final float SPRITEHEIGHT = 16;
+	protected static final float SPRITEHEIGHT = 20;
 	protected Route route;							// the complete route from start to end
 	protected Connection connection;				// current connection the Train is on
 	protected int waypoint = 0;						// index of route (which route in route) currently on
