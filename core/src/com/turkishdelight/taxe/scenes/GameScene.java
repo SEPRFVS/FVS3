@@ -122,6 +122,7 @@ public class GameScene extends GameGUIScene {
 		shopScene = new ShopScene(this, this.player1, this.player2);
 		goalsScene = new GoalsScene(this, this.player1, this.player2);
 		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
+		dialogueScene = new DialogueScene(null);
 	}
 
 	private void createTrainAndCarriage(Texture trainTexture, int weight, Route route, Player player) {

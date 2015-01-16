@@ -200,6 +200,21 @@ public class GoalsScene extends GameWindowedGUIScene {
 		incompleteButton.setTexture(buttonText);
 		Add(incompleteButton);
 		// ---------------------
+		//Create Exit Button
+		Button exitButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				Game.popScene();
+				Game.pushScene(parentGame);
+				}
+			};
+		exitButton.setPosition(975, 582);
+		exitButton.setSize(23, 17);
+		Texture exitButtonText = new Texture("shopExitButton.png");
+		exitButton.setTexture(exitButtonText);
+		Add(exitButton);
+	
 	}
 	
 	
