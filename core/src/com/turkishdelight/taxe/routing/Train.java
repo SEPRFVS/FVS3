@@ -11,19 +11,18 @@ import com.turkishdelight.taxe.worldobjects.Station;
 public class Train extends AiSprite {
 	// train class takes a route, follows route by going through paths individually. 
 	
-	// TODO introduce chance of breaking down
 	// TODO if no fuel, alert dialog for out of fuel
-	// TODO allow to be partly along route
-	// TODO getRoute() function
 	// TODO send event when reaching station 
 	
 	private static final double SPEED_UPGRADE = 1.4;
 	private static final double RELIABILITY_UPGRADE = 0.8;
 	private static final double FUEL_UPGRADE = 0.6;
+	
 	Carriage carriage;								// carriage train is currently connected to - CANNOT BE NULL
 	protected float overshootDistance;				// amount that the train passes the station by
 	Station startLocation;							// The initial location that the trains starts at, when route == null
 	private boolean atStation;						// boolean whether train is at station
+	private int speed; 							// amount of pixels travelled every turn
 	private int fuelEfficiency;						// precise amount of fuel that player loses per turn
 	private float reliability;						// probability between 0 and 1 that a train takes the wrong junction
 	private boolean fuelUpgrade = false;
@@ -35,8 +34,8 @@ public class Train extends AiSprite {
 		super(parentScene, text, player, station);
 		this.parentScene = parentScene;
 		this.weight = weight;
-		startLocation = station;
-		atStation = true;
+		this.startLocation = station;
+		this.atStation = true;
 		this.speed = speed;
 		this.fuelEfficiency = fuelEfficiency;
 		this.reliability = reliability;
@@ -52,11 +51,6 @@ public class Train extends AiSprite {
 		}
 	}
 
-	
-	public void atStation(){
-		/// method called when train is at a station
-	}
-	
 	public void setCarriage(Carriage carriage){
 		this.carriage = carriage;
 	}
@@ -79,6 +73,10 @@ public class Train extends AiSprite {
 	
 	public int getWaypoint() {
 		return waypoint;
+	}
+	
+	public String getRouteName(){
+		return this.route.getName();
 	}
 	
 	public Station getStation() {
@@ -108,6 +106,11 @@ public class Train extends AiSprite {
 			reliabilityUpgrade = true;
 		break;
 		}
+	}
+	
+	public void atStation(){
+		/// method called when train is at a station
+		System.out.println("train at station");
 	}
 	
 	protected void updatePosition() {

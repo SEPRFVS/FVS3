@@ -13,8 +13,8 @@ import com.turkishdelight.taxe.worldobjects.Station;
 public abstract class AiSprite extends Clickable {
 	// abstract class for anything that follows a path on every turn (extended by carriage, train)
 	protected Player player; 
-	private static final int SPRITEWIDTH = 50;		// TODO change to widths/ heights of corresponding trains
-	private static final float SPRITEHEIGHT = 20;
+	protected static final int SPRITEWIDTH = 50;		// could change to widths/ heights of corresponding trains
+	protected static final float SPRITEHEIGHT = 16;
 	protected Route route;							// the complete route from start to end
 	protected Connection connection;				// current connection the Train is on
 	protected int waypoint = 0;						// index of route (which route in route) currently on
@@ -24,7 +24,6 @@ public abstract class AiSprite extends Clickable {
 	protected int midSpritex;
 	protected int midSpritey;						// halfway of sprite, used to correct into middle of route
 
-	protected int speed = 10; 						// speed to travel - TODO probably only use in train
 	protected float current = 0; 					// 'time' passed (between 0 and 1)
 	protected Vector2 out = new Vector2(1,1);		// vector to output current location at (set at (1,1) to stop jumping when starting a new route)
 
@@ -71,10 +70,6 @@ public abstract class AiSprite extends Clickable {
 	
 	public float getRouteDistance(){
 		return routeDistance;
-	}
-	
-	public int getSpeed() {
-		return speed;
 	}
 
 	public void stopSprite(){

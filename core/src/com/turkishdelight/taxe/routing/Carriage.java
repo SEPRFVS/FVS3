@@ -11,7 +11,7 @@ import com.turkishdelight.taxe.worldobjects.Station;
 
 public class Carriage extends AiSprite {
 	private static final int CARRIAGE_WEIGHT = 1;
-	// carriage moves 50 pxs behind the train it is connected to.
+	// carriage moves SPRITEWIDTH behind the train it is connected to.
 	private Train train;							// train that the carriage is connected to
 	private int carriageCount = 3; 					// counts of number of carriages currently carrying ( >= 0)
 	private float prevDistances = 0f;				// the distance of the routes that the carriage has completed only
@@ -36,16 +36,16 @@ public class Carriage extends AiSprite {
 	
 	@Override
 	protected void updatePosition() {
-		// moves exactly 50 behind the train it is connected to
+		// moves exactly SPRITEWIDTH behind the train it is connected to to look connected 
 		if (train.getRouteDistance() >= 50) {
-			float nextDistance = train.getRouteDistance()- prevDistances- 50f;
+			float nextDistance = train.getRouteDistance()- prevDistances- SPRITEWIDTH;
 			if ((nextDistance >= path.getFinalDistance())){
 				// if next move will go past waypoint
 				prevDistances+= path.getFinalDistance();
 				if (waypoint+2 >= route.numLocations()){
 					// if at final waypoint, fix to final waypoint
 					System.out.println("Carriage final waypoint reached");
-					current = path.getTFromDistance(path.getFinalDistance()-50f);
+					current = path.getTFromDistance(path.getFinalDistance()-SPRITEWIDTH);
 					completed = true;
 				} else {
 					// if carriage at intermediate waypoint, move to next path and calculate overshootDistance into next route
@@ -64,18 +64,24 @@ public class Carriage extends AiSprite {
 			}
 	
 		// setup carriage label
-		Vector2 labelVector = path.getPointFromT(path.getTFromDistance(train.getRouteDistance()-prevDistances-60f));
+		Vector2 labelVector = path.getPointFromT(path.getTFromDistance(train.getRouteDistance()-prevDistances-SPRITEWIDTH));
 		carriageCountLabel.setText(Integer.toString(getCarriageCount()));
 		carriageCountLabel.setPosition(labelVector.x, labelVector.y);
 		carriageCountLabel.setRotation(getRotation());
 	}
 	
+	public void setLabelAlpha(float f){
+		carriageCountLabel.setAlpha(f);
+	}
+	
 	public Train getTrain(){
 		return this.train;
 	}
+	
 	public int getCarriageCount() {
 		return carriageCount;
 	}
+	
 	public void increaseCarriageCount(){
 		carriageCount+=1;
 		carriageCountLabel.setText(Integer.toString(getCarriageCount()));
@@ -131,5 +137,4 @@ public class Carriage extends AiSprite {
 		}
 		updatePosition();
 	}
-	
 }

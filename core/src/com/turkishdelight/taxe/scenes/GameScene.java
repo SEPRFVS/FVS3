@@ -32,10 +32,12 @@ public class GameScene extends GameGUIScene {
 	public GoalsScene goalsScene;
 	public CurrentResourcesScene resourceScene;
 	
+	public int numberTurns = 0;
 	private ArrayList<CurvedPath> curvedPaths = new ArrayList<CurvedPath>();					// collection of curved paths (only one way for each path) for drawing
 	private ArrayList<RouteLocation> routeLocations = new ArrayList<RouteLocation>();			// collection of routelocations (junction/station)
 	
 	private ArrayList<AiSprite> previousCollisions = new ArrayList<AiSprite>();					// used for remembering the collisions that occured in the previous turn, ensures not multiple collisions detected
+	private int prevCollision;
 	
 	private LabelButton confirmRouteSelectionButton;
 	private LabelButton routeSelectionButton;
@@ -43,7 +45,7 @@ public class GameScene extends GameGUIScene {
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
 	private int newRouteDistance;																// TODO currently only used to print- should be displayed
-	//private ArrayList<RouteLocation> previousConnectedLocations = new ArrayList<RouteLocation>(); // used in route selection, the locations that were connected to the previously used location
+	
 
 	public GameScene(Player player1In, Player player2In){
 		super(player1In, player2In, false);
@@ -65,9 +67,14 @@ public class GameScene extends GameGUIScene {
 	public void nextTurn() {
 		
 		if (map != null){
+			numberTurns++;
 			ArrayList<AiSprite> collisions = getCollisions();
 			if (collisions.size() > 0) {
 				calculateCollisions(collisions);
+				prevCollision = numberTurns;
+			} else if (numberTurns - prevCollision > 2) {
+				// stops repeated collisions if one players train is following the other players train
+				previousCollisions = new ArrayList<AiSprite>();
 			}
 		}
 	}
@@ -125,13 +132,14 @@ public class GameScene extends GameGUIScene {
 		connectRouteLocations(budapest, junction2);
 		connectRouteLocations(moscow, krakow);
 		connectRouteLocations(moscow, berlin);
+		connectRouteLocations(lisbon, madrid);
 
 		// add trains
 		Texture trainTexture = new Texture("traincropped.png"); // traincropped added to allow more accurate collision detection
 		createTrainAndCarriage(player1, rome,  trainTexture, 1, 20, 1 , 0.0001f);
 		createTrainAndCarriage(player1, london,trainTexture, 1, 50, 1 , 0.0001f);
 		Train train = createTrainAndCarriage(player2, lisbon, trainTexture, 2, 100, 1 , 0.0001f);
-		Route route1 = createRoute("LondonParisBerlin");
+		Route route1 = createRouteFromString("LondonParisBerlin");
 		train.restoreRoute(route1, 1, 1f);
 		
 		// create route (with dotted line)
@@ -190,41 +198,9 @@ public class GameScene extends GameGUIScene {
 		Add(confirmRouteSelectionButton);
 	}
 
-	private Route createRoute(String string) {
-		// creates a route from a string of form "Routelocation1Routelocation2"
-		// Assumes valid input string
-		if (string.length() == 0){
-			return null;
-		}
-		// parse the string to get the seperate locations
-		ArrayList<String> locations = new ArrayList<String>();
-		int startSubString = 0;
-		for (int i = 1; i< string.length();i++){
-			if (i == string.length()-1){
-				locations.add(string.substring(startSubString, i+1));
-			}
-			if (Character.isUpperCase(string.charAt(i))) {
-				locations.add(string.substring(startSubString, i));
-				startSubString = i;	
-			} 
-		}
-		
-		// create the new route by getting the station with the corresponding text from the routelocations array
-		ArrayList<RouteLocation> newRouteLocations = new ArrayList<RouteLocation>();
-		for (RouteLocation routeLocation: routeLocations){
-			if (locations.contains(routeLocation.getName())) {
-				newRouteLocations.add(routeLocation);
-			}
-		}
-		Route tempRoute = new Route(newRouteLocations);
-		return tempRoute;
-	}
-
 	private Train createTrainAndCarriage(final Player player, Station station, Texture trainTexture, int weight, int speed, int fuelEfficiency, float reliability) {
 		// create a train, carriage and connect them
 		Train train = new Train(this, player, trainTexture, station, weight, speed, fuelEfficiency, reliability) ;
-	
-		System.out.println("Train type is" + train.getClass());
 		Add(train);
 		Carriage carriage = new Carriage(this, trainTexture, player, station, train);
 		Add(carriage);
@@ -258,18 +234,50 @@ public class GameScene extends GameGUIScene {
 		l2.addConnection(l1, path2); 
 	}
 	
+	private Route createRouteFromString(String string) {
+		// creates a route from a string of form "Routelocation1Routelocation2"
+		// Assumes valid input string
+		if (string.length() == 0){
+			return null;
+		}
+		// parse the string to get the seperate locations
+		ArrayList<String> locations = new ArrayList<String>();
+		int startSubString = 0;
+		for (int i = 1; i< string.length();i++){
+			if (i == string.length()-1){
+				locations.add(string.substring(startSubString, i+1));
+			}
+			if (Character.isUpperCase(string.charAt(i))) {
+				locations.add(string.substring(startSubString, i));
+				startSubString = i;	
+			} 
+		}
+		
+		// create the new route by getting the station with the corresponding text from the routelocations array
+		ArrayList<RouteLocation> newRouteLocations = new ArrayList<RouteLocation>();
+		for (RouteLocation routeLocation: routeLocations){
+			if (locations.contains(routeLocation.getName())) {
+				newRouteLocations.add(routeLocation);
+			}
+		}
+		Route tempRoute = new Route(newRouteLocations);
+		return tempRoute;
+	}
+	
 	private void calculateCollisions(ArrayList<AiSprite> collisions) {
+		// main method that resolves valid collisions
+		ArrayList<AiSprite> currentCollisions = new ArrayList<AiSprite>(); // collisions that have been resolved, tracked to stop repeated collisions
 		for (int i = 0; i < collisions.size(); i+=2){
 			boolean previousCollision = false;
 			AiSprite p1AiSprite = collisions.get(i);
 			AiSprite p2AiSprite = collisions.get(i+1);
 			int collisionType = getCollisionType(p1AiSprite, p2AiSprite);
-			previousCollision = isPreviousCollision(p1AiSprite, p2AiSprite, collisionType);
+			previousCollision = isPreviousCollision(previousCollisions, p1AiSprite, p2AiSprite, collisionType) 
+					|| isPreviousCollision(currentCollisions, p1AiSprite, p2AiSprite, collisionType);
+			// calculates if collision previously occurred and stops multiple collisions if train/ carriage overlaps
 			
-			// resolve the collisions
+			// resolve the collisions based on collision type
 			if (!previousCollision){
-				
-				System.out.println(collisionType);
 				switch(collisionType){
 				case(1):
 					((Carriage) p2AiSprite).decreaseCarriageCount();
@@ -278,49 +286,51 @@ public class GameScene extends GameGUIScene {
 					((Carriage) p1AiSprite).decreaseCarriageCount();
 				break;
 				case(3):
-					resolveTrainCollision(p1AiSprite, p2AiSprite);
+					resolveTrainCollision((Train) p1AiSprite, (Train) p2AiSprite);
 				break;
 				default:
 					break;
 				}
+				currentCollisions.add(p1AiSprite);
+				currentCollisions.add(p2AiSprite);
 			}
 		}
 		previousCollisions = collisions;
 	}
 
-	private boolean isPreviousCollision(AiSprite p1AiSprite, AiSprite p2AiSprite, int collisionType) {
-		// calculates if a collision has occured between 2 sprites or their respective connected trains/carriages
-		for (int x=0; x<previousCollisions.size(); x+=2){
-			AiSprite p1CollidedSprite = previousCollisions.get(x);
-			AiSprite p2CollidedSprite = previousCollisions.get(x+1);
+	private boolean isPreviousCollision(ArrayList<AiSprite> aiSprites, AiSprite p1AiSprite, AiSprite p2AiSprite, int collisionType) {
+		// calculates if a collision has occurred between 2 sprites or their respective connected trains/carriages in aiSprites array
+		for (int x=0; x<aiSprites.size(); x+=2){
+			AiSprite p1CollidedSprite = aiSprites.get(x);
+			AiSprite p2CollidedSprite = aiSprites.get(x+1);
 			if (p1CollidedSprite.equals(p1AiSprite) && p2CollidedSprite.equals(p2AiSprite)){
 				// if the 2 sprites have collided
 				return true;
 			} else if (collisionType == 1){
 				// p1 train, p2 carriage
 				if (p1CollidedSprite.equals(p1AiSprite) && p2CollidedSprite.equals(((Carriage) p2AiSprite).getTrain())){
-					// if the p1 train collided with the p2 train previously
+					// if the p1 train collided with the p2 train
 					return true;
 				} else if (p1CollidedSprite.equals(((Train) p1AiSprite).getCarriage()) && p2CollidedSprite.equals(((Carriage) p2AiSprite).getTrain())){
-					// if the p1 carriage collided with p2 train previously
+					// if the p1 carriage collided with p2 train 
 					return true;
 				}
 			} else if (collisionType == 2){
 				// p1 carriage, p2 train
 				if (p1CollidedSprite.equals(((Carriage) p1AiSprite).getTrain()) && p2CollidedSprite.equals(p2AiSprite)){
-					// if the p1 train collided with the p2 train previously
+					// if the p1 train collided with the p2 train
 					return true;
 				} else if (p1CollidedSprite.equals(((Carriage) p1AiSprite).getTrain()) && p2CollidedSprite.equals(((Train) p1AiSprite).getCarriage())){
-					// if the p1 train collided with p2 carriage previously
+					// if the p1 train collided with p2 carriage
 					return true;
 				}
 			} else if (collisionType == 3){
 				// p1 train, p2 train
 				if (p1CollidedSprite.equals(p1AiSprite) && p2CollidedSprite.equals(((Train) p2AiSprite).getCarriage())){
-					// if the p1 train collided with the p2 train previously
+					// if the p1 train collided with the p2 train
 					return true;
 				} else if (p1CollidedSprite.equals(((Train) p1AiSprite).getCarriage()) && p2CollidedSprite.equals(p2AiSprite)){
-					// if the p1 carriage collided with p2 train previously
+					// if the p1 carriage collided with p2 train
 					return true;
 				}
 			}
@@ -328,7 +338,7 @@ public class GameScene extends GameGUIScene {
 		return false;
 	}
 	
-	private void resolveTrainCollision(AiSprite p1Train, AiSprite p2Train){
+	private void resolveTrainCollision(Train p1Train, Train p2Train){
 		//special method for resolving train-train collisions only
 		if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
 			System.out.println("p1 wins!");
@@ -346,11 +356,10 @@ public class GameScene extends GameGUIScene {
 	}
 	
 	private ArrayList<AiSprite> getCollisions(){
-		// returns array where every even element is player1 collided train, odd element is player2 collided train
+		// returns array where every even element is player1 collided aiSprite, odd element is player2 collided aiSprite
 		ArrayList<AiSprite> collidedAiSprites = new ArrayList<AiSprite>();
 		for (AiSprite p1AiSprite: player1.getAiSprites()) {
 			for (AiSprite p2AiSprite: player2.getAiSprites()) {
-				System.out.println(getCollisionType(p1AiSprite, p2AiSprite));
 				if (getCollisionType(p1AiSprite, p2AiSprite) >0){
 					collidedAiSprites.add(p1AiSprite);
 					collidedAiSprites.add(p2AiSprite);
@@ -361,7 +370,7 @@ public class GameScene extends GameGUIScene {
 	}
 
 	private int getCollisionType(AiSprite aiSprite1, AiSprite aiSprite2) {
-		// tests whether 2 aiSprites have collided using their respective polygons
+		// tests whether 2 aiSprites have collided using their respective polygons, retuns number corresponding to collision type
 		Polygon poly1 = aiSprite1.getPolygon();
 		Polygon poly2 = aiSprite2.getPolygon();
 		// if collision has already occurred
@@ -408,6 +417,9 @@ public class GameScene extends GameGUIScene {
 		for (AiSprite aiSprite : otherAiSprites){
 			aiSprite.setColor(Color.LIGHT_GRAY);
 			aiSprite.setAlpha(0.2f);
+			if (aiSprite.getClass() == Carriage.class){
+				((Carriage) aiSprite).setLabelAlpha(0.2f);
+			}
 		}
 		
 		// change alpha of own players carriages so can see locations the carriage covers
@@ -415,6 +427,7 @@ public class GameScene extends GameGUIScene {
 		for (AiSprite aiSprite : playerAiSprites){
 			if (aiSprite.getClass() == Carriage.class){
 				aiSprite.setAlpha(0.5f);
+				((Carriage) aiSprite).setLabelAlpha(0.5f);
 			}
 		}
 	}
@@ -432,7 +445,7 @@ public class GameScene extends GameGUIScene {
 	}
 	
 	public void selectStartingLocation(RouteLocation startLocation){
-		// used when the initial train has been selecting, giving the attached starting location
+		// used when the initial train has been selecting, given the attached starting location
 		newRoute.add(startLocation);
 		((Station) startLocation).setFont(Label.genericFont(Color.BLUE, 20));
 		Texture blueLocationTexture = new Texture("blueLocation.png");
@@ -456,7 +469,7 @@ public class GameScene extends GameGUIScene {
 		ArrayList<AiSprite> aiSprites = activePlayer().getAiSprites();
 		for (AiSprite aiSprite: aiSprites){
 			if (aiSprite != selectedTrains.get(0)){
-				aiSprite.setAlpha(0.5f);
+				aiSprite.setAlpha(0.7f);
 			}
 		}
 		
@@ -553,12 +566,18 @@ public class GameScene extends GameGUIScene {
 		for (AiSprite aiSprite : otherAiSprites){
 			aiSprite.setColor(Color.WHITE);
 			aiSprite.setAlpha(1f);
+			if (aiSprite.getClass() == Carriage.class){
+				((Carriage) aiSprite).setLabelAlpha(1f);
+			}
 		}
 		
 		// reset alpha of players other trains and carriages
 		ArrayList<AiSprite> aiSprites = activePlayer().getAiSprites();
 		for (AiSprite aiSprite: aiSprites){
 			aiSprite.setAlpha(1f);
+			if (aiSprite.getClass() == Carriage.class){
+				((Carriage) aiSprite).setLabelAlpha(1f);
+			}
 		}
 		
 		selectedTrains = new ArrayList<Train>();
@@ -570,7 +589,7 @@ public class GameScene extends GameGUIScene {
 	private HashMap<String, CurvedPath> getPaths() {
 		// this creates all of the paths on the map and returns them
 		HashMap<String, CurvedPath> paths = new HashMap<String, CurvedPath>();
-		// the string key is the two routelocation string representations concaenated int he order that correspons to the path
+		// the string key is the two routelocation string representations concatenated in the order that corresponds to the path
 		// eg key "ParisRome" corresponds to path that goes from paris to rome
 		// used to make route creation easier
 		
