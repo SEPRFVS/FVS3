@@ -55,6 +55,7 @@ public class Clickable extends SpriteComponent {
 		return false;
 	}
 	
+	
 	//This method is overwritten to set up events when the sprite is clicked
 	public void onClickStart()
 	{
@@ -67,4 +68,13 @@ public class Clickable extends SpriteComponent {
 		
 	}
 
+	public void onCharStroke(char ch)
+	{
+		
+	}
+	
+	public void onKeyPressed(int keycode)
+	{
+		
+	}
 }

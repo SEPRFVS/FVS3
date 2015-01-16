@@ -2,7 +2,6 @@ package com.turkishdelight.taxe;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -114,6 +113,10 @@ public class Scene implements InputProcessor{
 		{
 			onEscPressed();
 		}
+		for(Clickable item : clickAbleObjects)
+		{
+			item.onKeyPressed(keycode);
+		}
 		return false;
 	}
 	
@@ -124,7 +127,11 @@ public class Scene implements InputProcessor{
 
 	@Override
 	public boolean keyTyped(char character) {
-		//No Action
+		System.out.println("Typed:" + character);
+		for(Clickable item : clickAbleObjects)
+		{
+			item.onCharStroke(character);
+		}
 		return false;
 	}
 
