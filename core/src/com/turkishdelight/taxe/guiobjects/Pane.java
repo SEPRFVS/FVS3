@@ -2,6 +2,7 @@ package com.turkishdelight.taxe.guiobjects;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turkishdelight.taxe.Clickable;
@@ -13,8 +14,8 @@ public class Pane extends Clickable {
 	float previousX = 0;
 	float previousY = 0;
 	
-	public Pane(Scene parentScene, int z) {
-		super(parentScene, Button.text, z);
+	public Pane(Scene parentScene, Texture t, int z) {
+		super(parentScene, t, z);
 		components = new ComponentBatch(){
 			@Override
 			public void Update()
