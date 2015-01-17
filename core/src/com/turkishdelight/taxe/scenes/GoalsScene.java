@@ -36,12 +36,14 @@ public class GoalsScene extends GameWindowedGUIScene {
 	
 	public void drawScrollpane()
 	{
+		Texture tempTexture = new Texture("location.png"); // TODO NEEDS SETTING
 		pane = new Pane(this, -1);
+		pane.setTexture(tempTexture);
 		pane.setSize(922, 800);
 		pane.setPosition(50, 485 - pane.getHeight());
 		Add(pane);
 		
-		Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png");
+		Texture scrollPaneBackgroundText = new Texture("location.png"); //TODO needs Obstacles_Scrollpane_Background
 		scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
 		scrollPaneBackground.setSize(922,800);
 		scrollPaneBackground.setLocalPosition(0, 0);
@@ -52,7 +54,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 		final float minY = 73;
 		final float maxY = 485 - pane.getHeight();
 		
-		Texture scrollerText = new Texture("Scroller.png");
+		Texture scrollerText = new Texture("location.png"); // TODO change to pane scroller
 		final Scroller scrollPane = new Scroller(this, scrollerText, Game.guiZ) {
 					@Override
 					public void onMove(float percentage)

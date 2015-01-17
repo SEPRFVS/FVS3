@@ -31,10 +31,15 @@ public class GameGUIScene extends Scene{
 	Label player2ScoreLabel;
 	Label player2MoneyLabel;
 	Label player2FuelLabel;
+	Button nextGoButton;
 	
-	public GameGUIScene(Player p1, Player p2, boolean hasWindow)
+	public GameGUIScene(Player p1, Player p2, boolean hasWindow, Scene passedScene)
 	{
-		super.onCreate();
+		onCreate(p1, p2, hasWindow, passedScene);
+	}
+	
+	public void onCreate(Player p1, Player p2, boolean hasWindow, Scene passedScene)
+	{
 		player1 = p1;
 		player2 = p2;
 		initialiseGUI(hasWindow);
@@ -72,7 +77,7 @@ public class GameGUIScene extends Scene{
 		Texture buttonText = new Texture("Clear_Button.png");
 		
 		// Create Next Go button
-		Button nextGoButton = new Button(this) {
+		nextGoButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
@@ -146,7 +151,7 @@ public class GameGUIScene extends Scene{
 		// Create player 1 name label
 		Texture player1LabelText = new Texture("Clear_Button.png");
 		player1NameLabel = new Label(this, player1LabelText, Label.genericFont(Color.BLUE, 40), Game.guiZ);
-		player1NameLabel.setText("PLAYER 1");
+		player1NameLabel.setText(player1.getName());
 		player1NameLabel.setPosition(36, 730);
 		player1NameLabel.setAlignment(0);
 		Add(player1NameLabel);
@@ -210,7 +215,7 @@ public class GameGUIScene extends Scene{
 		// Create player 2 name label
 		Texture player2LabelText = new Texture("Clear_Button.png");
 		player2NameLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 40), Game.goalsZ);
-		player2NameLabel.setText("PLAYER 2");
+		player2NameLabel.setText(player2.getName());
 		player2NameLabel.setPosition(985, 730);
 		player2NameLabel.setAlignment(2);
 		player2NameLabel.setAlpha((float) 0.4);
@@ -312,6 +317,8 @@ public class GameGUIScene extends Scene{
 	
 	public void updateValues()
 	{
+		player1NameLabel.setText(player1.getName());
+		player2NameLabel.setText(player2.getName());
 		player1MoneyLabel.setText(String.valueOf(player1.getMoney()));
 		player2MoneyLabel.setText(String.valueOf(player2.getMoney()));
 		player1ScoreLabel.setText("Score: " + player1.getScore());
@@ -323,14 +330,14 @@ public class GameGUIScene extends Scene{
 	public void nextGoPressed()
 	{
 		System.out.println("nextGoPressed");
-		
 		if (player1Go) {	
 			player2Active(); 
 		}
 		else {
 			player1Active(); 
 		}
-		
+
+		updateValues();
 		player1Go = !player1Go;
 	}
 }

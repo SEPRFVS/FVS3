@@ -13,6 +13,8 @@ public class DialogueScene extends Scene {
 	SpriteComponent dialogue;
 	Label dialLabel;
 	String text;
+	
+	// seems to currently require seperate setText method to set the text correctly, as OnCreate called before text assignment
 	public DialogueScene(String text)
 	{
 		super();
@@ -51,8 +53,8 @@ public class DialogueScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				//onOkayButton();
-				
+				Game.popScene();
+				onOkayButton();
 			}
 		};
 		okayButton.setPosition(463, 423);
@@ -64,8 +66,8 @@ public class DialogueScene extends Scene {
 		Texture dialLabelText  = new Texture("Clear_Button.png");
 		dialLabel = new Label(this, dialLabelText, Label.genericFont(Color.LIGHT_GRAY, 30), Game.goalsZ);
 		dialLabel.setText(text);
-		dialLabel.setPosition(573, 528);
-		dialLabel.setAlignment(2);
+		dialLabel.setPosition(Game.targetWindowsWidth / 2, 528);
+		dialLabel.setAlignment(1);
 		dialLabel.setAlpha((float) 0.4);
 		Add(dialLabel);
 	}
@@ -76,11 +78,15 @@ public class DialogueScene extends Scene {
 		dialLabel.setText(text);
 	}
 	
+	public void onOkayButton()
+	{
+		
+	}
+	
 	public String getText()
 	{
 		return text;
 	}
-	
-	}
+}
 	
 		

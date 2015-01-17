@@ -540,12 +540,12 @@ public class NewGameScene extends Scene   {
 	public void startGame()
 	{
 		System.out.println("Game Started: " + currentDifficultyPlayer1.getText() + " " + currentDifficultyPlayer2.getText() + startCityPlayer1.getText() + startCityPlayer2.getText());	
-		Player p1 = generatePlayer(currentDifficultyPlayer1, player1NameText);
-		Player p2 = generatePlayer(currentDifficultyPlayer2, player2NameText);
+		Player p1 = generatePlayer(currentDifficultyPlayer1, player1NameText, startCityPlayer1);
+		Player p2 = generatePlayer(currentDifficultyPlayer2, player2NameText, startCityPlayer2);
 		Game.setScene(new GameScene(p1, p2));
 	}
 	
-	public Player generatePlayer(LabelButton currentDifficultyPlayer, EditText playerNameText)
+	public Player generatePlayer(LabelButton currentDifficultyPlayer, EditText playerNameText, LabelButton currentLocationPlayer)
 	{
 		Player p = new Player();
 		p.setName(playerNameText.getText());
@@ -564,6 +564,7 @@ public class NewGameScene extends Scene   {
 			p.setMoney(10);
 			p.setFuel(50);
 		}
+		p.setStartLocation(currentLocationPlayer.getText());
 		return p;
 	}
 	
@@ -572,4 +573,6 @@ public class NewGameScene extends Scene   {
 		System.out.println("Didn't want you to play anyway!");
 		Game.setScene(new MainMenuScene());
 	}
+	
+	
 	}

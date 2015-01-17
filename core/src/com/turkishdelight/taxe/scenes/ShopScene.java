@@ -1,5 +1,7 @@
 package com.turkishdelight.taxe.scenes;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.turkishdelight.taxe.Game;
@@ -10,6 +12,9 @@ import com.turkishdelight.taxe.guiobjects.Label;
 import com.turkishdelight.taxe.guiobjects.LabelButton;
 import com.turkishdelight.taxe.guiobjects.Pane;
 import com.turkishdelight.taxe.guiobjects.Scroller;
+import com.turkishdelight.taxe.routing.Train;
+import com.turkishdelight.taxe.routing.Train.Type;
+import com.turkishdelight.taxe.worldobjects.Station;
 
 public class ShopScene extends GameWindowedGUIScene {
 
@@ -17,14 +22,12 @@ public class ShopScene extends GameWindowedGUIScene {
 	SpriteComponent scrollPaneBackground;
 	Pane pane;
 	
-	LabelButton steamButton;
-	LabelButton dieselButton;
-	LabelButton electricButton;
-	LabelButton nuclearButton;
-	LabelButton magLevButton;
-	LabelButton kingButton;
-	
-	Boolean steamBool = false;
+	private LabelButton steamButton;
+	private LabelButton dieselButton;
+	private LabelButton electricButton;
+	private LabelButton nuclearButton;
+	private LabelButton magLevButton;
+	private LabelButton kingButton;
 	
 	public ShopScene(GameScene parent, Player player1, Player player2)
 	{
@@ -77,117 +80,249 @@ public class ShopScene extends GameWindowedGUIScene {
 		scrollPane.setPosition(35, 454);
 		Add(scrollPane);
 		
-		Texture buyButtonText = new Texture("buy_bg.png");
-		
-		// Create Steam button
-		steamButton = new LabelButton(this) {
-			@Override
-			public void onClickEnd()
-			{
-				steamPressed();
-			}
-		};
-		steamButton.setLocalPosition(65, 555);
-		steamButton.setSize(115, 34);
-		steamButton.setTexture(buyButtonText);
-		steamButton.setText("Buy: 10cr");
-		steamButton.setAlignment(1);
-		steamButton.setAlpha(1);
-		steamButton.setFont(Label.genericFont(Color.WHITE, 22));
-		pane.Add(steamButton);
-		// ---------------------
-		
-		// Create Diesel button
-		dieselButton = new LabelButton(this) {
-			@Override
-			public void onClickEnd()
-			{
-				dieselPressed();
-			}
-		};
-		dieselButton.setLocalPosition(530, 555);
-		dieselButton.setSize(115, 34);
-		dieselButton.setTexture(buyButtonText);
-		dieselButton.setText("Buy: 30cr");
-		dieselButton.setAlignment(1);
-		dieselButton.setAlpha(1);
-		dieselButton.setFont(Label.genericFont(Color.WHITE, 22));
-		pane.Add(dieselButton);
-		// ---------------------
-		
-		// Create Electric button
-		electricButton = new LabelButton(this) {
-			@Override
-			public void onClickEnd()
-			{
-				electricPressed();
-			}
-		};
-		electricButton.setLocalPosition(65, 305);
-		electricButton.setSize(115, 34);
-		electricButton.setTexture(buyButtonText);
-		electricButton.setText("Buy: 90cr");
-		electricButton.setAlignment(1);
-		electricButton.setAlpha(1);
-		electricButton.setFont(Label.genericFont(Color.WHITE, 22));
-		pane.Add(electricButton);
-		// ---------------------
-		
-		// Create Nuclear button
-		nuclearButton = new LabelButton(this) {
-			@Override
-			public void onClickEnd()
-			{
-				nuclearPressed();
-			}
-		};
-		nuclearButton.setLocalPosition(530, 305);
-		nuclearButton.setSize(115, 34);
-		nuclearButton.setTexture(buyButtonText);
-		nuclearButton.setText("Buy: 200cr");
-		nuclearButton.setAlignment(1);
-		nuclearButton.setAlpha(1);
-		nuclearButton.setFont(Label.genericFont(Color.WHITE, 22));
-		pane.Add(nuclearButton);
-		// ---------------------
-		
-		// Create MagLev button
-		magLevButton = new LabelButton(this) {
-			@Override
-			public void onClickEnd()
-			{
-				magLevPressed();
-			}
-		};
-		magLevButton.setLocalPosition(65, 45);
-		magLevButton.setSize(115, 34);
-		magLevButton.setTexture(buyButtonText);
-		magLevButton.setText("Buy: 500cr");
-		magLevButton.setAlignment(1);
-		magLevButton.setAlpha(1);
-		magLevButton.setFont(Label.genericFont(Color.WHITE, 22));
-		pane.Add(magLevButton);
-		// ---------------------
-		
-		// Create King button
-		kingButton = new LabelButton(this) {
-			@Override
-			public void onClickEnd()
-			{
-				kingPressed();
-			}
-		};
-		kingButton.setLocalPosition(530, 45);
-		kingButton.setSize(115, 34);
-		kingButton.setTexture(buyButtonText);
-		kingButton.setText("Buy: 1000cr");
-		kingButton.setAlignment(1);
-		kingButton.setAlpha(1);
-		kingButton.setFont(Label.genericFont(Color.WHITE, 22));
-		pane.Add(kingButton);
-		// ---------------------
-		
 		drawUpgradeButtons();
+		drawTrainButtons();
+	}
+	
+	public void drawTrainButtons()
+	{
+		// Create Steam button
+
+				Player activePlayer = parentGame.activePlayer();
+				Texture buyButtonText = new Texture("buy_bg.png");
+				Texture sellButtonText = new Texture("sell_bg.png");
+				steamButton = new LabelButton(this) {
+				@Override
+				public void onClickEnd()
+				{
+					steamPressed();
+				}
+				};
+				if(activePlayer.hasTrain("Steam"))
+				{
+					steamButton.setTexture(sellButtonText);
+					steamButton.setText("Sell: 10cr");
+				}
+				else
+				{
+					steamButton.setTexture(buyButtonText);
+					steamButton.setText("Buy: 10cr");
+				}
+				steamButton.setLocalPosition(65, 555);
+				steamButton.setSize(115, 34);
+				steamButton.setAlignment(1);
+				steamButton.setAlpha(1);
+				steamButton.setFont(Label.genericFont(Color.WHITE, 22));
+				pane.Add(steamButton);
+				// ---------------------
+				
+				// Create Diesel button
+				dieselButton = new LabelButton(this) {
+				@Override
+				public void onClickEnd()
+					{
+						dieselPressed();
+					}
+				};
+				dieselButton.setLocalPosition(530, 555);
+				dieselButton.setSize(115, 34);
+				if(activePlayer.hasTrain("Diesel"))
+				{
+					dieselButton.setTexture(sellButtonText);
+					dieselButton.setText("Sell: 30cr");
+				}
+				else
+				{
+					dieselButton.setTexture(buyButtonText);
+					dieselButton.setText("Buy: 30cr");
+				}
+				dieselButton.setAlignment(1);
+				dieselButton.setAlpha(1);
+				dieselButton.setFont(Label.genericFont(Color.WHITE, 22));
+				pane.Add(dieselButton);
+				// ---------------------
+						
+				// Create Electric button
+				electricButton = new LabelButton(this) {
+					@Override
+					public void onClickEnd()
+					{
+						electricPressed();
+					}
+				};
+				electricButton.setLocalPosition(65, 305);
+				electricButton.setSize(115, 34);
+				if(activePlayer.hasTrain("Electric"))
+				{
+					electricButton.setTexture(sellButtonText);
+					electricButton.setText("Sell: 90cr");
+				}
+				else
+				{
+					electricButton.setTexture(buyButtonText);
+					electricButton.setText("Buy: 90cr");
+				}
+				electricButton.setAlignment(1);
+				electricButton.setAlpha(1);
+				electricButton.setFont(Label.genericFont(Color.WHITE, 22));
+				pane.Add(electricButton);
+				// ---------------------
+						
+				// Create Nuclear button
+				nuclearButton = new LabelButton(this) {
+					@Override
+					public void onClickEnd()
+					{
+						nuclearPressed();
+					}
+				};
+				nuclearButton.setLocalPosition(530, 305);
+				nuclearButton.setSize(115, 34);
+				if(activePlayer.hasTrain("Nuclear"))
+				{
+					nuclearButton.setTexture(sellButtonText);
+					nuclearButton.setText("Sell: 200r");
+				}
+				else
+				{
+					nuclearButton.setTexture(buyButtonText);
+					nuclearButton.setText("Buy: 200cr");
+				}
+				nuclearButton.setAlignment(1);
+				nuclearButton.setAlpha(1);
+				nuclearButton.setFont(Label.genericFont(Color.WHITE, 22));
+				pane.Add(nuclearButton);
+				// ---------------------
+						
+				// Create MagLev button
+				magLevButton = new LabelButton(this) {
+					@Override
+					public void onClickEnd()
+					{
+						magLevPressed();
+					}
+				};
+				magLevButton.setLocalPosition(65, 45);
+				magLevButton.setSize(115, 34);
+				if(activePlayer.hasTrain("Mag"))
+				{
+					magLevButton.setTexture(sellButtonText);
+					magLevButton.setText("Sell: 500cr");
+				}
+				else
+				{
+					magLevButton.setTexture(buyButtonText);
+					magLevButton.setText("Buy: 500cr");
+				}
+				magLevButton.setAlignment(1);
+				magLevButton.setAlpha(1);
+				magLevButton.setFont(Label.genericFont(Color.WHITE, 22));
+				pane.Add(magLevButton);
+				// ---------------------
+						
+				// Create King button
+				kingButton = new LabelButton(this) {
+					@Override
+					public void onClickEnd()
+					{
+						kingPressed();
+					}
+				};
+				kingButton.setLocalPosition(530, 45);
+				kingButton.setSize(115, 34);
+				if(activePlayer.hasTrain("TheKing"))
+				{
+					kingButton.setTexture(sellButtonText);
+					kingButton.setText("Sell: 1000cr");
+				}
+				else
+				{
+					kingButton.setTexture(buyButtonText);
+					kingButton.setText("Buy: 1000cr");
+				}
+				kingButton.setAlignment(1);
+				kingButton.setAlpha(1);
+				kingButton.setFont(Label.genericFont(Color.WHITE, 22));
+				pane.Add(kingButton);
+				// ---------------------
+	}
+	
+	public void refreshButtons()
+	{
+		Player activePlayer = parentGame.activePlayer();
+		Texture buyButtonText = new Texture("buy_bg.png");
+		Texture sellButtonText = new Texture("sell_bg.png");
+		//Refresh steam button
+		if(activePlayer.hasTrain("Steam"))
+		{
+			steamButton.setTexture(sellButtonText);
+			steamButton.setText("Sell: 10cr");
+		}
+		else
+		{
+			steamButton.setTexture(buyButtonText);
+			steamButton.setText("Buy: 10cr");
+		}
+		// ---------------------
+		
+		// Refresh Diesel button
+		if(activePlayer.hasTrain("Diesel"))
+		{
+			dieselButton.setTexture(sellButtonText);
+			dieselButton.setText("Sell: 30cr");
+		}
+		else
+		{
+			dieselButton.setTexture(buyButtonText);
+			dieselButton.setText("Buy: 30cr");
+		}
+		// Refresh Electric button
+		if(activePlayer.hasTrain("Electric"))
+		{
+			electricButton.setTexture(sellButtonText);
+			electricButton.setText("Sell: 90cr");
+		}
+		else
+		{
+			electricButton.setTexture(buyButtonText);
+			electricButton.setText("Buy: 90cr");
+		}
+				
+		// Refresh Nuclear button
+		if(activePlayer.hasTrain("Nuclear"))
+		{
+			nuclearButton.setTexture(sellButtonText);
+			nuclearButton.setText("Sell: 200r");
+		}
+		else
+		{
+			nuclearButton.setTexture(buyButtonText);
+			nuclearButton.setText("Buy: 200cr");
+		}
+				
+		// Refresh MagLev button
+		if(activePlayer.hasTrain("Mag"))
+		{
+			magLevButton.setTexture(sellButtonText);
+			magLevButton.setText("Sell: 500cr");
+		}
+		else
+		{
+			magLevButton.setTexture(buyButtonText);
+			magLevButton.setText("Buy: 500cr");
+		}
+				
+		// Refresh King button
+		if(activePlayer.hasTrain("TheKing"))
+		{
+			kingButton.setTexture(sellButtonText);
+			kingButton.setText("Sell: 1000cr");
+		}
+		else
+		{
+			kingButton.setTexture(buyButtonText);
+			kingButton.setText("Buy: 1000cr");
+		}
 	}
 	
 	public void drawUpgradeButtons()
@@ -337,25 +472,7 @@ public class ShopScene extends GameWindowedGUIScene {
 	public void obstaclePressed()
 	{
 		System.out.println("obstaclePressed");
-		
-		// Create obstacles texture and set shop window background to be obstacles.
-		Texture obstaclesText = new Texture("Shop_Obstacles.png");
-		shop.setTexture(obstaclesText);
-		// ---------------------
-		
-		// Create obstacles scrollpane background texture and assign to the scrollpane
-		Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png");
-		scrollPaneBackground.setTexture(scrollPaneBackgroundText);
-		// ---------------------
-		
-		// Set buy/sell buttons to be transparent
-		steamButton.setAlpha(0);
-		dieselButton.setAlpha(0);
-		electricButton.setAlpha(0);
-		nuclearButton.setAlpha(0);
-		magLevButton.setAlpha(0);
-		kingButton.setAlpha(0);
-		// ---------------------
+		Game.pushScene(parentGame.makeDialogueScene("Coming soon!"));
 		
 	}
 	
@@ -393,33 +510,45 @@ public class ShopScene extends GameWindowedGUIScene {
 	
 	public void steamPressed()
 	{
-		System.out.println("steamPressed");
-		
-		Texture buyButtonText = new Texture("buy_bg.png");
-		Texture sellButtonText = new Texture("sell_bg.png");
-		
-		if (steamBool == true) 
+		if(!parentGame.activePlayer().hasTrain("Steam"))
 		{
-			steamButton.setText("Sell: 10cr");
-			steamButton.setTexture(sellButtonText);
-			System.out.println("111");
+			buyPressed(parentGame.activePlayer(), Train.Type.STEAM, 10);
 		}
-		else if (steamBool == false)
+		else
 		{
-			steamButton.setText("Buy: 10cr");
-			steamButton.setTexture(buyButtonText);
-			System.out.println("222");
+			DialogueScene dial =  new DialogueScene("Are you sure?") {
+				@Override
+				public void onOkayButton()
+				{
+					parentGame.activePlayer().sellTrain("Steam", 10, parentGame);
+					refreshButtons();
+					updateValues();
+				}
+			};
+			Game.pushScene(dial);
 		}
-		
-		steamBool = !steamBool;
-		System.out.println(steamBool);
-		
 	}
 	
 	public void dieselPressed()
 	{
 		System.out.println("dieselPressed");
-		Game.pushScene(parentGame.makeDialogueScene("Are you sure?"));
+		if(!parentGame.activePlayer().hasTrain("Diesel"))
+		{
+			buyPressed(parentGame.activePlayer(), Train.Type.DIESEL, 30);
+		}
+		else
+		{
+			DialogueScene dial =  new DialogueScene("Are you sure?") {
+				@Override
+				public void onOkayButton()
+				{
+					parentGame.activePlayer().sellTrain("Diesel", 30, parentGame);
+					refreshButtons();
+					updateValues();
+				}
+			};
+			Game.pushScene(dial);
+		}
 	}
 	
 	public void electricPressed()
@@ -445,5 +574,35 @@ public class ShopScene extends GameWindowedGUIScene {
 	public void upgradePressed()
 	{
 		System.out.println("upgradePressed");
+	}
+	
+	public void buyPressed(final Player player, final Type trainType, final int price)
+	{
+		ArrayList<String> lstIn = new ArrayList<String>();
+		lstIn.add("London");
+		lstIn.add("Rome");
+		lstIn.add("Moscow");
+		lstIn.add("Lisbon");
+		lstIn.add("Paris");
+		lstIn.add("Berlin");
+		lstIn.add("Madrid");
+		lstIn.add("Budapest");
+		SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselection.png"), lstIn) {
+			@Override
+			public void onSelectionEnd() {
+				String selectedStation = (String)elements.get(selectedElementIndex);
+				player.buyTrain(trainType, price, selectedStation, parentGame);
+				Game.popScene();
+				refreshButtons();
+				updateValues();
+			}
+		};
+		Game.pushScene(locationSelectionScene);
+	}
+	@Override
+	public void onFocusGained()
+	{
+		super.onFocusGained();
+		refreshButtons();
 	}
 }

@@ -204,25 +204,7 @@ public class CurrentResourcesScene extends GameWindowedGUIScene {
 	public void obstaclesPressed()
 	{
 		System.out.println("obstaclesPressed");
-		
-		// Create obstacles texture and set current resources window background to be for obstacles tab.
-		Texture obstaclesText = new Texture("Current_Resources_Obstacles.png");
-		currentResources.setTexture(obstaclesText);
-		// ---------------------
-		
-		// Create obstacles scrollpane background texture and assign to the scrollpane
-		Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png");
-		scrollPaneBackground.setTexture(scrollPaneBackgroundText);
-		// ---------------------
-		
-		// Set in use sprites to be transparent
-		steamInUse.setAlpha(0);
-		dieselInUse.setAlpha(0);
-		electricInUse.setAlpha(0);
-		nuclearInUse.setAlpha(0);
-		magLevInUse.setAlpha(0);
-		kingInUse.setAlpha(0);
-		// ---------------------
+		Game.pushScene(parentGame.makeDialogueScene("Coming soon!"));
 		
 	}
 	

@@ -2,6 +2,7 @@ package com.turkishdelight.taxe.guiobjects;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turkishdelight.taxe.Clickable;

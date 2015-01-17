@@ -1,40 +1,52 @@
 package com.turkishdelight.taxe.routing;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.turkishdelight.taxe.worldobjects.Location;
+import java.util.ArrayList;
+
+import com.turkishdelight.taxe.worldobjects.RouteLocation;
+import com.turkishdelight.taxe.worldobjects.Station;
 
 public class Route {
 	// Contains information on route from location to another, possibly through multiple locations via multiple paths
+	// Has start location, then array of connections. 
 	
-	private Array<Connection> connections;			// collection of connections
-	private Location startLocation;					// starting location of route (is connected to first location in connections)
-	private int size = 0;							// number of paths in route
-
+	
+	private ArrayList<Connection> connections =new ArrayList<Connection>();		// collection of connections
+	private RouteLocation startLocation;										// starting location of route (must connected to first location in connections)
+	private int size = 0;														// number of paths in route
+	private String name = "";													// name of route of form "Location1Location2..."
 	public Route() {
-		this.connections = new Array<Connection>();
+		this.connections = new ArrayList<Connection>();
 	}
-
-	public Route(Location ... locations) { // note locations cannot be null
-		this.connections = new Array<Connection>();
-		Location previous = null;
-		// add start location first, then sort out connections.
-		for (Location location : locations){
+	
+	public int getSize()
+	{
+		return size;
+	}
+	
+	public Route(ArrayList<RouteLocation> locations){
+		// takes an arraylist of locations, creates a route if all locations are connected. 
+		// TODO ensure that list is correct size
+		RouteLocation previousLocation = null;
+		String name = "";
+		for (RouteLocation location : locations){
 			if (size == 0) {
-				this.startLocation = location;
+				this.startLocation =  location;
 			} else {
-				if (previous.isConnected(location)){
-					this.connections.add(new Connection(location, previous.getCurvedRoute(location)));
+				if (previousLocation.isConnected(location)){
+					this.connections.add(new Connection(location, previousLocation.getCurvedRoute(location)));
+					name += location.getName();
 				} else {
-					System.out.println("NOT A VALID ROUTE"); // TODO be stricter here
+					// if the previous location isnt connected to the current location, invalid route.
+					System.out.println("NOT A VALID ROUTE"); // be stricter here
 				}
 			}
-			previous = location;	
+			previousLocation = location;	
 			size++;
 		}
+		this.name = name;
 	}
 	
-	public int size(){
+	public int numLocations(){
 		return size;
 	}
 	
@@ -42,21 +54,18 @@ public class Route {
 		return connections.get(i);
 	}
 	
-	public Location getStartLocation(){
+	public RouteLocation getStartLocation(){
 		return this.startLocation;
-	}
-
-	public Array<Vector2> getLocationPositions(){ 
-		Array<Vector2> positions = new Array<Vector2>();
-		for (Connection connection:this.connections){
-			positions.add(connection.getLocation().getCoords());
-		}
-		return positions;
 	}
 
 	public void addConnection(Connection connection){
 		connections.add(connection);
 		size+=1;
+	}
+
+	public String getName() {
+		// get the name of the route- of form LocationLocationLocation
+		return this.name;
 	}
 	
 }
