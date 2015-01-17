@@ -2,7 +2,6 @@ package com.turkishdelight.taxe.guiobjects;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turkishdelight.taxe.Clickable;
@@ -20,7 +19,6 @@ public class Pane extends Clickable {
 			@Override
 			public void Update()
 			{
-				super.Update();
 				if(getX() != previousX || getY() != previousY)
 				{
 					previousX = getX();
@@ -61,6 +59,7 @@ public class Pane extends Clickable {
 	//This method is used to add a sprite component to the game
 	public void Add(SpriteComponent spriteComp)
 	{
+		spriteComp.setIsPaneChild(true);
 		components.Add(spriteComp);
 		if(spriteComp.isClickAble())
 		{

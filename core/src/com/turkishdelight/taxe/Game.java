@@ -5,7 +5,9 @@ import java.util.Stack;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turkishdelight.taxe.scenes.MainMenuScene;
 import com.turkishdelight.taxe.scenes.ShopScene;
@@ -44,6 +46,11 @@ public class Game extends ApplicationAdapter {
 		System.out.println("Setting intital scene");
 		//By default we set out scene to the main menu
 		setScene(new MainMenuScene());
+		//Set up a sprite for fading background scenes
+		gray = new SpriteComponent(null, new Texture("blank.png"), 0);
+		gray.setSize(targetWindowsWidth, targetWindowsHeight);
+		gray.setColor(Color.GRAY);
+		gray.setAlpha(0.5f);
 	}
 
 	public static void setPushedScene(Scene newScene)
@@ -74,6 +81,12 @@ public class Game extends ApplicationAdapter {
 		}
 	}
 	
+	public static void popScene(boolean cleanup)
+	{
+		currentScene.cleanup();
+		popScene();
+	}
+	
 	public static void pushScene(Scene s)
 	{
 		if(currentScene != topScene)
@@ -85,6 +98,7 @@ public class Game extends ApplicationAdapter {
 	
 	 
 	//LibGdxs default update method is named render, it calls an update method before rendering the game
+	SpriteComponent gray;
 	@Override
 	public void render () {
 		//Ensure our components object is correctly set up
@@ -93,16 +107,20 @@ public class Game extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
-		//draw our components object
-		//Draw the scene underneath
-		try
-		{
-			scenes.peek().Draw(batch);
-		}
-		catch(EmptyStackException e)
-		{
-			//We are at the bottom of the stack
-			topScene.Draw(batch);
+		if(topScene != currentScene)
+			{
+			//Draw the scene underneath
+			try
+			{
+				scenes.peek().Draw(batch);
+			}
+			catch(EmptyStackException e)
+			{
+				//We are at the bottom of the stack
+				topScene.Draw(batch);
+			}
+			//Draw a gray rectangle to tint the background
+			gray.draw(batch);
 		}
 		//Draw the current scene
 		currentScene.Draw(batch);

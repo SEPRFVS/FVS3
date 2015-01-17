@@ -419,6 +419,7 @@ public class ShopScene extends GameWindowedGUIScene {
 	public void dieselPressed()
 	{
 		System.out.println("dieselPressed");
+		Game.pushScene(parentGame.makeDialogueScene("Are you sure?"));
 	}
 	
 	public void electricPressed()

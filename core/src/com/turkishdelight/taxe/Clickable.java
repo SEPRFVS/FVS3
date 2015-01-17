@@ -18,8 +18,8 @@ public class Clickable extends SpriteComponent {
 		//Firstly we get the bounds of the item
 		float minX = this.getX();
 		float minY = this.getY();
-		float maxX = this.getX() + this.getWidth();
-		float maxY = this.getY() + this.getHeight();
+		float maxX = this.getX() + this.getBoundingRectangle().getWidth();
+		float maxY = this.getY() + this.getBoundingRectangle().getHeight();
 		
 		//Then we check for the touch location between the bounds
 		if(posX > minX && posX < maxX)
@@ -40,8 +40,8 @@ public class Clickable extends SpriteComponent {
 		//Firstly we get the bounds of the item
 		float minX = this.getX();
 		float minY = this.getY();
-		float maxX = this.getX() + this.getWidth();
-		float maxY = this.getY() + this.getHeight();
+		float maxX = this.getX() + this.getBoundingRectangle().getWidth();
+		float maxY = this.getY() + this.getBoundingRectangle().getHeight();
 		//Then we check for the touch location between the bounds
 		if(posX > minX && posX < maxX)
 		{

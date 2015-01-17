@@ -6,12 +6,18 @@ import com.turkishdelight.taxe.routing.AiSprite;
 import com.turkishdelight.taxe.routing.Train;
 
 public class Player {
+	private String name = "Player";
 	private int money = 0;
 	private int score = 0;
 	private int fuel = 0;
 	private ArrayList<SpriteComponent> possessions = new ArrayList<SpriteComponent>();
 	private ArrayList<AiSprite> aiSprites = new ArrayList<AiSprite>(); // used in game scene for collisions
 
+	public String getName()
+	{
+		return name;
+	}
+	
 	public int getFuel()
 	{
 		return fuel;
@@ -27,6 +33,11 @@ public class Player {
 		return score;
 	}
 
+	public void setName(String newName)
+	{
+		name = newName;
+	}
+	
 	public void setFuel(int newFuel)
 	{
 		fuel = newFuel;

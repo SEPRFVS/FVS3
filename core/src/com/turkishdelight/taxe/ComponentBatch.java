@@ -83,4 +83,20 @@ public class ComponentBatch {
 	public void setReorderZ(boolean reorderZ) {
 		this.reorderZ = reorderZ;
 	}
+	
+	public void cleanup()
+	{
+		ArrayList<SpriteComponent> toRemove = new ArrayList<SpriteComponent>();
+		for(SpriteComponent c : spriteComponents)
+		{
+			c.cleanup();
+			toRemove.add(c);
+		}
+		for(SpriteComponent c : toRemove)
+		{
+			spriteComponents.remove(c);
+		}
+		toRemove = null;
+		spriteComponents = null;
+	}
 }

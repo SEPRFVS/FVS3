@@ -175,7 +175,11 @@ public class Scene implements InputProcessor{
 	{
 		for(Clickable item : clickAbleObjects)
 		{
-			item.clickEnd(posX, posY);
+			//Clicks for pane children are handled by the pane itself
+			if(!item.isPaneChild())
+			{
+				item.clickEnd(posX, posY);
+			}
 		}
 	}
 	
@@ -184,7 +188,11 @@ public class Scene implements InputProcessor{
 	{
 		for(Clickable item : clickAbleObjects)
 		{
-			item.clickStart(posX, posY);
+			//Clicks for pane children are handled by the pane itself
+			if(!item.isPaneChild())
+			{
+				item.clickStart(posX, posY);
+			}
 		}
 	}
 	
@@ -206,5 +214,18 @@ public class Scene implements InputProcessor{
 	public void onFocusLost()
 	{
 		
+	}
+	
+	//This method is used to cull a scene for memory sake
+	public void cleanup()
+	{
+		components.cleanup();
+		components = null;
+		clickAbleObjects = null;
+		try {
+			System.gc();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 }

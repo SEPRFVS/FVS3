@@ -15,6 +15,8 @@ public class SpriteComponent extends Sprite{
 	private boolean clickAble = false;
 	private boolean ignoresPause = false;
 	
+	//This boolean stores whether this object is a child of a scene or a pane
+	private boolean paneChild = false;
 	
 	public SpriteComponent(Scene parentScene, Texture text, int z)
 	{
@@ -109,6 +111,18 @@ public class SpriteComponent extends Sprite{
 		return parentScene;
 	}
 	
+	public boolean isPaneChild()
+	{
+		return this.paneChild;
+	}
 	
-
+	public void setIsPaneChild(boolean pane)
+	{
+		this.paneChild = pane;
+	}
+	
+	public void cleanup()
+	{
+		this.parentScene = null;
+	}
 }

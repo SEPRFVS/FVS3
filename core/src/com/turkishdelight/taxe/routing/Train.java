@@ -9,13 +9,19 @@ import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
 
 public class Train extends AiSprite {
+	public enum Type
+	{
+		STEAM, DIESEL, ELECTRIC, NUCLEAR, MAG_LEV, THE_KING
+	}
 	// train class takes a route, follows route by going through paths individually. 
 	
 	Carriage carriage;								// carriage train is currently connected to - CANNOT BE NULL
 	protected boolean completed;					// has train completed entire route?
 	protected float overshoot;						// amount that the train passes the station by
 	protected float previouscurrent = 0;			// the previous current value for the previous turn- used for distance calculation
-	
+	boolean speedBoost = false;
+	boolean reliabilityBoost = false;
+	boolean efficiencyBoost = false;
 	public Train(Scene parentScene, Texture text, Route route, int weight) {
 		super(parentScene, text, route);
 		this.weight = weight;
@@ -30,7 +36,12 @@ public class Train extends AiSprite {
 	}
 
 	public int getSpeed(){
-		return (int) speed;
+		float speedmod = 1;
+		if(speedBoost)
+		{
+			speedmod = 1.3f;
+		}
+		return (int) (super.getSpeed() * speedmod);
 	}
 	
 	public int getWaypoint() {
@@ -59,7 +70,7 @@ public class Train extends AiSprite {
 		curvedPath.derivativeAt(prevout, current);
 
 		//curvedPath.derivativeAt(out, current);
-		current += speed*30/prevout.len();    // 30 is just an arbitrary number, works well- increase to increase distance travelled each turn
+		current += getSpeed()*30/prevout.len();    // 30 is just an arbitrary number, works well- increase to increase distance travelled each turn
 
 		// for variable velocity (curves affect movement)
 		//current += speed;
