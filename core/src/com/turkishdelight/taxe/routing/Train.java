@@ -27,28 +27,28 @@ public class Train extends AiSprite {
 		private int speed;
 		private int efficiency;
 		private float reliability;
-		  private Type(String name, Texture trainText, Texture carraigeText, int weightIn, int speedIn, int efficiencyIn, float reliabilityIn)
-		  {
-		    this.name = name;
-		    this.train = trainText;
-		    this.carraige = carraigeText;
-		    this.weight = weightIn;
-		    this.speed = speedIn;
-		    this.efficiency = efficiencyIn;
-		    this.reliability = reliabilityIn;
-		  }
-		  public String getName()
-		  {
-		    return name;
-		  }
-		  public Texture getTrainTexture()
-		  {
-			  return train;
-		  }
-		  public Texture getCarraigeTexture()
-		  {
-			  return carraige;
-		  }
+		private Type(String name, Texture trainText, Texture carraigeText, int weightIn, int speedIn, int efficiencyIn, float reliabilityIn)
+		{
+			this.name = name;
+			this.train = trainText;
+			this.carraige = carraigeText;
+			this.weight = weightIn;
+			this.speed = speedIn;
+			this.efficiency = efficiencyIn;
+			this.reliability = reliabilityIn;
+		}
+		public String getName()
+		{
+			return name;
+		}
+		public Texture getTrainTexture()
+		{
+			return train;
+		}
+		public Texture getCarraigeTexture()
+		{
+			return carraige;
+		}
 		public int getWeight() {
 			return weight;
 		}
@@ -64,16 +64,17 @@ public class Train extends AiSprite {
 		{
 			return reliability;
 		}
-		
+
 	}
 	// train class takes a route, follows route by going through paths individually. 
 	// TODO if no fuel, alert dialog for out of fuel
 	// TODO send event when reaching station 
-	
+
 	private static final double SPEED_UPGRADE = 1.4;
 	private static final double RELIABILITY_UPGRADE = 0.8;
 	private static final double FUEL_UPGRADE = 0.6;
-	
+
+
 	Carriage carriage;								// carriage train is currently connected to - CANNOT BE NULL
 	protected boolean completed;					// has train completed entire route?
 	protected float overshoot;						// amount that the train passes the station by
@@ -89,7 +90,7 @@ public class Train extends AiSprite {
 	private boolean speedUpgrade = false;
 	private GameScene parentScene;
 	private String name;
-	
+
 	public Train(GameScene parentScene, Player player, String trainName, Texture text, Station station, int weight, int speed, int fuelEfficiency, float reliability) {
 		super(parentScene, text, player, station);
 		this.parentScene = parentScene;
@@ -100,9 +101,9 @@ public class Train extends AiSprite {
 		this.fuelEfficiency = fuelEfficiency;
 		this.reliability = reliability;
 		this.name = trainName;
-	    super.setAIType(AIType.TRAIN);
+		super.setAIType(AIType.TRAIN);
 	}
-	
+
 	@Override
 	public void onClickEnd()
 	{
@@ -124,26 +125,25 @@ public class Train extends AiSprite {
 	public int getSpeed(){
 		return (int) speed;
 	}
-	
+
 	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
-	
+
 	public int getWeight(){
 		return weight + carriage.getWeight();
 	}
-	
+
 	public int getWaypoint() {
 		return waypoint;
 	}
-	
+
 	public String getRouteName(){
 		return this.route.getName();
 	}
-	
+
 	public Station getStation() {
 		// returns current station the train is at, or null if not at one
-		// TODO needs checking.
 		if (route == null){
 			return startLocation;
 		}
@@ -169,7 +169,7 @@ public class Train extends AiSprite {
 		break;
 		}
 	}
-	
+
 	public boolean getUpgrade(int i)
 	{
 		if((i == 0 && speedUpgrade) || (i == 1 && fuelUpgrade) || (i == 2 && reliabilityUpgrade))
@@ -178,7 +178,7 @@ public class Train extends AiSprite {
 		}
 		return false;
 	}
-	
+
 	public void atStation(){
 		/// method called when train is at a station
 		Event stationEvent = new Event();
@@ -187,83 +187,64 @@ public class Train extends AiSprite {
 		stationEvent.Station = getStation().getName();
 		stationEvent.TrainCarriages = this.getCarriage().getCarriageCount();
 	}
-	
-	protected void updatePosition() {
-		float totalReliability = (float) ((reliabilityUpgrade) ? reliability*RELIABILITY_UPGRADE : reliability);
-		System.out.println("Train reliability: " + totalReliability);
-		if (MathUtils.randomBoolean(totalReliability)) {
-			DialogueScene dialogueScene = new DialogueScene("Broken down train!");
-			dialogueScene.setText("Broken down train!");
-			Game.pushScene(dialogueScene);
-			System.out.println("Train broken down for turn due to reliability");
-			return;
-		}
-		// for constant velocity, ignoring effect of curves
-		Vector2 prevout = new Vector2();
 
-		//curvedPath.derivativeAt(out, current);
-		current += getSpeed()*30/prevout.len();    // 30 is just an arbitrary number, works well- increase to increase distance travelled each turn
-
-		// for variable velocity (curves affect movement)
-		//current += speed;
-
-		// for testing with animation only
-		//current += Gdx.graphics.getDeltaTime() * speed / out.len() * 100;
-
-		if(current >= 0.95) {// if a waypoint is reached (0.95 means no tiny movements!)
+	protected void updatePosition() {float totalReliability = (float) ((reliabilityUpgrade) ? reliability*RELIABILITY_UPGRADE : reliability);
+	if (MathUtils.randomBoolean(totalReliability)) {
+		DialogueScene dialogueScene = new DialogueScene("Broken down train!");
+		dialogueScene.setText("Broken down train!");
+		Game.pushScene(dialogueScene);
+		System.out.println("Train broken down for turn due to reliability");
+		return;
+	}
+	atStation = false;
+	int totalSpeed = (int) ((speedUpgrade) ? speed*SPEED_UPGRADE : speed);
+	if ((pathDistance + totalSpeed) >= path.getFinalDistance()){
+		// if going to get to waypoint or beyond, set it to next waypoint
+		float distanceToStation = (path.getFinalDistance() - pathDistance);
+		overshootDistance = (pathDistance+totalSpeed)- path.getFinalDistance();						// currently unused
+		if (waypoint+2 == route.numLocations()){
+			// if at final waypoint, fix to that waypoint
+			System.out.println("Final waypoint reached");
+			completed = true;
+			current = 1;
+			waypoint++;
+			pathDistance += distanceToStation;
+			routeDistance += distanceToStation;
+			atStation = true;
+			atStation();
+		} else {
+			// if at intermediate waypoint
 			System.out.println("Waypoint reached");
-
-			if(waypoint+2 >= route.getSize()) { // if reached final waypoint, fix it to final waypoint
-		atStation = false;
-		int totalSpeed = (int) ((speedUpgrade) ? speed*SPEED_UPGRADE : speed);
-		if ((pathDistance + totalSpeed) >= path.getFinalDistance()){
-			// if going to get to waypoint or beyond, set it to next waypoint
-			float distanceToStation = (path.getFinalDistance() - pathDistance);
-			overshootDistance = (pathDistance+totalSpeed)- path.getFinalDistance();						// currently unused
-			if (waypoint+2 == route.numLocations()){
-				// if at final waypoint, fix to that waypoint
-				System.out.println("Final waypoint reached");
-				completed = true;
-				current = 1;
+			if (connection.getTargetLocation().getClass() == Junction.class){
+				// if a junction, <TODO test whether route changes to a different route based on reliability>, do not stop at junction
 				waypoint++;
-				pathDistance += distanceToStation;
+				connection = route.getConnection(waypoint);	// get next connection in route
+				path = connection.getPath();			// get next route in route
+				current = path.getTFromDistance(overshootDistance);
+				routeDistance += totalSpeed;
+				pathDistance = overshootDistance;
+			} else {
+				// if the routeLocation currently at is a station, fix to station for that turn
+				waypoint++; 								// move to next waypoint
+				connection = route.getConnection(waypoint);	// get next connection in route
+				path = connection.getPath();			// get next route in route
+				current = 0;
+				pathDistance = 0;
 				routeDistance += distanceToStation;
 				atStation = true;
 				atStation();
-			} else {
-				// if at intermediate waypoint
-				System.out.println("Waypoint reached");
-				if (connection.getTargetLocation().getClass() == Junction.class){
-					// if a junction, <TODO test whether route changes to a different route based on reliability>, do not stop at junction
-					waypoint++;
-					connection = route.getConnection(waypoint);	// get next connection in route
-					path = connection.getPath();			// get next route in route
-					current = path.getTFromDistance(overshootDistance);
-					routeDistance += totalSpeed;
-					pathDistance = overshootDistance;
-				} else {
-					// if the routeLocation currently at is a station, fix to station for that turn
-					waypoint++; 								// move to next waypoint
-					connection = route.getConnection(waypoint);	// get next connection in route
-					path = connection.getPath();			// get next route in route
-					current = 0;
-					pathDistance = 0;
-					routeDistance += distanceToStation;
-					atStation = true;
-					atStation();
-				}
-			}
-		} else {
-			current = path.getTFromDistance(pathDistance+totalSpeed); 
-			pathDistance += totalSpeed;
-			routeDistance += totalSpeed;
-		}
-		// calculate fuel to take off of player
-		double totalFuelEfficiency = (fuelUpgrade) ? (fuelEfficiency*FUEL_UPGRADE) : fuelEfficiency;
-		player.setFuel((int) (player.getFuel()- totalFuelEfficiency)); 
-		move();
 			}
 		}
+	} else {
+		// if not at any kind of waypoint
+		current = path.getTFromDistance(pathDistance+totalSpeed); 
+		pathDistance += totalSpeed;
+		routeDistance += totalSpeed;
+	}
+	// calculate fuel to take off of player
+	double totalFuelEfficiency = (fuelUpgrade) ? (fuelEfficiency*FUEL_UPGRADE) : fuelEfficiency;
+	player.setFuel((int) (player.getFuel()- totalFuelEfficiency)); 
+	move();
 	}
 
 	@Override
@@ -277,9 +258,9 @@ public class Train extends AiSprite {
 			if (player.getFuel()-fuelEfficiency > 0 ){
 				// if theres enough fuel 
 				updatePosition();
+				System.out.println("position updated");
 			} else {
 				// TODO if theres not enough fuel, send a dialog
-				System.out.println("No fuel!");
 				String noFuelText = "You need fuel to move!";
 				DialogueScene scene = new DialogueScene(noFuelText);
 				scene.setText(noFuelText);
@@ -287,7 +268,7 @@ public class Train extends AiSprite {
 			}
 		}
 	}
-	
+
 	public void setRoute(Route route) {
 		// sets the route, iff the route begins from trains current station
 		if (route.getStartLocation() == getStation()){
@@ -307,7 +288,7 @@ public class Train extends AiSprite {
 			System.out.println("Invalid route, must start from trains current station");
 		}
 	}
-	
+
 	public void restoreRoute(Route route, int waypoint, float current){
 		// put a train and carriagepartially on a route
 		this.route = route;
@@ -317,7 +298,7 @@ public class Train extends AiSprite {
 		connection= route.getConnection(waypoint);
 		path = connection.getPath();
 		completed = false; 
-		
+
 		// set the path/route distances correctly
 		pathDistance = path.getDistanceFromT(current);
 		routeDistance = pathDistance;
@@ -327,15 +308,14 @@ public class Train extends AiSprite {
 		move();
 		carriage.restoreRoute(route, waypoint, current);
 	}
-	
+
 	@Override 
 	public String toString(){
 		return this.name;
 	}
-	
-	public String getName()
-	  {
-	    return name;
-	  }
 
+	public String getName() {
+		return name;
+	}
 }
+

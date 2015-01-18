@@ -44,9 +44,10 @@ public class Game extends ApplicationAdapter {
 	public void create () {
 		System.out.println("Game created");
 		batch = new SpriteBatch();
-		System.out.println("Setting intital scene");
+		System.out.println("Setting initial scene");
 		//By default we set out scene to the main menu
 		setScene(new MainMenuScene());
+		//setScene(new GameScene(new Player(), new Player()));
 		//Set up a sprite for fading background scenes
 		gray = new SpriteComponent(null, new Texture("blank.png"), 0);
 		gray.setSize(targetWindowsWidth, targetWindowsHeight);

@@ -18,8 +18,7 @@ public class Route {
 		this.connections = new ArrayList<Connection>();
 	}
 	
-	public int getSize()
-	{
+	public int getSize() {
 		return size;
 	}
 	

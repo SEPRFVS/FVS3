@@ -150,9 +150,9 @@ public class GameScene extends GameGUIScene {
 		connectRouteLocations(lisbon, madrid);
 
 		// add trains
-		System.out.println(getStationByName(player1.getStartLocation()));
-		generateTrainAndCarraige(player1, getStationByName(player1.getStartLocation()), Train.Type.STEAM);
-		generateTrainAndCarraige(player2, getStationByName(player2.getStartLocation()), Train.Type.STEAM);
+		generateTrainAndCarriage(player1, getStationByName(player1.getStartLocation()), Train.Type.STEAM);
+		generateTrainAndCarriage(player2, getStationByName(player2.getStartLocation()), Train.Type.STEAM);
+
 		
 		// create route (with dotted line)
 		Texture text = new Texture("route.png");
@@ -254,11 +254,11 @@ public class GameScene extends GameGUIScene {
 		return train;
 	}
 	
-	public Train generateTrainAndCarraige(Player player, Station station, Train.Type type)
+	public Train generateTrainAndCarriage(Player player, Station station, Train.Type type)
 	{
 		return this.createTrainAndCarriage(player, type.getName(), station, type.getTrainTexture(), type.getCarraigeTexture(), type.getWeight(), type.getSpeed(), type.getEfficiency(), type.getReliability());
 	}
-	
+
 	private Station createStation(GameScene parentScene, String locationName, int x , int y) {
 		Station routeLocation = new Station(parentScene, locationName, x,y);
 		Add(routeLocation);
@@ -266,7 +266,7 @@ public class GameScene extends GameGUIScene {
 		return (Station) routeLocation;
 		
 	}	
-	
+
 	public Station getStationByName(String stationName)
 	{
 		for(RouteLocation station : routeLocations)
@@ -849,7 +849,6 @@ public class GameScene extends GameGUIScene {
 		CurvedPath junction1Junction2 = new CurvedPath(rdataSet13, false);
 		paths.put("J1J2", junction1Junction2);
 		
-		
 		Vector2[] dataSet14 = new Vector2[4];
 		dataSet14[0] = (new Vector2(352, 268));
 		dataSet14[1] = (new Vector2(352, 268));
@@ -945,6 +944,7 @@ public class GameScene extends GameGUIScene {
 		sr.polygon(p.getTransformedVertices());
 		sr.polygon(p2.getTransformedVertices());
 		sr.end();*/
+
 	}
 	
 	public Scene makeDialogueScene(String text)

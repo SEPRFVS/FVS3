@@ -28,8 +28,6 @@ public abstract class AiSprite extends Clickable {
 	
 	protected int midSpritex;
 	protected int midSpritey;						// halfway of sprite, used to correct into middle of route
-	
-	private int speed = 1; 						// speed to travel - TODO probably only use in train
 	protected float current = 0; 					// 'time' passed (between 0 and 1)
 	protected Vector2 out = new Vector2(1,1);		// vector to output current location at (set at (1,1) to stop jumping when starting a new route)
 
@@ -98,6 +96,7 @@ public abstract class AiSprite extends Clickable {
 		polygon.setRotation(angle);
 	}
 
+	
 	public AIType getAIType() {
 		return type;
 	}
@@ -105,6 +104,5 @@ public abstract class AiSprite extends Clickable {
 	public void setAIType(AIType type) {
 		this.type = type;
 	}
-
 
 }
