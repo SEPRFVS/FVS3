@@ -105,7 +105,7 @@ public class Scroller extends Clickable {
 	//Between it's minimum and maximum values
 	public void onMove(float percent)
 	{
-		System.out.println(percent);
+		System.out.println("Percent: " + percent);
 	}
 
 }

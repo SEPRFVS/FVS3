@@ -24,6 +24,7 @@ public class MainMenuScene extends Scene {
 			public void onClickEnd()
 			{
 				Game.setScene(new NewGameScene());
+				cleanup();
 			}
 		};
 		//Position new game button
@@ -37,6 +38,7 @@ public class MainMenuScene extends Scene {
 			public void onClickEnd()
 			{
 				Game.pushScene(new LoadGameScene());
+				cleanup();
 			}
 		};
 		//Position load game button
@@ -49,7 +51,8 @@ public class MainMenuScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				
+				Game.setScene(new LeaderboardScene());
+				cleanup();
 			}
 		};
 		//Position view leaderboard button

@@ -11,6 +11,11 @@ import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.worldobjects.Station;
 
 public abstract class AiSprite extends Clickable {
+	public enum AIType
+	{
+		TRAIN, CARRIAGE, OBSTACLE;
+	}
+	private AIType type = AIType.TRAIN;
 	// abstract class for anything that follows a path on every turn (extended by carriage, train)
 	protected Player player; 
 	protected static final int SPRITEWIDTH = 50;		// could change to widths/ heights of corresponding trains
@@ -23,7 +28,6 @@ public abstract class AiSprite extends Clickable {
 	
 	protected int midSpritex;
 	protected int midSpritey;						// halfway of sprite, used to correct into middle of route
-
 	protected float current = 0; 					// 'time' passed (between 0 and 1)
 	protected Vector2 out = new Vector2(1,1);		// vector to output current location at (set at (1,1) to stop jumping when starting a new route)
 
@@ -92,5 +96,13 @@ public abstract class AiSprite extends Clickable {
 		polygon.setRotation(angle);
 	}
 
+	
+	public AIType getAIType() {
+		return type;
+	}
+
+	public void setAIType(AIType type) {
+		this.type = type;
+	}
 
 }

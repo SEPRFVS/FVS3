@@ -37,7 +37,8 @@ public class GoalsScene extends GameWindowedGUIScene {
 	public void drawScrollpane()
 	{
 		Texture tempTexture = new Texture("location.png"); // TODO NEEDS SETTING
-		pane = new Pane(this, tempTexture, -1);
+		pane = new Pane(this, -1);
+		pane.setTexture(tempTexture);
 		pane.setSize(922, 800);
 		pane.setPosition(50, 485 - pane.getHeight());
 		Add(pane);

@@ -19,21 +19,20 @@ public abstract class SelectionScene extends Scene {
 	protected ArrayList<?> elements;													// the elements that will be displayed
 	private ArrayList<LabelButton> labelButtons = new ArrayList<LabelButton>();			// arraylist of labelbuttons- index corresponds to same labelbuttons element in elements
 	// Generic Scene that displays an arraylist, with each element being selectable
-	
-	public SelectionScene(){
-		super();
+
+	private Texture backText;
+	public SelectionScene(Texture backgroundTexture){
+		onCreate(backgroundTexture);
 	}
 	
-	public SelectionScene(ArrayList<?> elements) {
-		super();
+	public SelectionScene(Texture backgroundTexture, ArrayList<?> elements) {
 		this.elements = elements;
+		onCreate(backgroundTexture);
 	}
 	
-	@Override
-	public void onCreate() {
+	public void onCreate(Texture backText) {
 		//Load Background Image
-		Texture dialText = new Texture("trainselection.png");
-		selectionBackground = new SpriteComponent(this, dialText, Game.backgroundZ);
+		selectionBackground = new SpriteComponent(this, backText, Game.backgroundZ);
 		selectionBackground.setPosition(Game.targetWindowsWidth/2-200, 150);
 		Add(selectionBackground);
 				
@@ -62,6 +61,20 @@ public abstract class SelectionScene extends Scene {
 	}
 	
 	private void createLabelButtons() {
+		//Drop existing elements
+		if(labelButtons != null)
+		{
+			ArrayList<LabelButton> buttonsToDrop = new ArrayList<LabelButton>();
+			for(LabelButton b : labelButtons)
+			{
+				buttonsToDrop.add(b);
+				Remove(b);
+			}
+			for(LabelButton b : buttonsToDrop)
+			{
+				labelButtons.remove(b);
+			}
+		}
 		/// create a labelbutton for each element in elements
 		if (elements == null){
 			return;

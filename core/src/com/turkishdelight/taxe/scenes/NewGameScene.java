@@ -105,7 +105,8 @@ public class NewGameScene extends Scene   {
 		// Create player 1 name label
 		player1NameText = new EditText(this, player1LabelText, Label.genericFont(Color.GRAY, 40), Game.shopZ);
 		player1NameText.setText("Name");
-		player1NameText.setPosition(36, 510);
+		player1NameText.setSize(200, 50);
+		player1NameText.setPosition(36, 480);
 		player1NameText.setAlignment(0);
 		Add(player1NameText);
 		
@@ -286,14 +287,13 @@ public class NewGameScene extends Scene   {
 		player2TitleLabel.setAlignment(0);
 		Add(player2TitleLabel);
 
-		
-		// Create player 2 Name label
-		player2NameLabel = new Label(this, player2LabelText, Label.genericFont(Color.GRAY, 40));
-		player2NameLabel.setText("Name");
-		player2NameLabel.setPosition(550, 510);
-		player2NameLabel.setAlignment(0);
-		Add(player2NameLabel);
-
+		// Create player 2 name label
+		player2NameText = new EditText(this, player2LabelText, Label.genericFont(Color.GRAY, 40), Game.shopZ);
+		player2NameText.setText("Name");
+		player2NameText.setSize(200, 50);
+		player2NameText.setPosition(550, 480);
+		player2NameText.setAlignment(0);
+		Add(player2NameText);
 		
 		// Player 2 Name Input
 		
@@ -540,9 +540,32 @@ public class NewGameScene extends Scene   {
 	public void startGame()
 	{
 		System.out.println("Game Started: " + currentDifficultyPlayer1.getText() + " " + currentDifficultyPlayer2.getText() + startCityPlayer1.getText() + startCityPlayer2.getText());	
-		Player p1 = new Player();
-		Player p2 = new Player();
+		Player p1 = generatePlayer(currentDifficultyPlayer1, player1NameText, startCityPlayer1);
+		Player p2 = generatePlayer(currentDifficultyPlayer2, player2NameText, startCityPlayer2);
 		Game.setScene(new GameScene(p1, p2));
+	}
+	
+	public Player generatePlayer(LabelButton currentDifficultyPlayer, EditText playerNameText, LabelButton currentLocationPlayer)
+	{
+		Player p = new Player();
+		p.setName(playerNameText.getText());
+		if(currentDifficultyPlayer.getText().equals("Easy"))
+		{
+			p.setMoney(20);
+			p.setFuel(1000);
+		}
+		if(currentDifficultyPlayer.getText().equals("Medium"))
+		{
+			p.setMoney(15);
+			p.setFuel(800);
+		}
+		if(currentDifficultyPlayer.getText().equals("Hard"))
+		{
+			p.setMoney(10);
+			p.setFuel(500);
+		}
+		p.setStartLocation(currentLocationPlayer.getText());
+		return p;
 	}
 	
 	public void backToMenu()
@@ -550,4 +573,6 @@ public class NewGameScene extends Scene   {
 		System.out.println("Didn't want you to play anyway!");
 		Game.setScene(new MainMenuScene());
 	}
+	
+	
 	}

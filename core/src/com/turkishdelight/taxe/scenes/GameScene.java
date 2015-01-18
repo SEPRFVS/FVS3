@@ -9,9 +9,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.turkishdelight.taxe.EventHandler;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
+import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
+import com.turkishdelight.taxe.guiobjects.Button;
 import com.turkishdelight.taxe.guiobjects.Label;
 import com.turkishdelight.taxe.guiobjects.LabelButton;
 import com.turkishdelight.taxe.routing.AiSprite;
@@ -31,7 +34,9 @@ public class GameScene extends GameGUIScene {
 	public ShopScene shopScene;
 	public GoalsScene goalsScene;
 	public CurrentResourcesScene resourceScene;
+	public DialogueScene dialogueScene;
 	private SelectionScene trainSelectionScene;
+	private PauseMenuScene pauseScene;
 	
 	public int numberTurns = 0;
 	private ArrayList<CurvedPath> curvedPaths = new ArrayList<CurvedPath>();					// collection of curved paths (only one way for each path) for drawing
@@ -46,12 +51,12 @@ public class GameScene extends GameGUIScene {
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
 	private int newRouteDistance;			
-	
+	public EventHandler events = new EventHandler();
 	
 
 	public GameScene(Player player1In, Player player2In){
-		super(player1In, player2In, false);
-		nextTurn();
+		super(player1In, player2In, false, null);
+		player1Active();
 		player1Go = true;
 		player1In.setFuel(700);
 		delayedCreate();
@@ -104,7 +109,7 @@ public class GameScene extends GameGUIScene {
 		shopScene = new ShopScene(this, this.player1, this.player2);
 		goalsScene = new GoalsScene(this, this.player1, this.player2);
 		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
-		trainSelectionScene = new SelectionScene() {
+		trainSelectionScene = new SelectionScene(new Texture("trainselection.png")) {
 			@Override
 			public void onSelectionEnd() {
 				selectedTrains = new ArrayList<Train>();
@@ -112,6 +117,7 @@ public class GameScene extends GameGUIScene {
 				Game.popScene();
 			}
 		};
+		pauseScene = new PauseMenuScene(this);
 	
 		//Locations setup
 		curvedPaths = new ArrayList<CurvedPath>();
@@ -145,13 +151,10 @@ public class GameScene extends GameGUIScene {
 		connectRouteLocations(lisbon, madrid);
 
 		// add trains
-		Texture trainTexture = new Texture("elec1.png"); 
-		Texture carriageTexture = new Texture("elec1Carriage.png");
-		createTrainAndCarriage(player1, "train1", london, trainTexture, carriageTexture, 1, 20, 1 , 0.0001f);
-		createTrainAndCarriage(player1, "train2", london, trainTexture, carriageTexture, 1, 50, 1 , 0.0001f);
-		Train train = createTrainAndCarriage(player2, "train3", lisbon, trainTexture, carriageTexture, 2, 100, 1 , 0.0001f);
-		Route route1 = restoreRoute("LondonParisBerlin");
-		train.restoreRoute(route1, 1, 1f);
+		System.out.println(getStationByName(player1.getStartLocation()));
+		generateTrainAndCarraige(player1, getStationByName(player1.getStartLocation()), Train.Type.STEAM);
+		generateTrainAndCarraige(player2, getStationByName(player2.getStartLocation()), Train.Type.STEAM);
+
 		
 		// create route (with dotted line)
 		Texture text = new Texture("route.png");
@@ -167,7 +170,10 @@ public class GameScene extends GameGUIScene {
 				Add(route);
 			}
 		}
-		
+		shopScene = new ShopScene(this, this.player1, this.player2);
+		goalsScene = new GoalsScene(this, this.player1, this.player2);
+		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
+		dialogueScene = new DialogueScene("");
 		Texture clearButtonTexture = new Texture("Clear_Button.png");
 		routeSelectionButton = new LabelButton(this, clearButtonTexture , 100 , 40, Label.genericFont(Color.WHITE, 20)) {
 			@Override
@@ -186,8 +192,7 @@ public class GameScene extends GameGUIScene {
 		routeSelectionButton.setText("Select Route");
 		routeSelectionButton.setAlignment(0);
 		Add(routeSelectionButton);
-		
-		confirmRouteSelectionButton = new LabelButton(this, clearButtonTexture, 100 , 40, Label.genericFont(Color.WHITE, 20)) {
+		confirmRouteSelectionButton = new LabelButton(this, clearButtonTexture, 100 , 40, Label.genericFont(Color.WHITE, 20)){
 			@Override
 			public void onClickEnd()
 			{
@@ -207,6 +212,36 @@ public class GameScene extends GameGUIScene {
 		confirmRouteSelectionButton.setText("");
 		confirmRouteSelectionButton.setAlignment(0);
 		Add(confirmRouteSelectionButton);
+		
+		//Buttons set up
+		Texture buttonText = new Texture("Clear_Button.png");
+		//Create settings menu button
+		Button settingsButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				Game.pushScene(pauseScene);
+			}
+		};
+		settingsButton.setZ(Game.guiZ);
+		settingsButton.setPosition(924, 0);
+		settingsButton.setSize(100, 100);
+		settingsButton.setTexture(buttonText);
+		Add(settingsButton);
+		//Create settings menu button
+		
+		Button leaderButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				Game.pushScene(makeDialogueScene("Leaderboard coming soon!"));
+			}
+		};
+		leaderButton.setZ(Game.guiZ);
+		leaderButton.setPosition(814, 0);
+		leaderButton.setSize(100, 100);
+		leaderButton.setTexture(buttonText);
+		Add(leaderButton);
 	}
 
 	private Train createTrainAndCarriage(final Player player, String trainName, Station station, Texture trainTexture, Texture carriageTexture, int weight, int speed, int fuelEfficiency, float reliability) {
@@ -221,6 +256,11 @@ public class GameScene extends GameGUIScene {
 		return train;
 	}
 	
+	public Train generateTrainAndCarraige(Player player, Station station, Train.Type type)
+	{
+		return this.createTrainAndCarriage(player, type.getName(), station, type.getTrainTexture(), type.getCarraigeTexture(), type.getWeight(), type.getSpeed(), type.getEfficiency(), type.getReliability());
+	}
+
 	private Station createStation(GameScene parentScene, String locationName, int x , int y) {
 		Station routeLocation = new Station(parentScene, locationName, x,y);
 		Add(routeLocation);
@@ -228,6 +268,19 @@ public class GameScene extends GameGUIScene {
 		return (Station) routeLocation;
 		
 	}	
+
+	public Station getStationByName(String stationName)
+	{
+		for(RouteLocation station : routeLocations)
+		{
+			if(station.getName().equals(stationName))
+			{
+				System.out.println("Station found: " + stationName);
+				return (Station)station;
+			}
+		}
+		return null;
+	}
 	
 	private Junction createJunction(GameScene parentScene, String locationName, int x , int y) {
 		Junction routeLocation = new Junction(parentScene, locationName, x,y);
@@ -245,6 +298,7 @@ public class GameScene extends GameGUIScene {
 		l2.addConnection(l1, path2); 
 	}
 	
+	@SuppressWarnings("unused")
 	private Route restoreRoute(String string) {
 		// creates a route from a string of form "Routelocation1Routelocation2"
 		// Assumes valid input string
@@ -797,7 +851,6 @@ public class GameScene extends GameGUIScene {
 		CurvedPath junction1Junction2 = new CurvedPath(rdataSet13, false);
 		paths.put("J1J2", junction1Junction2);
 		
-		
 		Vector2[] dataSet14 = new Vector2[4];
 		dataSet14[0] = (new Vector2(352, 268));
 		dataSet14[1] = (new Vector2(352, 268));
@@ -858,7 +911,7 @@ public class GameScene extends GameGUIScene {
 	{
 		System.out.println("goalsToolbarPressed");
 		if (!isSelectingRoute)
-			Game.pushScene(goalsScene);
+			Game.pushScene(makeDialogueScene("Goals coming soon!"));
 	}
 	
 	@Override
@@ -893,5 +946,26 @@ public class GameScene extends GameGUIScene {
 		sr.polygon(p.getTransformedVertices());
 		sr.polygon(p2.getTransformedVertices());
 		sr.end();*/
+
+	}
+	
+	public Scene makeDialogueScene(String text)
+	{
+		dialogueScene.setText(text);
+		return dialogueScene;
+	}
+	
+	public void cleanup()
+	{
+		this.goalsScene.parentGame = null;
+		this.goalsScene = null;
+		this.resourceScene.parentGame = null;
+		this.resourceScene = null;
+		this.shopScene.parentGame = null;
+		this.shopScene = null;
+		this.dialogueScene = null;
+		this.pauseScene.parentGame = null;
+		this.pauseScene = null;
+		super.cleanup();
 	}
 }

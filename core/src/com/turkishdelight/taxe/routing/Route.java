@@ -18,6 +18,10 @@ public class Route {
 		this.connections = new ArrayList<Connection>();
 	}
 	
+	public int getSize() {
+		return size;
+	}
+	
 	public Route(ArrayList<RouteLocation> locations){
 		// takes an arraylist of locations, creates a route if all locations are connected. 
 		// TODO ensure that list is correct size

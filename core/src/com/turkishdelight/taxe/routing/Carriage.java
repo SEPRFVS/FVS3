@@ -21,8 +21,9 @@ public class Carriage extends AiSprite {
 		super(parentScene, text, player, station);
 		this.weight = 1;
 		this.train = train;	
-		Texture player1LabelText = new Texture("Clear_Button.png");
-		carriageCountLabel = new Label(parentScene, player1LabelText, Label.genericFont(Color.MAROON, 20), Game.guiZ);
+		this.setAIType(AIType.CARRIAGE);
+		Texture carriageLabelText = new Texture("Clear_Button.png");
+		carriageCountLabel = new Label(parentScene, carriageLabelText, Label.genericFont(Color.MAROON, 20), Game.guiZ);
 		parentScene.Add(carriageCountLabel);
 		carriageCountLabel.setText(Integer.toString(getCarriageCount()));
 	}

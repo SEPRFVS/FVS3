@@ -2,14 +2,24 @@ package com.turkishdelight.taxe.scenes;
 
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
+import com.turkishdelight.taxe.Scene;
 
 public class GameWindowedGUIScene extends GameGUIScene{
 	
-	GameScene parentGame;
+	public GameScene parentGame;
 	
 	public GameWindowedGUIScene(GameScene parent, Player p1, Player p2) {
-		super(p1, p2, true);
-		parentGame = parent;
+		super(p1, p2, true, parent);
+		
+	}
+	
+	@Override
+	public void onCreate(Player p1, Player p2, boolean hasWindow, Scene parent)
+	{
+		parentGame = (GameScene)parent;
+		player1 = p1;
+		player2 = p2;
+		initialiseGUI(hasWindow);
 	}
 	
 	@Override
@@ -31,26 +41,13 @@ public class GameWindowedGUIScene extends GameGUIScene{
 	public void nextGoPressed()
 	{
 		System.out.println("nextGoPressed");
-		
-		if (player1Go) {	
-			player2Active(); 
-			parentGame.player2Active();
-		}
-		else {
-			player1Active(); 
-			parentGame.player1Active();
-		}
-		parentGame.nextTurn();
-		
-		player1Go = !player1Go;
 	}
 
 	@Override
 	public void goalsToolbarPressed() 
 	{
 		System.out.println("goalsToolbarPressed");
-		Game.popScene();
-		Game.pushScene(parentGame.goalsScene);
+		Game.pushScene(parentGame.makeDialogueScene("Goals coming soon!"));
 	}
 	
 	@Override

@@ -19,7 +19,7 @@ public class DialogueScene extends Scene {
 	{
 		super();
 		this.text = text;
-		System.out.println(this.text);
+		drawDialogueButtons();
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ public class DialogueScene extends Scene {
 		dialogue.setPosition(380, 400);
 		dialogue.setSize(Game.targetWindowsWidth/4, Game.targetWindowsHeight/5);
 		Add(dialogue);
-		drawDialogueButtons();
+		// ---------------------
 	}
 	
 	public void drawDialogueButtons()
@@ -40,9 +40,7 @@ public class DialogueScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				//System.out.println(Game.scenes.pop().getClass().getSimpleName());
 				Game.popScene();
-				
 			}
 		};
 		exitButton.setPosition(605, 525);
@@ -56,7 +54,7 @@ public class DialogueScene extends Scene {
 			public void onClickEnd()
 			{
 				Game.popScene();
-				
+				onOkayButton();
 			}
 		};
 		okayButton.setPosition(463, 423);
@@ -68,16 +66,27 @@ public class DialogueScene extends Scene {
 		Texture dialLabelText  = new Texture("Clear_Button.png");
 		dialLabel = new Label(this, dialLabelText, Label.genericFont(Color.LIGHT_GRAY, 30), Game.goalsZ);
 		dialLabel.setText(text);
-		dialLabel.setPosition(508, 519);
+		dialLabel.setPosition(Game.targetWindowsWidth / 2, 528);
 		dialLabel.setAlignment(1);
 		dialLabel.setAlpha((float) 0.4);
 		Add(dialLabel);
 	}
 	
-	public void setText(String labelText){
-		dialLabel.setText(this.text = labelText);
+	public void setText(String text)
+	{
+		this.text = text;
+		dialLabel.setText(text);
 	}
 	
+	public void onOkayButton()
+	{
+		
 	}
+	
+	public String getText()
+	{
+		return text;
+	}
+}
 	
 		
