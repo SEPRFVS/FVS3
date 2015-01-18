@@ -58,7 +58,6 @@ public class GameScene extends GameGUIScene {
 		super(player1In, player2In, false, null);
 		player1Active();
 		player1Go = true;
-		player1In.setFuel(700);
 		delayedCreate();
 	}
 	
@@ -151,9 +150,8 @@ public class GameScene extends GameGUIScene {
 		connectRouteLocations(lisbon, madrid);
 
 		// add trains
-		System.out.println(getStationByName(player1.getStartLocation()));
-		generateTrainAndCarraige(player1, getStationByName(player1.getStartLocation()), Train.Type.STEAM);
-		generateTrainAndCarraige(player2, getStationByName(player2.getStartLocation()), Train.Type.STEAM);
+		generateTrainAndCarriage(player1, getStationByName(player1.getStartLocation()), Train.Type.STEAM);
+		generateTrainAndCarriage(player2, getStationByName(player2.getStartLocation()), Train.Type.STEAM);
 
 		
 		// create route (with dotted line)
@@ -256,7 +254,7 @@ public class GameScene extends GameGUIScene {
 		return train;
 	}
 	
-	public Train generateTrainAndCarraige(Player player, Station station, Train.Type type)
+	public Train generateTrainAndCarriage(Player player, Station station, Train.Type type)
 	{
 		return this.createTrainAndCarriage(player, type.getName(), station, type.getTrainTexture(), type.getCarraigeTexture(), type.getWeight(), type.getSpeed(), type.getEfficiency(), type.getReliability());
 	}

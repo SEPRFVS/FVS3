@@ -113,7 +113,7 @@ public class Player {
 		else
 		{
 			setMoney(getMoney() - price);
-			s.generateTrainAndCarraige(this, s.getStationByName(station), type);
+			s.generateTrainAndCarriage(this, s.getStationByName(station), type);
 			return true;
 		}
 	}
