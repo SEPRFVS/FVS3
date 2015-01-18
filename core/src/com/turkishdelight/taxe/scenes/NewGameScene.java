@@ -552,17 +552,17 @@ public class NewGameScene extends Scene   {
 		if(currentDifficultyPlayer.getText().equals("Easy"))
 		{
 			p.setMoney(20);
-			p.setFuel(100);
+			p.setFuel(1000);
 		}
 		if(currentDifficultyPlayer.getText().equals("Medium"))
 		{
 			p.setMoney(15);
-			p.setFuel(80);
+			p.setFuel(800);
 		}
 		if(currentDifficultyPlayer.getText().equals("Hard"))
 		{
 			p.setMoney(10);
-			p.setFuel(50);
+			p.setFuel(500);
 		}
 		p.setStartLocation(currentLocationPlayer.getText());
 		return p;

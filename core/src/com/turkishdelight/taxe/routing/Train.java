@@ -3,6 +3,7 @@ package com.turkishdelight.taxe.routing;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.turkishdelight.taxe.Event;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.scenes.DialogueScene;
@@ -13,12 +14,12 @@ import com.turkishdelight.taxe.worldobjects.Station;
 public class Train extends AiSprite {
 	public enum Type
 	{
-		STEAM("Steam", new Texture("steam.png"), new Texture("steamCarriage.png"), 1, 5, 20, 0.4f),
-		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 8, 20, 0.3f), 
-		ELECTRIC("Electric", new Texture("elec1.png"), new Texture("elec1Carriage.png"), 1, 20, 10, 0.3f), 
-		NUCLEAR("Nuclear", new Texture("elec2.png"), new Texture("elec2Carriage.png"), 2, 30, 50, 0.002f), 
-		MAG_LEV("Mag", new Texture("mag.png"), new Texture("magCarriage.png"), 3, 50, 4, 0.05f), 
-		THE_KING("TheKing", new Texture("TheKing.png"), new Texture("TheKingCarriage.png"), 4, 70, 2, 0.02f);
+		STEAM("Steam", new Texture("steam.png"), new Texture("steamCarriage.png"), 1, 25, 20, 0.4f),
+		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 40, 20, 0.3f), 
+		ELECTRIC("Electric", new Texture("elec1.png"), new Texture("elec1Carriage.png"), 1, 160, 10, 0.3f), 
+		NUCLEAR("Nuclear", new Texture("elec2.png"), new Texture("elec2Carriage.png"), 2, 180, 50, 0.002f), 
+		MAG_LEV("Mag", new Texture("mag.png"), new Texture("magCarriage.png"), 3, 200, 4, 0.05f), 
+		THE_KING("TheKing", new Texture("TheKing.png"), new Texture("TheKingCarriage.png"), 4, 350, 2, 0.02f);
 		private String name;
 		private Texture train;
 		private Texture carraige;
@@ -169,9 +170,22 @@ public class Train extends AiSprite {
 		}
 	}
 	
+	public boolean getUpgrade(int i)
+	{
+		if((i == 0 && speedUpgrade) || (i == 1 && fuelUpgrade) || (i == 2 && reliabilityUpgrade))
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	public void atStation(){
 		/// method called when train is at a station
-		System.out.println("train at station");
+		Event stationEvent = new Event();
+		stationEvent.EventType = "Arrival";
+		stationEvent.TrainType = getName();
+		stationEvent.Station = getStation().getName();
+		stationEvent.TrainCarriages = this.getCarriage().getCarriageCount();
 	}
 	
 	protected void updatePosition() {

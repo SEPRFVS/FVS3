@@ -47,8 +47,7 @@ public class GameWindowedGUIScene extends GameGUIScene{
 	public void goalsToolbarPressed() 
 	{
 		System.out.println("goalsToolbarPressed");
-		Game.popScene();
-		Game.pushScene(parentGame.goalsScene);
+		Game.pushScene(parentGame.makeDialogueScene("Goals coming soon!"));
 	}
 	
 	@Override

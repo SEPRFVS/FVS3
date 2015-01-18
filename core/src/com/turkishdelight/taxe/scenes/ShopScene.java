@@ -14,7 +14,6 @@ import com.turkishdelight.taxe.guiobjects.Pane;
 import com.turkishdelight.taxe.guiobjects.Scroller;
 import com.turkishdelight.taxe.routing.Train;
 import com.turkishdelight.taxe.routing.Train.Type;
-import com.turkishdelight.taxe.worldobjects.Station;
 
 public class ShopScene extends GameWindowedGUIScene {
 
@@ -28,6 +27,8 @@ public class ShopScene extends GameWindowedGUIScene {
 	private LabelButton nuclearButton;
 	private LabelButton magLevButton;
 	private LabelButton kingButton;
+	
+	ArrayList<LabelButton> upgradeButtons = new ArrayList<LabelButton>();
 	
 	public ShopScene(GameScene parent, Player player1, Player player2)
 	{
@@ -80,7 +81,6 @@ public class ShopScene extends GameWindowedGUIScene {
 		scrollPane.setPosition(35, 454);
 		Add(scrollPane);
 		
-		drawUpgradeButtons();
 		drawTrainButtons();
 	}
 	
@@ -91,6 +91,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				Player activePlayer = parentGame.activePlayer();
 				Texture buyButtonText = new Texture("buy_bg.png");
 				Texture sellButtonText = new Texture("sell_bg.png");
+				upgradeButtons = new ArrayList<LabelButton>();
 				steamButton = new LabelButton(this) {
 				@Override
 				public void onClickEnd()
@@ -252,11 +253,17 @@ public class ShopScene extends GameWindowedGUIScene {
 		Player activePlayer = parentGame.activePlayer();
 		Texture buyButtonText = new Texture("buy_bg.png");
 		Texture sellButtonText = new Texture("sell_bg.png");
+		for(LabelButton button : upgradeButtons)
+		{
+			pane.Remove(button);
+		}
+		upgradeButtons = new ArrayList<LabelButton>();
 		//Refresh steam button
 		if(activePlayer.hasTrain("Steam"))
 		{
 			steamButton.setTexture(sellButtonText);
 			steamButton.setText("Sell: 10cr");
+			drawUpgradeButtons(steamButton, activePlayer.getTrain("Steam"), activePlayer, 5);
 		}
 		else
 		{
@@ -270,6 +277,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		{
 			dieselButton.setTexture(sellButtonText);
 			dieselButton.setText("Sell: 30cr");
+			drawUpgradeButtons(dieselButton, activePlayer.getTrain("Diesel"), activePlayer, 10);
 		}
 		else
 		{
@@ -281,6 +289,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		{
 			electricButton.setTexture(sellButtonText);
 			electricButton.setText("Sell: 90cr");
+			drawUpgradeButtons(electricButton, activePlayer.getTrain("Electric"), activePlayer, 30);
 		}
 		else
 		{
@@ -293,6 +302,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		{
 			nuclearButton.setTexture(sellButtonText);
 			nuclearButton.setText("Sell: 200r");
+			drawUpgradeButtons(nuclearButton, activePlayer.getTrain("Nuclear"), activePlayer, 50);
 		}
 		else
 		{
@@ -305,6 +315,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		{
 			magLevButton.setTexture(sellButtonText);
 			magLevButton.setText("Sell: 500cr");
+			drawUpgradeButtons(magLevButton, activePlayer.getTrain("Mag"), activePlayer, 100);
 		}
 		else
 		{
@@ -317,6 +328,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		{
 			kingButton.setTexture(sellButtonText);
 			kingButton.setText("Sell: 1000cr");
+			drawUpgradeButtons(kingButton, activePlayer.getTrain("TheKing"), activePlayer, 150);
 		}
 		else
 		{
@@ -324,61 +336,54 @@ public class ShopScene extends GameWindowedGUIScene {
 			kingButton.setText("Buy: 1000cr");
 		}
 	}
-	
-	public void drawUpgradeButtons()
+
+	public void drawUpgradeButtons(LabelButton baseButton, Train t, Player p, int upgradePrice)
 	{
-		
+		System.out.println("Drawing " + t.getName() + " upgrade buttons");
+		int xdisplacement = 285;
+		int ydisplacement = 153;
+		int yjump = 50;
+		LabelButton buttonSpeed = generateUpgradeButton(baseButton.getLocalX() + xdisplacement, baseButton.getLocalY() + ydisplacement, t, 0, p, upgradePrice);
+		LabelButton buttonEfficiency = generateUpgradeButton(baseButton.getLocalX() + xdisplacement, baseButton.getLocalY() + ydisplacement - yjump, t, 1, p, upgradePrice);
+		LabelButton buttonReliability = generateUpgradeButton(baseButton.getLocalX() + xdisplacement, baseButton.getLocalY() + ydisplacement - (2 * yjump), t, 2, p, upgradePrice);
+		upgradeButtons.add(buttonSpeed);
+		upgradeButtons.add(buttonEfficiency);
+		upgradeButtons.add(buttonReliability);
+		pane.Add(buttonSpeed);
+		pane.Add(buttonEfficiency);
+		pane.Add(buttonReliability);
+	}
+	
+	public LabelButton generateUpgradeButton(int x, int y, final Train train, final int upgrade, final Player player, final int price)
+	{
 		Texture upgradeButtonText = new Texture("upgrade_bg.png");
-		
-		int xCoord1 = 360;
-		int xCoord2 = 820;
-		int yCoord = 708;
-		for (int i = 0; i < 18; i++)
+		LabelButton upgradeButton = new LabelButton(this) {
+			@Override
+			public void onClickEnd()
+			{
+				if(!train.getUpgrade(upgrade))
+				{
+					upgradePressed(player, train, upgrade, price);
+				}
+			}
+		};
+		upgradeButton.setLocalPosition(x, y);
+		upgradeButton.setSize(80, 22);
+		upgradeButton.setTexture(upgradeButtonText);
+		String text;
+		if(!train.getUpgrade(upgrade))
 		{
-			
-			// Create Upgrade buttons
-			LabelButton upgradeButton = new LabelButton(this) {
-				@Override
-				public void onClickEnd()
-				{
-					upgradePressed();
-				}
-			};
-			
-			
-			if (i % 6 == 0 && i != 0)
-			{
-				// Update y Coordinate for big jump after 6 buttons have been displayed
-				yCoord = yCoord - 105;
-				upgradeButton.setLocalPosition(xCoord1, yCoord);
-			}
-			else
-			{
-				if (i % 2 == 0)
-				{
-					upgradeButton.setLocalPosition(xCoord1, yCoord);
-				}
-				else
-				{
-					upgradeButton.setLocalPosition(xCoord2, yCoord);
-					
-					// Update y Coordinate for small jump after each row has been displayed
-					yCoord = yCoord - 50;
-				}
-				
-			}
-			
-			upgradeButton.setSize(80, 22);
-			upgradeButton.setTexture(upgradeButtonText);
-			upgradeButton.setText("Upgrade");
-			upgradeButton.setAlignment(1);
-			upgradeButton.setAlpha(1);
-			upgradeButton.setFont(Label.genericFont(Color.WHITE, 18));
-			pane.Add(upgradeButton);
-			// ---------------------
-			
+			text = "Upgrade";
 		}
-		// ---------------------
+		else
+		{
+			text = "Owned";
+		}
+		upgradeButton.setText(text);
+		upgradeButton.setAlignment(1);
+		upgradeButton.setAlpha(1);
+		upgradeButton.setFont(Label.genericFont(Color.WHITE, 18));
+		return upgradeButton;
 	}
 	
 	@Override
@@ -554,30 +559,124 @@ public class ShopScene extends GameWindowedGUIScene {
 	public void electricPressed()
 	{
 		System.out.println("electricPressed");
+		if(!parentGame.activePlayer().hasTrain("Electric"))
+		{
+			buyPressed(parentGame.activePlayer(), Train.Type.ELECTRIC, 90);
+		}
+		else
+		{
+			DialogueScene dial =  new DialogueScene("Are you sure?") {
+				@Override
+				public void onOkayButton()
+				{
+					parentGame.activePlayer().sellTrain("Electric", 90, parentGame);
+					refreshButtons();
+					updateValues();
+				}
+			};
+			Game.pushScene(dial);
+		}
 	}
 	
 	public void nuclearPressed()
 	{
 		System.out.println("nuclearPressed");
+		if(!parentGame.activePlayer().hasTrain("Nuclear"))
+		{
+			buyPressed(parentGame.activePlayer(), Train.Type.NUCLEAR, 200);
+		}
+		else
+		{
+			DialogueScene dial =  new DialogueScene("Are you sure?") {
+				@Override
+				public void onOkayButton()
+				{
+					parentGame.activePlayer().sellTrain("Nuclear", 200, parentGame);
+					refreshButtons();
+					updateValues();
+				}
+			};
+			Game.pushScene(dial);
+		}
 	}
 	
 	public void magLevPressed()
 	{
 		System.out.println("magLevPressed");
+		if(!parentGame.activePlayer().hasTrain("Mag"))
+		{
+			buyPressed(parentGame.activePlayer(), Train.Type.MAG_LEV, 500);
+		}
+		else
+		{
+			DialogueScene dial =  new DialogueScene("Are you sure?") {
+				@Override
+				public void onOkayButton()
+				{
+					parentGame.activePlayer().sellTrain("Mag", 500, parentGame);
+					refreshButtons();
+					updateValues();
+				}
+			};
+			Game.pushScene(dial);
+		}
 	}
 	
 	public void kingPressed()
 	{
 		System.out.println("kingPressed");
+		if(!parentGame.activePlayer().hasTrain("TheKing"))
+		{
+			buyPressed(parentGame.activePlayer(), Train.Type.THE_KING, 1000);
+		}
+		else
+		{
+			DialogueScene dial =  new DialogueScene("Are you sure?") {
+				@Override
+				public void onOkayButton()
+				{
+					parentGame.activePlayer().sellTrain("TheKing", 1000, parentGame);
+					refreshButtons();
+					updateValues();
+				}
+			};
+			Game.pushScene(dial);
+		}
 	}
 	
-	public void upgradePressed()
+	public void upgradePressed(final Player player, final Train train, final int upgrade, final int price)
 	{
+		if(player.getMoney() < price)
+		{
+			Game.pushScene(parentGame.makeDialogueScene("Requires " + price + "cr"));
+			return;
+		}
+		DialogueScene dial =  new DialogueScene("Cost: " + price + "cr") {
+			@Override
+			public void onOkayButton()
+			{
+				player.setMoney(player.getMoney() - price);
+				train.setUpgrade(upgrade);
+				refreshButtons();
+				updateValues();
+			}
+		};
+		Game.pushScene(dial);
 		System.out.println("upgradePressed");
 	}
 	
 	public void buyPressed(final Player player, final Type trainType, final int price)
 	{
+		if(player.getMoney() < price)
+		{
+			Game.pushScene(parentGame.makeDialogueScene("Requires " + price + "cr"));
+			return;
+		}
+		else if(player.getTrainCount() > 2)
+		{
+			Game.pushScene(parentGame.makeDialogueScene("May only own 3 trains!"));
+			return;
+		}
 		ArrayList<String> lstIn = new ArrayList<String>();
 		lstIn.add("London");
 		lstIn.add("Rome");

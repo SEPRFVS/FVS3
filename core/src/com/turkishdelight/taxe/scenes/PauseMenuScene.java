@@ -9,6 +9,12 @@ import com.turkishdelight.taxe.guiobjects.Button;
 
 public class PauseMenuScene extends Scene {
 	SpriteComponent pauseMenu;	
+	GameScene parentGame;
+	public PauseMenuScene(GameScene gameScene) {
+		super();
+		parentGame = gameScene;
+	}
+
 	@Override
 	public void onCreate()
 	{	// Create background image for pausemenu
@@ -63,18 +69,20 @@ public class PauseMenuScene extends Scene {
 	}
 	public void resumePressed()
 	{
-	Game.popScene();
+		Game.popScene();
 		
 	}
 	public void savePressed()
 	{
-		
+		Game.popScene();
+		Game.pushScene(parentGame.makeDialogueScene("Save feature coming soon!"));
 		
 	}
 	public void quitPressed()
 	{
-	Game.popScene();
-	Game.setScene(new MainMenuScene());
+		Game.popScene();
+		parentGame.cleanup();
+		Game.setScene(new MainMenuScene());
 	}
 	
 

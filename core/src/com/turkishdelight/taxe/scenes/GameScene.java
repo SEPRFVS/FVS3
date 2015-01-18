@@ -9,10 +9,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.turkishdelight.taxe.EventHandler;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
+import com.turkishdelight.taxe.guiobjects.Button;
 import com.turkishdelight.taxe.guiobjects.Label;
 import com.turkishdelight.taxe.guiobjects.LabelButton;
 import com.turkishdelight.taxe.routing.AiSprite;
@@ -34,6 +36,7 @@ public class GameScene extends GameGUIScene {
 	public CurrentResourcesScene resourceScene;
 	public DialogueScene dialogueScene;
 	private SelectionScene trainSelectionScene;
+	private PauseMenuScene pauseScene;
 	
 	public int numberTurns = 0;
 	private ArrayList<CurvedPath> curvedPaths = new ArrayList<CurvedPath>();					// collection of curved paths (only one way for each path) for drawing
@@ -48,6 +51,7 @@ public class GameScene extends GameGUIScene {
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
 	private int newRouteDistance;			
+	public EventHandler events = new EventHandler();
 	
 
 	public GameScene(Player player1In, Player player2In){
@@ -112,6 +116,7 @@ public class GameScene extends GameGUIScene {
 				Game.popScene();
 			}
 		};
+		pauseScene = new PauseMenuScene(this);
 	
 		//Locations setup
 		curvedPaths = new ArrayList<CurvedPath>();
@@ -205,6 +210,36 @@ public class GameScene extends GameGUIScene {
 		confirmRouteSelectionButton.setText("");
 		confirmRouteSelectionButton.setAlignment(0);
 		Add(confirmRouteSelectionButton);
+		
+		//Buttons set up
+		Texture buttonText = new Texture("Clear_Button.png");
+		//Create settings menu button
+		Button settingsButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				Game.pushScene(pauseScene);
+			}
+		};
+		settingsButton.setZ(Game.guiZ);
+		settingsButton.setPosition(924, 0);
+		settingsButton.setSize(100, 100);
+		settingsButton.setTexture(buttonText);
+		Add(settingsButton);
+		//Create settings menu button
+		
+		Button leaderButton = new Button(this) {
+			@Override
+			public void onClickEnd()
+			{
+				Game.pushScene(makeDialogueScene("Leaderboard coming soon!"));
+			}
+		};
+		leaderButton.setZ(Game.guiZ);
+		leaderButton.setPosition(814, 0);
+		leaderButton.setSize(100, 100);
+		leaderButton.setTexture(buttonText);
+		Add(leaderButton);
 	}
 
 	private Train createTrainAndCarriage(final Player player, String trainName, Station station, Texture trainTexture, Texture carriageTexture, int weight, int speed, int fuelEfficiency, float reliability) {
@@ -261,6 +296,7 @@ public class GameScene extends GameGUIScene {
 		l2.addConnection(l1, path2); 
 	}
 	
+	@SuppressWarnings("unused")
 	private Route restoreRoute(String string) {
 		// creates a route from a string of form "Routelocation1Routelocation2"
 		// Assumes valid input string
@@ -874,7 +910,7 @@ public class GameScene extends GameGUIScene {
 	{
 		System.out.println("goalsToolbarPressed");
 		if (!isSelectingRoute)
-			Game.pushScene(goalsScene);
+			Game.pushScene(makeDialogueScene("Goals coming soon!"));
 	}
 	
 	@Override
@@ -915,5 +951,19 @@ public class GameScene extends GameGUIScene {
 	{
 		dialogueScene.setText(text);
 		return dialogueScene;
+	}
+	
+	public void cleanup()
+	{
+		this.goalsScene.parentGame = null;
+		this.goalsScene = null;
+		this.resourceScene.parentGame = null;
+		this.resourceScene = null;
+		this.shopScene.parentGame = null;
+		this.shopScene = null;
+		this.dialogueScene = null;
+		this.pauseScene.parentGame = null;
+		this.pauseScene = null;
+		super.cleanup();
 	}
 }
