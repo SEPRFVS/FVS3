@@ -121,7 +121,7 @@ public class GameGUIScene extends Scene{
 		Add(shopToolbarButton);
 		// ---------------------
 		
-		// Create incompletes toolbar button
+		// Create Resources toolbar button
 		Button resourcesToolbarButton = new Button(this) {
 			@Override
 			public void onClickEnd()

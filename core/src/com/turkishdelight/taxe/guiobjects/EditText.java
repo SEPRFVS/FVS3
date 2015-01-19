@@ -1,6 +1,7 @@
 package com.turkishdelight.taxe.guiobjects;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.turkishdelight.taxe.Scene;
@@ -18,12 +19,15 @@ public class EditText extends LabelButton {
 	public void onClickEnd()
 	{
 		focus = true;
+		this.setFont(Label.genericFont(Color.GREEN, 40));
+		this.setText("");
 	}
 	
 	@Override
 	public boolean clickEnd(int x, int y)
 	{
 		focus = false;
+		this.setFont(Label.genericFont(Color.GRAY, 40));
 		return super.clickEnd(x, y);
 	}
 	

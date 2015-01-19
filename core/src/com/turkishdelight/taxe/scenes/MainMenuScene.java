@@ -51,7 +51,7 @@ public class MainMenuScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				Game.setScene(new LeaderboardScene());
+				Game.pushScene(new LeaderboardScene());
 				cleanup();
 			}
 		};

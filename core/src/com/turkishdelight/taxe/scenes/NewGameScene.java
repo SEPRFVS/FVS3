@@ -106,7 +106,7 @@ public class NewGameScene extends Scene   {
 		player1NameText = new EditText(this, player1LabelText, Label.genericFont(Color.GRAY, 40), Game.shopZ);
 		player1NameText.setText("Name");
 		player1NameText.setSize(200, 50);
-		player1NameText.setPosition(36, 480);
+		player1NameText.setPosition(46, 450);
 		player1NameText.setAlignment(0);
 		Add(player1NameText);
 		
@@ -291,7 +291,7 @@ public class NewGameScene extends Scene   {
 		player2NameText = new EditText(this, player2LabelText, Label.genericFont(Color.GRAY, 40), Game.shopZ);
 		player2NameText.setText("Name");
 		player2NameText.setSize(200, 50);
-		player2NameText.setPosition(550, 480);
+		player2NameText.setPosition(560, 450);
 		player2NameText.setAlignment(0);
 		Add(player2NameText);
 		
@@ -301,7 +301,7 @@ public class NewGameScene extends Scene   {
 		// Player 2 Difficulty Title
 		player2Difficulty = new Label(this, player2LabelText, Label.genericFont(Color.RED, 40));
 		player2Difficulty.setText("Difficulty");
-		player2Difficulty.setPosition(550, 390);
+		player2Difficulty.setPosition(560, 390);
 		player2Difficulty.setAlignment(0);
 		Add(player2Difficulty);
 
@@ -551,7 +551,7 @@ public class NewGameScene extends Scene   {
 		p.setName(playerNameText.getText());
 		if(currentDifficultyPlayer.getText().equals("Easy"))
 		{
-			p.setMoney(20);
+			p.setMoney(500);
 			p.setFuel(1000);
 		}
 		if(currentDifficultyPlayer.getText().equals("Medium"))
