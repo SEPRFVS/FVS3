@@ -89,7 +89,7 @@ public abstract class SelectionScene extends Scene {
 			};
 			labelButton.setText(element.toString());
 			labelButton.setAlignment(1);
-			labelButton.setPosition(Game.targetWindowsWidth/2, 450 - (50*i));
+			labelButton.setPosition((Game.targetWindowsWidth/2) - 105, 590 - (50*i));
 			Add(labelButton);
 			labelButtons.add(labelButton);
 			i++;

@@ -26,15 +26,18 @@ public class LeaderboardScene extends Scene {
 		// ---------------------
 		
 		// Create button to return to the main menu.
-		Button mainMenuButton = new Button(this) {
+		Texture backButtonClr = new Texture("Clear_Button.png");
+		Button backButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
-				Game.setScene(new MainMenuScene());
+				Game.popScene();
 			}
 		};
-		mainMenuButton.setPosition(870, 660);		
-		Add(mainMenuButton);
+		backButton.setPosition(827, 656);
+		backButton.setSize(140, 50);
+		backButton.setTexture(backButtonClr);
+		Add(backButton);
 		// ---------------------
 		
 		drawScrollpane();

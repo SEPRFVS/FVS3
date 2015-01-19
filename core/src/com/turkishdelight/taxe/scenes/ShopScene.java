@@ -340,7 +340,7 @@ public class ShopScene extends GameWindowedGUIScene {
 	public void drawUpgradeButtons(LabelButton baseButton, Train t, Player p, int upgradePrice)
 	{
 		System.out.println("Drawing " + t.getName() + " upgrade buttons");
-		int xdisplacement = 285;
+		int xdisplacement = 295;
 		int ydisplacement = 153;
 		int yjump = 50;
 		LabelButton buttonSpeed = generateUpgradeButton(baseButton.getLocalX() + xdisplacement, baseButton.getLocalY() + ydisplacement, t, 0, p, upgradePrice);
