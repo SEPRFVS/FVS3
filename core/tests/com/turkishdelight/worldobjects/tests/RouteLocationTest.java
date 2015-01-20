@@ -6,15 +6,18 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.routing.CurvedPath;
 import com.turkishdelight.taxe.scenes.GameScene;
+import com.turkishdelight.taxe.testrunners.GdxTestRunner;
 import com.turkishdelight.taxe.worldobjects.RouteLocation;
 import com.turkishdelight.taxe.worldobjects.Station;
 
+@RunWith(GdxTestRunner.class)
 public class RouteLocationTest {
 	
 	private static Texture texture;

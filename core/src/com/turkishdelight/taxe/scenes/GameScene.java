@@ -98,6 +98,7 @@ public class GameScene extends GameGUIScene {
 	
 	@Override
 	public void Update() {
+		// used to allow multiple train on same lcoation, select one of them
 		if (selectedTrains.size() > 1){
 			trainSelectionScene.setElements(selectedTrains);
 			Game.pushScene(trainSelectionScene);
