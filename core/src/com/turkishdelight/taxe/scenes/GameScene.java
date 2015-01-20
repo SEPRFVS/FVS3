@@ -63,8 +63,9 @@ public class GameScene extends GameGUIScene {
 	protected boolean isSelectingRoute = false;													// boolean that says whether the playyer is currently in route selection mode
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
-	private int newRouteDistance;			
+	private int newRouteDistance;		
 	public EventHandler events;
+	private HashMap<String, CurvedPath> paths;
 	
 
 	public GameScene(Player player1In, Player player2In){
@@ -82,7 +83,6 @@ public class GameScene extends GameGUIScene {
 	}
 	
 	public void nextTurn() {
-		
 		if (map != null){
 			numberTurns++;
 			ArrayList<AiSprite> collisions = getCollisions();
@@ -101,7 +101,6 @@ public class GameScene extends GameGUIScene {
 		if (selectedTrains.size() > 1){
 			trainSelectionScene.setElements(selectedTrains);
 			Game.pushScene(trainSelectionScene);
-			
 		} 
 		if (newRoute.size() == 0 && selectedTrains.size() > 0){
 			selectStartingLocation(selectedTrains.get(0).getStation());
@@ -145,6 +144,8 @@ public class GameScene extends GameGUIScene {
 		Junction junction2 = createJunction(this, "J2", 455, 321);
 		System.out.println("Locations created");
 		
+		paths = getPaths();
+		
 		// setup connections
 		connectRouteLocations(london, paris); 
 		connectRouteLocations(paris, junction1);
@@ -166,7 +167,7 @@ public class GameScene extends GameGUIScene {
 		generateTrainAndCarriage(getPlayer2(), getStationByName(getPlayer2().getStartLocation()), Train.Type.STEAM);
 
 		
-		// create route (with dotted line)
+		// draw route (with dotted line)
 		Texture text = new Texture("route.png");
 		final int divider = 10; // distance between 2 dots
 		// go to every x * divider, find closest distance value from path array and use that to get corresponding position
@@ -209,7 +210,9 @@ public class GameScene extends GameGUIScene {
 				if (isSelectingRoute) {
 					if (newRoute.size() > 1 && (newRoute.get(newRoute.size()-1).getClass() == Station.class)) {
 						// route must be at least 2 locations, finish on a station
-						selectedTrains.get(0).setRoute(new Route(newRoute));
+						Train trainSelected = selectedTrains.get(0);
+						trainSelected.setRoute(new Route(newRoute));
+						trainSelected.getCarriage().setRoute();
 						System.out.println("Route completed: " + newRoute.toString());
 						endSelectingRoute();
 						isSelectingRoute = false;
@@ -270,21 +273,28 @@ public class GameScene extends GameGUIScene {
 	{
 		return events;
 	}
-
+	
+	public ArrayList<RouteLocation> getLocations(){
+		return routeLocations;
+	}
+	
 	private Train createTrainAndCarriage(final Player player, String trainName, Station station, Texture trainTexture, Texture carriageTexture, int weight, int speed, int fuelEfficiency, float reliability) {
 		// create a train, carriage and connect them
 		Train train = new Train(this, player, trainName, trainTexture, station, weight, speed, fuelEfficiency, reliability) ;
-		Add(train);
+		
 		Carriage carriage = new Carriage(this, carriageTexture, player, station, train);
 		Add(carriage);
+		Add(train);
 		player.addAiSprite(train);
 		player.addAiSprite(carriage);
 		train.setCarriage(carriage);
 		return train;
 	}
 	
-	public Train generateTrainAndCarriage(Player player, Station station, Train.Type type)
-	{
+	public Train generateTrainAndCarriage(Player player, Station station, Train.Type type) {
+		if (player == null || station == null){
+			return null;
+		}
 		return this.createTrainAndCarriage(player, type.getName(), station, type.getTrainTexture(), type.getCarraigeTexture(), type.getWeight(), type.getSpeed(), type.getEfficiency(), type.getReliability());
 	}
 
@@ -293,11 +303,9 @@ public class GameScene extends GameGUIScene {
 		Add(routeLocation);
 		routeLocations.add(routeLocation);
 		return (Station) routeLocation;
-		
 	}	
 
-	public Station getStationByName(String stationName)
-	{
+	public Station getStationByName(String stationName) {
 		for(RouteLocation station : routeLocations)
 		{
 			if(station.getName().equals(stationName))
@@ -316,17 +324,29 @@ public class GameScene extends GameGUIScene {
 		return (Junction) routeLocation;
 		}
 	
-	private void connectRouteLocations(RouteLocation l1, RouteLocation l2){
+	public void connectRouteLocations(RouteLocation l1, RouteLocation l2){
 		// connects 2 routelocations (junctions + stations) 
-		HashMap<String, CurvedPath> paths = getPaths();
 		CurvedPath path1 = paths.get(l1.getName() + l2.getName());
 		CurvedPath path2 = paths.get(l2.getName() + l1.getName());
-		l1.addConnection(l2, path1);
-		l2.addConnection(l1, path2); 
+		if (path1 != null && path2 != null){
+			l1.addConnection(l2, path1);
+			l2.addConnection(l1, path2); 
+		}
 	}
 	
+	public void connectRouteLocations(RouteLocation l1, RouteLocation l2, HashMap<String, CurvedPath> paths){
+		// used for testing only
+		// connects 2 routelocations (junctions + stations) 
+		CurvedPath path1 = paths.get(l1.getName() + l2.getName());
+		CurvedPath path2 = paths.get(l2.getName() + l1.getName());
+		if (path1 != null && path2 != null){
+			l1.addConnection(l2, path1);
+			l2.addConnection(l1, path2); 
+		}
+	}
+
 	@SuppressWarnings("unused")
-	private Route restoreRoute(String string) {
+	public Route restoreRoute(String string) {
 		// creates a route from a string of form "Routelocation1Routelocation2"
 		// Assumes valid input string
 		if (string.length() == 0){
@@ -347,16 +367,30 @@ public class GameScene extends GameGUIScene {
 		
 		// create the new route by getting the station with the corresponding text from the routelocations array
 		ArrayList<RouteLocation> newRouteLocations = new ArrayList<RouteLocation>();
-		for (RouteLocation routeLocation: routeLocations){
-			if (locations.contains(routeLocation.getName())) {
-				newRouteLocations.add(routeLocation);
+		for (String locationName: locations){
+			RouteLocation routeLocation = getStationByName(locationName);
+			if (routeLocation != null){
+				newRouteLocations.add(getStationByName(locationName));
+			} else {
+				return null;
 			}
 		}
-		Route tempRoute = new Route(newRouteLocations);
+		
+		
+		Route tempRoute;
+		try {
+			tempRoute = new Route(newRouteLocations);
+		} catch(IllegalArgumentException e){
+			return null;
+		}
 		return tempRoute;
 	}
 	
-	private void calculateCollisions(ArrayList<AiSprite> collisions) {
+	public ArrayList<AiSprite> getPreviousCollisions(){
+		return this.previousCollisions;
+	}
+	
+	public void calculateCollisions(ArrayList<AiSprite> collisions) {
 		// main method that resolves valid collisions
 		ArrayList<AiSprite> currentCollisions = new ArrayList<AiSprite>(); // collisions that have been resolved, tracked to stop repeated collisions
 		for (int i = 0; i < collisions.size(); i+=2){
@@ -373,18 +407,23 @@ public class GameScene extends GameGUIScene {
 				switch(collisionType){
 				case(1):
 					((Carriage) p2AiSprite).decreaseCarriageCount();
+					currentCollisions.add(p1AiSprite);
+					currentCollisions.add(p2AiSprite);
 				break;
 				case(2):
 					((Carriage) p1AiSprite).decreaseCarriageCount();
+					currentCollisions.add(p1AiSprite);
+					currentCollisions.add(p2AiSprite);
 				break;
 				case(3):
 					resolveTrainCollision((Train) p1AiSprite, (Train) p2AiSprite);
+					currentCollisions.add(p1AiSprite);
+					currentCollisions.add(p2AiSprite);
 				break;
 				default:
 					break;
 				}
-				currentCollisions.add(p1AiSprite);
-				currentCollisions.add(p2AiSprite);
+				
 			}
 		}
 		previousCollisions = collisions;
@@ -432,12 +471,12 @@ public class GameScene extends GameGUIScene {
 	
 	private void resolveTrainCollision(Train p1Train, Train p2Train){
 		//special method for resolving train-train collisions only
-		if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
+		if ((p1Train.getWeight()*p1Train.getSpeed()) > (p2Train.getWeight()*p2Train.getSpeed())){
 			System.out.println("p1 wins!");
 			Carriage carriage = ((Train) p2Train).getCarriage();
 			carriage.decreaseCarriageCount();
 			
-		} else if ((p1Train.getWeight()*p1Train.getSpeed()) > (p2Train.getWeight()*p2Train.getSpeed())){
+		} else if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
 			System.out.println("p2 wins!");
 			Carriage carriage = ((Train) p1Train).getCarriage();
 			carriage.decreaseCarriageCount();
@@ -447,7 +486,7 @@ public class GameScene extends GameGUIScene {
 		}
 	}
 	
-	private ArrayList<AiSprite> getCollisions(){
+	public ArrayList<AiSprite> getCollisions(){
 		// returns array where every even element is player1 collided aiSprite, odd element is player2 collided aiSprite
 		ArrayList<AiSprite> collidedAiSprites = new ArrayList<AiSprite>();
 		for (AiSprite p1AiSprite: getPlayer1().getAiSprites()) {
@@ -486,7 +525,7 @@ public class GameScene extends GameGUIScene {
 		
 	}
 	
-	protected void startSelectingRoute() {
+	public void startSelectingRoute() {
 		// change buttons accordingly
 		nextGoButton.setSize(0,0);
 		confirmRouteSelectionButton.setText("Confirm Route");
@@ -522,6 +561,7 @@ public class GameScene extends GameGUIScene {
 				((Carriage) aiSprite).setLabelAlpha(0.5f);
 			}
 		}
+		isSelectingRoute = true;
 	}
 	
 	public void addSelectedTrain(Train train) {
@@ -534,6 +574,11 @@ public class GameScene extends GameGUIScene {
 
 	public boolean isRouteSelecting() {
 		return isSelectingRoute;
+	}
+	
+	public void setSelectingTrain(Train train){
+		// FOR TESTING ONLY
+		this.selectedTrains.add(train);
 	}
 	
 	public void selectStartingLocation(RouteLocation startLocation){
@@ -564,11 +609,13 @@ public class GameScene extends GameGUIScene {
 				aiSprite.setAlpha(0.7f);
 			}
 		}
-		
 	}
 	
 	
 	public void selectLocation(RouteLocation routeLocation){
+		if (newRoute.size() == 0){
+			return;
+		}
 		if ((routeLocation.isConnected(newRoute.get(newRoute.size()-1)) && !newRoute.contains(routeLocation))){
 			// if the starting location/ train has been selected, if the location is connected to the previous location
 			// and if the new location isnt already selected, select the location
@@ -626,7 +673,7 @@ public class GameScene extends GameGUIScene {
 		}
 	}
 
-	private void endSelectingRoute(){
+	public void endSelectingRoute(){
 		// reverse everything changed in startSelectingRoute 
 		// reset buttons
 		nextGoButton.setSize(83, 44);
@@ -675,9 +722,10 @@ public class GameScene extends GameGUIScene {
 		selectedTrains = new ArrayList<Train>();
 		newRoute = new ArrayList<RouteLocation>();
 		newRouteDistance = 0;
+		isSelectingRoute = false;
 	}
 
-	private HashMap<String, CurvedPath> getPaths() {
+	public HashMap<String, CurvedPath> getPaths() {
 		// this creates all of the paths on the map and returns them
 		HashMap<String, CurvedPath> paths = new HashMap<String, CurvedPath>();
 		// the string key is the two routelocation string representations concatenated in the order that corresponds to the path
@@ -893,7 +941,7 @@ public class GameScene extends GameGUIScene {
 		return paths;
 	}
 
-	private Vector2[] reverseDataset(Vector2[] dataSet){
+	public Vector2[] reverseDataset(Vector2[] dataSet){
 		Vector2[] rdataSet1 = new Vector2[dataSet.length];
 		for (int i=0; i < rdataSet1.length; i++){
 			rdataSet1[rdataSet1.length-i-1] = dataSet[i];

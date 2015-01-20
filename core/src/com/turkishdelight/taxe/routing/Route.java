@@ -3,7 +3,6 @@ package com.turkishdelight.taxe.routing;
 import java.util.ArrayList;
 
 import com.turkishdelight.taxe.worldobjects.RouteLocation;
-import com.turkishdelight.taxe.worldobjects.Station;
 
 public class Route {
 	// Contains information on route from location to another, possibly through multiple locations via multiple paths
@@ -32,13 +31,15 @@ public class Route {
 				this.startLocation =  location;
 			} else {
 				if (previousLocation.isConnected(location)){
-					this.connections.add(new Connection(location, previousLocation.getCurvedRoute(location)));
-					name += location.getName();
+					this.connections.add(new Connection(location, previousLocation.getCurvedPath(location)));
+					
 				} else {
 					// if the previous location isnt connected to the current location, invalid route.
 					System.out.println("NOT A VALID ROUTE"); // be stricter here
+					throw new IllegalArgumentException("Route must be connected");
 				}
 			}
+			name += location.getName();
 			previousLocation = location;	
 			size++;
 		}
@@ -50,7 +51,11 @@ public class Route {
 	}
 	
 	public Connection getConnection(int i){
-		return connections.get(i);
+		if (i < connections.size()){
+			return connections.get(i);
+		} else {
+			return null;
+		}
 	}
 	
 	public RouteLocation getStartLocation(){
@@ -67,4 +72,13 @@ public class Route {
 		return this.name;
 	}
 	
+	@Override
+	public boolean equals(Object object){
+		if (object.getClass() == Route.class) {
+			if (((Route) object).getName().equals(this.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

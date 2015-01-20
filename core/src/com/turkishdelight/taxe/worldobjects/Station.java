@@ -46,4 +46,14 @@ public class Station extends RouteLocation{
 	    return Station.this;
 	}
 	
+	@Override
+	public boolean equals(Object object){
+		if (object.getClass() == Station.class) {
+			if (((Station) object).getName().equals(this.getName()) && ((Station) object).getPosition().equals(this.getPosition())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }
