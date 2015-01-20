@@ -5,10 +5,10 @@ import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
 
-public class Route extends SpriteComponent {
+public class RouteSprite extends SpriteComponent {
 
 	static Texture text = new Texture("route.png");
-	public Route(Scene parentScene) {
+	public RouteSprite(Scene parentScene) {
 		super(parentScene, text, Game.locationZ);
 	}
 

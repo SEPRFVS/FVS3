@@ -51,6 +51,7 @@ public class Game extends ApplicationAdapter {
 		gray.setSize(targetWindowsWidth, targetWindowsHeight);
 		gray.setColor(Color.GRAY);
 		gray.setAlpha(0.5f);
+
 	}
 
 	public static void setPushedScene(Scene newScene)

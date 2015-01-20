@@ -19,6 +19,9 @@ public class Carriage extends AiSprite {
 	
 	public Carriage(Scene parentScene, Texture text, Player player, Station station, Train train) {
 		super(parentScene, text, player, station);
+		if (train == null){
+			throw new IllegalArgumentException("Train cannot be null");
+		}
 		this.weight = 1;
 		this.train = train;	
 		this.setAIType(AIType.CARRIAGE);
@@ -30,41 +33,58 @@ public class Carriage extends AiSprite {
 	
 	@Override
 	public void updateTurn() {
-		if (route != null && !completed) {
+		if (route != null && !train.hasCompleted()) {
 			updatePosition(); 
 		}
 	}
 	
 	@Override
-	protected void updatePosition() {
+	public void updatePosition() {
 		// moves exactly SPRITEWIDTH behind the train it is connected to to look connected 
+		if (route == null){
+			return;
+		}
 		if (train.getRouteDistance() >= 50) {
 			float nextDistance = train.getRouteDistance()- prevDistances- SPRITEWIDTH;
 			if ((nextDistance >= path.getFinalDistance())){
 				// if next move will go past waypoint
 				prevDistances+= path.getFinalDistance();
-				if (waypoint+2 >= route.numLocations()){
-					// if at final waypoint, fix to final waypoint
-					System.out.println("Carriage final waypoint reached");
-					current = path.getTFromDistance(path.getFinalDistance()-SPRITEWIDTH);
-					completed = true;
-				} else {
-					// if carriage at intermediate waypoint, move to next path and calculate overshootDistance into next route
-					System.out.println("Carriage reached waypoint");
-					float overshootDistance = nextDistance- path.getFinalDistance();
-					waypoint++;
-					connection = route.getConnection(waypoint);
-					path = connection.getPath();
-					current = path.getTFromDistance(overshootDistance);
-				}
-			}  else {
+				// if carriage at intermediate waypoint, move to next path and calculate overshootDistance into next route
+				System.out.println("Carriage reached waypoint");
+				float overshootDistance = nextDistance- path.getFinalDistance();
+				waypoint++;
+				connection = route.getConnection(waypoint);
+				path = connection.getPath();
+				current = path.getTFromDistance(overshootDistance);
+				pathDistance = overshootDistance;
+				routeDistance += overshootDistance;
+			}
+			else if (train.hasCompleted()){
+				// if at final waypoint, fix to final waypoint
+				// may not be being reached?
+				System.out.println("Carriage final waypoint reached");
+				current = path.getTFromDistance(path.getFinalDistance()-SPRITEWIDTH);
+				pathDistance = path.getFinalDistance()-SPRITEWIDTH;
+				routeDistance = prevDistances + pathDistance;
+				completed = true;
+			} else {
 				// if nothing special, just set to nextDistance
 				current = path.getTFromDistance(nextDistance);
+				pathDistance = nextDistance;
+				routeDistance = prevDistances + nextDistance;
 			}
 			move();	
+			setLabel();
 			}
 	
+		
+	}
+
+	public void setLabel() {
 		// setup carriage label
+		if (route == null){
+			return;
+		}
 		Vector2 labelVector = path.getPointFromT(path.getTFromDistance(train.getRouteDistance()-prevDistances-SPRITEWIDTH));
 		carriageCountLabel.setText(Integer.toString(getCarriageCount()));
 		carriageCountLabel.setPosition(labelVector.x, labelVector.y);
@@ -99,7 +119,12 @@ public class Carriage extends AiSprite {
 		return carriageCount * CARRIAGE_WEIGHT;
 	}
 
-	public void setRoute(Route route) {
+	public void setRoute() {
+		Route route = train.getRoute();
+		if (route == null){
+			this.route = null;
+			return;
+		}
 		this.route = route;
 		waypoint = 0;
 		current = 0;
@@ -111,32 +136,56 @@ public class Carriage extends AiSprite {
 		completed = false;
 	}
 	
-	public void restoreRoute(Route route, int trainWaypoint, float current) {
+	public void restoreRoute() {
 		// called from train, restores the carriage to the right distance behind the train
-		this.route = route;
+		Route newRoute = train.getRoute();
+		int trainWaypoint = train.getWaypoint();
+		float trainCurrent = train.getCurrent();
+		
+		if (newRoute == null){
+			this.route = newRoute;
+			return;
+		} else if (newRoute.numLocations() <= waypoint || trainCurrent > 1f){
+			this.route = null;
+			return;
+		}
+		
+		this.route = newRoute;
 		if (train.pathDistance < 50 && train.routeDistance > 50){
 			// check if the carriage would be on the previous path of the route
-			this.waypoint = trainWaypoint-1;
+			if (waypoint > 0){
+				this.waypoint = trainWaypoint-1;
+			} else {
+				this.waypoint = 0;
+			}
 		} else {
 			this.waypoint = trainWaypoint;
 		}
 		
 		out = new Vector2(1,1);
-		connection= route.getConnection(waypoint);
+		connection= newRoute.getConnection(waypoint);
 		path = connection.getPath();
 		completed = false;
 		// calculate prevDistances by calculating sum of the completed paths
 		prevDistances = 0;
 		for (int i = 0; i < waypoint; i++){
-			prevDistances += route.getConnection(i).getPath().getFinalDistance();
+			prevDistances += newRoute.getConnection(i).getPath().getFinalDistance();
 		}
 		
-		if (train.routeDistance > 50){
+		pathDistance = train.getRouteDistance() - prevDistances - 50f;
+		routeDistance = prevDistances + pathDistance;
+		if (train.getRouteDistance() > 50){
 			// if the train has passed the threshold for a carriage to follow it
-			current = path.getTFromDistance(train.getRouteDistance() - prevDistances - 50f);
+			this.current = path.getTFromDistance(pathDistance);
 		} else {
-			current = 0;
+			this.current = 0;
 		}
-		updatePosition();
+		
+		move();
+		setLabel();
+	}
+
+	public Label getLabel() {
+		return carriageCountLabel;
 	}
 }

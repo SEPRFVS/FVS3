@@ -47,19 +47,21 @@ public abstract class RouteLocation extends Clickable {
 		return false;
 	}
 	
-	public CurvedPath getCurvedRoute(RouteLocation routeLocation) {
+	public CurvedPath getCurvedPath(RouteLocation routeLocation) {
 		// gets the route connecting this to location
 		// currently assumes location is connected
-		connections = getConnections();
-		for (Connection connection : connections) {
-			if (connection.getTargetLocation().equals(routeLocation)){ 
-				return connection.getPath();
+		if (isConnected(routeLocation)){
+			connections = getConnections();
+			for (Connection connection : connections) {
+				if (connection.getTargetLocation().equals(routeLocation)){ 
+					return connection.getPath();
+				}
 			}
 		}
 		return null;
 	}
 	
-	public Vector2 getCoords() {
+	public Vector2 getPosition() {
 		return this.coords;
 	}
 
@@ -74,10 +76,24 @@ public abstract class RouteLocation extends Clickable {
 		this.selectingRoute = selectingRoute;
 	}
 	
+	public Boolean getSelectingRoute(){
+		return this.selectingRoute;
+	}
+	
 	@Override
 	public void onClickEnd(){
 		if (selectingRoute && parentScene.getSelectedTrain() != null){
 			parentScene.selectLocation(this);
 		}
+	}
+	
+	@Override
+	public boolean equals(Object object){
+		if (object.getClass() == RouteLocation.class) {
+			if (((RouteLocation) object).getName().equals(this.getName()) && ((RouteLocation) object).getPosition().equals(this.getPosition())){
+				return true;
+			}
+		}
+		return false;
 	}
 }

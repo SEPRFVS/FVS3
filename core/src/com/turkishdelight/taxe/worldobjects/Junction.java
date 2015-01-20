@@ -11,4 +11,14 @@ public class Junction extends RouteLocation {
 		this.setSize(7, 7);
 	}
 	
+	@Override
+	public boolean equals(Object object){
+		if (object.getClass() == Junction.class) {
+			if (((Junction) object).getName().equals(this.getName()) && ((Junction) object).getPosition().equals(this.getPosition())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }
