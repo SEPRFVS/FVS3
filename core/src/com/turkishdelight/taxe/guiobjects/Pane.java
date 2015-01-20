@@ -2,7 +2,6 @@ package com.turkishdelight.taxe.guiobjects;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.turkishdelight.taxe.Clickable;
@@ -138,6 +137,22 @@ public class Pane extends Clickable {
 			}
 		}
 		return click;
+	}
+	
+	public void clear()
+	{
+		components.clear();
+		//Clearing like this avoids concurrent arrays
+		ArrayList<Clickable> componentsToDrop = new ArrayList<Clickable>();
+		for(Clickable s : clickAbleObjects)
+		{
+			componentsToDrop.add(s);
+		}
+		for(Clickable s : componentsToDrop)
+		{
+			clickAbleObjects.remove(s);
+		}
+		componentsToDrop = null;
 	}
 	
 }

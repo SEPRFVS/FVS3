@@ -17,8 +17,8 @@ public class GameWindowedGUIScene extends GameGUIScene{
 	public void onCreate(Player p1, Player p2, boolean hasWindow, Scene parent)
 	{
 		parentGame = (GameScene)parent;
-		player1 = p1;
-		player2 = p2;
+		setPlayer1(p1);
+		setPlayer2(p2);
 		initialiseGUI(hasWindow);
 	}
 	
@@ -47,7 +47,8 @@ public class GameWindowedGUIScene extends GameGUIScene{
 	public void goalsToolbarPressed() 
 	{
 		System.out.println("goalsToolbarPressed");
-		Game.pushScene(parentGame.makeDialogueScene("Goals coming soon!"));
+		Game.popScene();
+		Game.pushScene(parentGame.goalsScene);
 	}
 	
 	@Override

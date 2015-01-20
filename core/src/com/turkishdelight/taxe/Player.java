@@ -2,6 +2,7 @@ package com.turkishdelight.taxe;
 
 import java.util.ArrayList;
 
+import com.turkishdelight.taxe.goals.Goal;
 import com.turkishdelight.taxe.routing.AiSprite;
 import com.turkishdelight.taxe.routing.AiSprite.AIType;
 import com.turkishdelight.taxe.routing.Train;
@@ -14,8 +15,12 @@ public class Player {
 	private int money = 0;
 	private int score = 0;
 	private int fuel = 0;
-	private ArrayList<SpriteComponent> possessions = new ArrayList<SpriteComponent>();
-	private ArrayList<AiSprite> aiSprites = new ArrayList<AiSprite>(); // used in game scene for collisions
+	public ArrayList<SpriteComponent> possessions = new ArrayList<SpriteComponent>();
+	public ArrayList<AiSprite> aiSprites = new ArrayList<AiSprite>(); // used in game scene for collisions
+	//These 2 arrays track the completed and failed goals of the player for the purpose of displaying in the GUI
+	public ArrayList<Goal> completeGoals = new ArrayList<Goal>();
+	public ArrayList<Goal> failedGoals = new ArrayList<Goal>();
+	
 
 	public String getName()
 	{
@@ -130,6 +135,7 @@ public class Player {
 			possessions.remove(t);
 			aiSprites.remove(t);
 			s.Remove(t);
+			s.Remove(t.getCarriage());
 			setMoney(getMoney() + price);
 			return true;
 		}

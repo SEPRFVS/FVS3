@@ -13,8 +13,8 @@ import com.turkishdelight.taxe.guiobjects.Label;
 public class GameGUIScene extends Scene{
 
 	boolean player1Go = true;
-	Player player1;
-	Player player2;
+	private Player player1;
+	private Player player2;
 	
 	SpriteComponent player1Money;
 	SpriteComponent player1Fuel;
@@ -40,8 +40,8 @@ public class GameGUIScene extends Scene{
 	
 	public void onCreate(Player p1, Player p2, boolean hasWindow, Scene passedScene)
 	{
-		player1 = p1;
-		player2 = p2;
+		setPlayer1(p1);
+		setPlayer2(p2);
 		initialiseGUI(hasWindow);
 	}
 	
@@ -151,7 +151,7 @@ public class GameGUIScene extends Scene{
 		// Create player 1 name label
 		Texture player1LabelText = new Texture("Clear_Button.png");
 		player1NameLabel = new Label(this, player1LabelText, Label.genericFont(Color.BLUE, 40), Game.guiZ);
-		player1NameLabel.setText(player1.getName());
+		player1NameLabel.setText(getPlayer1().getName());
 		player1NameLabel.setPosition(36, 730);
 		player1NameLabel.setAlignment(0);
 		Add(player1NameLabel);
@@ -168,7 +168,7 @@ public class GameGUIScene extends Scene{
 		
 		// Create player 1 score label
 		player1ScoreLabel = new Label(this, player1LabelText, Label.genericFont(Color.BLUE, 20), Game.goalsZ);
-		player1ScoreLabel.setText("Score: " + player1.getScore());
+		player1ScoreLabel.setText("Score: " + getPlayer1().getScore());
 		player1ScoreLabel.setPosition(36, 683);
 		player1ScoreLabel.setAlignment(0);
 		Add(player1ScoreLabel);
@@ -185,7 +185,7 @@ public class GameGUIScene extends Scene{
 		
 		// Create player 1 money label
 		player1MoneyLabel = new Label(this, player1LabelText, Label.genericFont(Color.MAROON, 20), Game.goalsZ);
-		player1MoneyLabel.setText(String.valueOf(player1.getMoney()));
+		player1MoneyLabel.setText(String.valueOf(getPlayer1().getMoney()));
 		player1MoneyLabel.setPosition(player1Money.getX() + player1Money.getWidth() + 8, 648);
 		player1MoneyLabel.setAlignment(0);
 		Add(player1MoneyLabel);
@@ -203,7 +203,7 @@ public class GameGUIScene extends Scene{
 		
 		// Create player 1 fuel label
 		player1FuelLabel = new Label(this, player1LabelText, Label.genericFont(Color.TEAL, 20), Game.goalsZ);
-		player1FuelLabel.setText(String.valueOf(player1.getFuel()));
+		player1FuelLabel.setText(String.valueOf(getPlayer1().getFuel()));
 		player1FuelLabel.setPosition(player1Fuel.getX() + player1Fuel.getWidth() + 8, 648);
 		player1FuelLabel.setAlignment(0);
 		Add(player1FuelLabel);
@@ -215,7 +215,7 @@ public class GameGUIScene extends Scene{
 		// Create player 2 name label
 		Texture player2LabelText = new Texture("Clear_Button.png");
 		player2NameLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 40), Game.goalsZ);
-		player2NameLabel.setText(player2.getName());
+		player2NameLabel.setText(getPlayer2().getName());
 		player2NameLabel.setPosition(985, 730);
 		player2NameLabel.setAlignment(2);
 		player2NameLabel.setAlpha((float) 0.4);
@@ -233,7 +233,7 @@ public class GameGUIScene extends Scene{
 		
 		// Create player 2 score label
 		player2ScoreLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20), Game.goalsZ);
-		player2ScoreLabel.setText("Score: " + player2.getScore());
+		player2ScoreLabel.setText("Score: " + getPlayer2().getScore());
 		player2ScoreLabel.setPosition(985, 683);
 		player2ScoreLabel.setAlignment(2);
 		Add(player2ScoreLabel);
@@ -241,7 +241,7 @@ public class GameGUIScene extends Scene{
 		
 		// Create player 2 fuel label
 		player2FuelLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20), Game.goalsZ);
-		player2FuelLabel.setText(String.valueOf(player2.getFuel()));
+		player2FuelLabel.setText(String.valueOf(getPlayer2().getFuel()));
 		player2FuelLabel.setPosition(985, 648);
 		player2FuelLabel.setAlignment(2);
 		Add(player2FuelLabel);
@@ -259,7 +259,7 @@ public class GameGUIScene extends Scene{
 		
 		// Create player 2 money label
 		player2MoneyLabel = new Label(this, player2LabelText, Label.genericFont(Color.LIGHT_GRAY, 20), Game.goalsZ);
-		player2MoneyLabel.setText(String.valueOf(player2.getMoney()));
+		player2MoneyLabel.setText(String.valueOf(getPlayer2().getMoney()));
 		int x = (int) player2Fuel.getX() - 30;
 		player2MoneyLabel.setPosition(x, 648);
 		player2MoneyLabel.setAlignment(2);
@@ -317,14 +317,14 @@ public class GameGUIScene extends Scene{
 	
 	public void updateValues()
 	{
-		player1NameLabel.setText(player1.getName());
-		player2NameLabel.setText(player2.getName());
-		player1MoneyLabel.setText(String.valueOf(player1.getMoney()));
-		player2MoneyLabel.setText(String.valueOf(player2.getMoney()));
-		player1ScoreLabel.setText("Score: " + player1.getScore());
-		player2ScoreLabel.setText("Score: " + player2.getScore());
-		player1FuelLabel.setText(String.valueOf(player1.getFuel()));
-		player2FuelLabel.setText(String.valueOf(player2.getFuel()));
+		player1NameLabel.setText(getPlayer1().getName());
+		player2NameLabel.setText(getPlayer2().getName());
+		player1MoneyLabel.setText(String.valueOf(getPlayer1().getMoney()));
+		player2MoneyLabel.setText(String.valueOf(getPlayer2().getMoney()));
+		player1ScoreLabel.setText("Score: " + getPlayer1().getScore());
+		player2ScoreLabel.setText("Score: " + getPlayer2().getScore());
+		player1FuelLabel.setText(String.valueOf(getPlayer1().getFuel()));
+		player2FuelLabel.setText(String.valueOf(getPlayer2().getFuel()));
 	}
 	
 	public void nextGoPressed()
@@ -339,5 +339,21 @@ public class GameGUIScene extends Scene{
 
 		updateValues();
 		player1Go = !player1Go;
+	}
+
+	public Player getPlayer1() {
+		return player1;
+	}
+
+	public void setPlayer1(Player player1) {
+		this.player1 = player1;
+	}
+
+	public Player getPlayer2() {
+		return player2;
+	}
+
+	public void setPlayer2(Player player2) {
+		this.player2 = player2;
 	}
 }

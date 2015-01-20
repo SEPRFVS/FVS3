@@ -9,9 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.turkishdelight.taxe.scenes.GameScene;
 import com.turkishdelight.taxe.scenes.MainMenuScene;
-import com.turkishdelight.taxe.scenes.ShopScene;
 
 public class Game extends ApplicationAdapter {
 	SpriteBatch batch;

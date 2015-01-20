@@ -99,4 +99,19 @@ public class ComponentBatch {
 		toRemove = null;
 		spriteComponents = null;
 	}
+	
+	public void clear()
+	{
+		//Clearing like this avoids concurrent arrays
+		ArrayList<SpriteComponent> componentsToDrop = new ArrayList<SpriteComponent>();
+		for(SpriteComponent s : spriteComponents)
+		{
+			componentsToDrop.add(s);
+		}
+		for(SpriteComponent s : componentsToDrop)
+		{
+			spriteComponents.remove(s);
+		}
+		componentsToDrop = null;
+	}
 }

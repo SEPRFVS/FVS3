@@ -2,6 +2,7 @@ package com.turkishdelight.taxe.scenes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,11 +10,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
-import com.turkishdelight.taxe.EventHandler;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
+import com.turkishdelight.taxe.goals.ArrivalObjective;
+import com.turkishdelight.taxe.goals.EmptyObjective;
+import com.turkishdelight.taxe.goals.EventHandler;
+import com.turkishdelight.taxe.goals.Goal;
+import com.turkishdelight.taxe.goals.Objective;
+import com.turkishdelight.taxe.goals.RouteObjective;
 import com.turkishdelight.taxe.guiobjects.Button;
 import com.turkishdelight.taxe.guiobjects.Label;
 import com.turkishdelight.taxe.guiobjects.LabelButton;
@@ -29,6 +35,13 @@ import com.turkishdelight.taxe.worldobjects.Station;
 
 public class GameScene extends GameGUIScene {
 
+	//Resource variables
+	int fuel = 10000;
+	int crPer100Fuel = 10;
+	
+	//This arraylist tracks the active goals of the game
+	public ArrayList<Goal> activeGoals = new ArrayList<Goal>();
+	public ArrayList<Goal> goalsToDrop = new ArrayList<Goal>();
 	Texture mapText;
 	SpriteComponent map;
 	public ShopScene shopScene;
@@ -51,12 +64,11 @@ public class GameScene extends GameGUIScene {
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
 	private int newRouteDistance;			
-	public EventHandler events = new EventHandler();
+	public EventHandler events;
 	
 
 	public GameScene(Player player1In, Player player2In){
 		super(player1In, player2In, false, null);
-		player1Active();
 		player1Go = true;
 		delayedCreate();
 	}
@@ -105,9 +117,9 @@ public class GameScene extends GameGUIScene {
 		Add(map);
 		
 		// scene setup
-		shopScene = new ShopScene(this, this.player1, this.player2);
-		goalsScene = new GoalsScene(this, this.player1, this.player2);
-		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
+		shopScene = new ShopScene(this, this.getPlayer1(), this.getPlayer2());
+		goalsScene = new GoalsScene(this, this.getPlayer1(), this.getPlayer2());
+		resourceScene = new CurrentResourcesScene(this, this.getPlayer1(), this.getPlayer2());
 		trainSelectionScene = new SelectionScene(new Texture("trainselection.png")) {
 			@Override
 			public void onSelectionEnd() {
@@ -150,8 +162,8 @@ public class GameScene extends GameGUIScene {
 		connectRouteLocations(lisbon, madrid);
 
 		// add trains
-		generateTrainAndCarriage(player1, getStationByName(player1.getStartLocation()), Train.Type.STEAM);
-		generateTrainAndCarriage(player2, getStationByName(player2.getStartLocation()), Train.Type.STEAM);
+		generateTrainAndCarriage(getPlayer1(), getStationByName(getPlayer1().getStartLocation()), Train.Type.STEAM);
+		generateTrainAndCarriage(getPlayer2(), getStationByName(getPlayer2().getStartLocation()), Train.Type.STEAM);
 
 		
 		// create route (with dotted line)
@@ -168,9 +180,9 @@ public class GameScene extends GameGUIScene {
 				Add(route);
 			}
 		}
-		shopScene = new ShopScene(this, this.player1, this.player2);
-		goalsScene = new GoalsScene(this, this.player1, this.player2);
-		resourceScene = new CurrentResourcesScene(this, this.player1, this.player2);
+		shopScene = new ShopScene(this, this.getPlayer1(), this.getPlayer2());
+		goalsScene = new GoalsScene(this, this.getPlayer1(), this.getPlayer2());
+		resourceScene = new CurrentResourcesScene(this, this.getPlayer1(), this.getPlayer2());
 		dialogueScene = new DialogueScene("");
 		Texture clearButtonTexture = new Texture("Clear_Button.png");
 		routeSelectionButton = new LabelButton(this, clearButtonTexture , 100 , 40, Label.genericFont(Color.WHITE, 20)) {
@@ -240,6 +252,23 @@ public class GameScene extends GameGUIScene {
 		leaderButton.setSize(100, 100);
 		leaderButton.setTexture(buttonText);
 		Add(leaderButton);
+		
+		events = new EventHandler();
+		Objective mainObjective = ArrivalObjective.generate();
+		Objective sideObjective = EmptyObjective.generate();
+		Goal g = new Goal(this, mainObjective, sideObjective, sideObjective);
+		this.activeGoals.add(g);
+		mainObjective = RouteObjective.generate();
+		sideObjective = EmptyObjective.generate();
+		g = new Goal(this, mainObjective, sideObjective, sideObjective);
+		this.activeGoals.add(g);
+		generateGoals();
+		player1Active();
+	}
+	
+	public EventHandler getEventHandler()
+	{
+		return events;
 	}
 
 	private Train createTrainAndCarriage(final Player player, String trainName, Station station, Texture trainTexture, Texture carriageTexture, int weight, int speed, int fuelEfficiency, float reliability) {
@@ -421,8 +450,8 @@ public class GameScene extends GameGUIScene {
 	private ArrayList<AiSprite> getCollisions(){
 		// returns array where every even element is player1 collided aiSprite, odd element is player2 collided aiSprite
 		ArrayList<AiSprite> collidedAiSprites = new ArrayList<AiSprite>();
-		for (AiSprite p1AiSprite: player1.getAiSprites()) {
-			for (AiSprite p2AiSprite: player2.getAiSprites()) {
+		for (AiSprite p1AiSprite: getPlayer1().getAiSprites()) {
+			for (AiSprite p2AiSprite: getPlayer2().getAiSprites()) {
 				if (getCollisionType(p1AiSprite, p2AiSprite) >0){
 					collidedAiSprites.add(p1AiSprite);
 					collidedAiSprites.add(p2AiSprite);
@@ -471,10 +500,10 @@ public class GameScene extends GameGUIScene {
 		
 		// fade other players trains, carriages
 		Player otherPlayer;
-		if (activePlayer() == player1){
-			otherPlayer = player2;
+		if (activePlayer() == getPlayer1()){
+			otherPlayer = getPlayer2();
 		} else {
-			otherPlayer = player1;
+			otherPlayer = getPlayer1();
 		}
 		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
 		for (AiSprite aiSprite : otherAiSprites){
@@ -620,9 +649,9 @@ public class GameScene extends GameGUIScene {
 		// reset train colours
 		Player otherPlayer;
 		if (player1Go){
-			otherPlayer = player2;
+			otherPlayer = getPlayer2();
 		} else {
-			otherPlayer = player1;
+			otherPlayer = getPlayer1();
 		}
 		// reset the other players aiSprites
 		ArrayList<AiSprite> otherAiSprites = otherPlayer.getAiSprites();
@@ -876,23 +905,69 @@ public class GameScene extends GameGUIScene {
 	public void player1Active()
 	{
 		super.player1Active();
-		player1.updateTurn(true);
-		player2.updateTurn(false);
+		getPlayer1().updateTurn(true);
+		getPlayer2().updateTurn(false);
+		updateGoals();
+		for(Goal g : activeGoals)
+		{
+			g.nextTurn(getPlayer1());
+		}
+		updateGoals();
+		//We recalculate the fuel price every player 1 turn
+		regenerateFuelPrice();
 	}
 	
 	@Override
 	public void player2Active()
 	{
 		super.player2Active();
-		player2.updateTurn(true);
-		player1.updateTurn(false);
+		getPlayer2().updateTurn(true);
+		getPlayer1().updateTurn(false);
+		updateGoals();
+		for(Goal g : activeGoals)
+		{
+			g.nextTurn(getPlayer2());
+		}
+		updateGoals();
+	}
+	
+	public void updateGoals()
+	{
+		System.out.println("Updating goals. Size" + activeGoals.size());
+		for(Goal g : goalsToDrop)
+		{
+			activeGoals.remove(g);
+		}
+		System.out.println("Size" + activeGoals.size());
+		goalsToDrop = new ArrayList<Goal>();
+		generateGoals();
+	}
+	
+	public void generateGoals()
+	{
+		activeGoals.trimToSize();
+		while (activeGoals.size() < 3)
+		{
+			Objective mainObjective;
+			if(new Random().nextDouble() > 0.5)
+			{
+				mainObjective = ArrivalObjective.generate();
+			}
+			else
+			{
+				mainObjective = RouteObjective.generate();
+			}
+			Objective sideObjective = EmptyObjective.generate();
+			Goal g = new Goal(this, mainObjective, sideObjective, sideObjective);
+			this.activeGoals.add(g);
+		}
 	}
 	
 	public Player activePlayer() {
 		if (player1Go){
-			return player1;
+			return getPlayer1();
 		} else {
-			return player2;
+			return getPlayer2();
 		}
 	}
 	
@@ -909,7 +984,7 @@ public class GameScene extends GameGUIScene {
 	{
 		System.out.println("goalsToolbarPressed");
 		if (!isSelectingRoute)
-			Game.pushScene(makeDialogueScene("Goals coming soon!"));
+			Game.pushScene(goalsScene);
 	}
 	
 	@Override
@@ -965,5 +1040,13 @@ public class GameScene extends GameGUIScene {
 		this.pauseScene.parentGame = null;
 		this.pauseScene = null;
 		super.cleanup();
+	}
+	
+	//This method is used to regenerate the fuel price each turn
+	public void regenerateFuelPrice()
+	{
+		float priceRatio = 10000.0f / fuel;
+		System.out.println("Regenerating fuel price:" + priceRatio);
+		this.crPer100Fuel = (int)(10 * priceRatio);
 	}
 }

@@ -1,16 +1,18 @@
-package com.turkishdelight.taxe;
+package com.turkishdelight.taxe.goals;
 
 import java.util.ArrayList;
 
+
 public class EventHandler {
 	
-int index = 0;
-ArrayList<Event> Events = new ArrayList<Event>();
+private int index = 0;
+private ArrayList<Event> Events = new ArrayList<Event>();
 
 public void pushEvent(Event e)
 {
 	Events.add(index, e);
 	index++;
+	System.out.println(e.Station);
 }
 
 public Event getEvent(int index)

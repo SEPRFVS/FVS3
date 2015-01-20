@@ -20,6 +20,7 @@ public class ShopScene extends GameWindowedGUIScene {
 	SpriteComponent shop;
 	SpriteComponent scrollPaneBackground;
 	Pane pane;
+	private String paneType = "Train";
 	
 	private LabelButton steamButton;
 	private LabelButton dieselButton;
@@ -27,7 +28,8 @@ public class ShopScene extends GameWindowedGUIScene {
 	private LabelButton nuclearButton;
 	private LabelButton magLevButton;
 	private LabelButton kingButton;
-	
+	private Label fuelLabel, fuelPriceLabel;
+	private LabelButton fuelButton;
 	ArrayList<LabelButton> upgradeButtons = new ArrayList<LabelButton>();
 	
 	public ShopScene(GameScene parent, Player player1, Player player2)
@@ -45,28 +47,15 @@ public class ShopScene extends GameWindowedGUIScene {
 		shop.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
 		Add(shop);
 		// ---------------------
-		
-		drawTrainsScrollpane();
-	}
-	
-	public void drawTrainsScrollpane()
-	{
 		pane = new Pane(this, -1);
 		pane.setSize(922, 800);
 		pane.setPosition(50, 485 - pane.getHeight());
 		Add(pane);
-		
-		Texture scrollPaneBackgroundText = new Texture("Trains_Scrollpane_Background.png");
-		scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
-		scrollPaneBackground.setSize(922,800);
-		scrollPaneBackground.setLocalPosition(0, 0);
-		pane.Add(scrollPaneBackground);
-		
 		//Min Y is the position the pane must be in to show it's lowest content
 		//Max Y is the position the pane must be in to show it's highest content
 		final float minY = 73;
 		final float maxY = 485 - pane.getHeight();
-		
+				
 		Texture scrollerText = new Texture("Scroller.png");
 		final Scroller scrollPane = new Scroller(this, scrollerText, Game.guiZ) {
 					@Override
@@ -80,8 +69,37 @@ public class ShopScene extends GameWindowedGUIScene {
 		scrollPane.setRange(74, 454);
 		scrollPane.setPosition(35, 454);
 		Add(scrollPane);
+		drawTrainsScrollpane();
+	}
+	
+	public void drawTrainsScrollpane()
+	{
+		paneType = "Train";
+		pane.clear();
+		
+		Texture scrollPaneBackgroundText = new Texture("Trains_Scrollpane_Background.png");
+		scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
+		scrollPaneBackground.setSize(922,800);
+		scrollPaneBackground.setLocalPosition(0, 0);
+		pane.Add(scrollPaneBackground);
+		
+		
 		
 		drawTrainButtons();
+	}
+	
+	public void drawResourceScrollPane()
+	{
+		paneType = "Resource";
+		pane.clear();
+		
+		Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png");
+		scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
+		scrollPaneBackground.setSize(922,800);
+		scrollPaneBackground.setLocalPosition(0, 0);
+		pane.Add(scrollPaneBackground);
+		
+		drawResourceButtons();
 	}
 	
 	public void drawTrainButtons()
@@ -248,8 +266,65 @@ public class ShopScene extends GameWindowedGUIScene {
 				// ---------------------
 	}
 	
+	public void drawResourceButtons()
+	{
+		Texture buyButtonText = new Texture("buy_bg.png");
+		Texture emptyButtonText = new Texture("sell_bg.png");
+		Texture LabelText = new Texture("Clear_Button.png");
+		fuelLabel = new Label(this, LabelText, Label.genericFont(Color.BLUE, 40));
+		fuelLabel.setText("Fuel Reserve: " + parentGame.fuel);
+		fuelLabel.setLocalPosition(65, 800);
+		fuelLabel.setAlignment(0);
+		pane.Add(fuelLabel);
+		fuelPriceLabel = new Label(this, LabelText, Label.genericFont(Color.BLUE, 40));
+		fuelPriceLabel.setText("Price per 100 fuel: " + parentGame.crPer100Fuel + "cr");
+		fuelPriceLabel.setLocalPosition(65, 740);
+		fuelPriceLabel.setAlignment(0);
+		pane.Add(fuelPriceLabel);
+		fuelButton = new LabelButton(this) {
+			@Override
+			public void onClickEnd()
+			{
+				if(parentGame.fuel >= 100)
+				{
+					if(parentGame.activePlayer().getMoney() >= parentGame.crPer100Fuel)
+					{
+						Game.pushScene(parentGame.makeDialogueScene("Fuel bought!"));
+						parentGame.activePlayer().setMoney(parentGame.activePlayer().getMoney() - parentGame.crPer100Fuel);
+						parentGame.activePlayer().setFuel(parentGame.activePlayer().getFuel() + 100);
+						parentGame.fuel += -100;
+					}
+					else
+					{
+						Game.pushScene(parentGame.makeDialogueScene("Not enough money!"));
+					}
+				}
+			}
+		};
+		if(parentGame.fuel < 100)
+		{
+			fuelButton.setTexture(emptyButtonText);
+			fuelButton.setText("Sold Out");
+		}
+		else
+		{
+			fuelButton.setTexture(buyButtonText);
+			fuelButton.setText("Buy");
+		}
+		fuelButton.setLocalPosition(65, 650);
+		fuelButton.setSize(115, 34);
+		fuelButton.setAlignment(1);
+		fuelButton.setAlpha(1);
+		fuelButton.setFont(Label.genericFont(Color.WHITE, 22));
+		pane.Add(fuelButton);
+
+	}
+	
 	public void refreshButtons()
 	{
+		if(paneType.equals("Train"))
+		{
+		//If we are in the trains pane, refresh train buttons
 		Player activePlayer = parentGame.activePlayer();
 		Texture buyButtonText = new Texture("buy_bg.png");
 		Texture sellButtonText = new Texture("sell_bg.png");
@@ -334,6 +409,26 @@ public class ShopScene extends GameWindowedGUIScene {
 		{
 			kingButton.setTexture(buyButtonText);
 			kingButton.setText("Buy: 1000cr");
+		}
+		}
+		else if (paneType.equals("Resource"))
+		{
+
+			Texture buyButtonText = new Texture("buy_bg.png");
+			Texture emptyButtonText = new Texture("sell_bg.png");
+			//If we are in the resource pane, refresh resource buttons
+			if(parentGame.fuel < 100)
+			{
+				fuelButton.setTexture(emptyButtonText);
+				fuelButton.setText("Sold Out");
+			}
+			else
+			{
+				fuelButton.setTexture(buyButtonText);
+				fuelButton.setText("Buy");
+			}
+			fuelLabel.setText("Fuel Reserve: " + parentGame.fuel);
+			fuelPriceLabel.setText("Price per 100 fuel: " + parentGame.crPer100Fuel + "cr");
 		}
 	}
 
@@ -453,23 +548,11 @@ public class ShopScene extends GameWindowedGUIScene {
 	{
 		System.out.println("trainPressed");
 		
+		this.drawTrainsScrollpane();
+		this.refreshButtons();
 		// Create trains texture and set shop window background to be trains.
 		Texture trainsText = new Texture("Shop_Trains.png");
 		shop.setTexture(trainsText);
-		// ---------------------
-		
-		// Create trains scrollpane background texture and assign to the scrollpane
-		Texture scrollPaneBackgroundText = new Texture("Trains_Scrollpane_Background.png");
-		scrollPaneBackground.setTexture(scrollPaneBackgroundText);
-		// ---------------------
-		
-		// Set buy/sell buttons to be visible
-		steamButton.setAlpha(1);
-		dieselButton.setAlpha(1);
-		electricButton.setAlpha(1);
-		nuclearButton.setAlpha(1);
-		magLevButton.setAlpha(1);
-		kingButton.setAlpha(1);
 		// ---------------------
 		
 	}
@@ -484,24 +567,10 @@ public class ShopScene extends GameWindowedGUIScene {
 	public void resourcePressed()
 	{
 		System.out.println("resourcePressed");
-		
+		this.drawResourceScrollPane();
 		// Create resources texture and set shop window background to be resources.
 		Texture resourcesText = new Texture("Shop_Resources.png");
 		shop.setTexture(resourcesText);
-		// ---------------------
-		
-		// Create resources scrollpane background texture and assign to the scrollpane
-		Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png");
-		scrollPaneBackground.setTexture(scrollPaneBackgroundText);
-		// ---------------------
-		
-		// Set buy/sell buttons to be transparent
-		steamButton.setAlpha(0);
-		dieselButton.setAlpha(0);
-		electricButton.setAlpha(0);
-		nuclearButton.setAlpha(0);
-		magLevButton.setAlpha(0);
-		kingButton.setAlpha(0);
 		// ---------------------
 		
 	}

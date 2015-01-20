@@ -1,6 +1,7 @@
 package com.turkishdelight.taxe;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
@@ -173,27 +174,40 @@ public class Scene implements InputProcessor{
 	//This method is called when the mouse is clicked up. The location of the mouse click is sent to the method as parameters
 	public void onClickEnd(int posX, int posY)
 	{
-		//System.out.println(posX + ", " + posY);
-		for(Clickable item : clickAbleObjects)
+		try
 		{
-			//Clicks for pane children are handled by the pane itself
-			if(!item.isPaneChild())
+			for(Clickable item : clickAbleObjects)
 			{
-				item.clickEnd(posX, posY);
+				//Clicks for pane children are handled by the pane itself
+				if(!item.isPaneChild())
+				{
+					item.clickEnd(posX, posY);
+				}
 			}
+		}
+		catch (ConcurrentModificationException e)
+		{
+			//We catch concurrent exceptions for when we clear the scroll pane
 		}
 	}
 	
 	//This method is called when the mouse is clicked down. The location of the mouse click is sent to the method as parameters
 	public void onClickStart(int posX, int posY)
 	{
-		for(Clickable item : clickAbleObjects)
+		try
 		{
-			//Clicks for pane children are handled by the pane itself
-			if(!item.isPaneChild())
+			for(Clickable item : clickAbleObjects)
 			{
-				item.clickStart(posX, posY);
+				//Clicks for pane children are handled by the pane itself
+				if(!item.isPaneChild())
+				{
+					item.clickStart(posX, posY);
+				}
 			}
+		}
+		catch (ConcurrentModificationException e)
+		{
+			//We catch concurrent exceptions for when we clear the scroll pane
 		}
 	}
 	

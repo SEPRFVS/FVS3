@@ -3,9 +3,9 @@ package com.turkishdelight.taxe.routing;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.turkishdelight.taxe.Event;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
+import com.turkishdelight.taxe.goals.Event;
 import com.turkishdelight.taxe.scenes.DialogueScene;
 import com.turkishdelight.taxe.scenes.GameScene;
 import com.turkishdelight.taxe.worldobjects.Junction;
@@ -181,11 +181,8 @@ public class Train extends AiSprite {
 
 	public void atStation(){
 		/// method called when train is at a station
-		Event stationEvent = new Event();
-		stationEvent.EventType = "Arrival";
-		stationEvent.TrainType = getName();
-		stationEvent.Station = getStation().getName();
-		stationEvent.TrainCarriages = this.getCarriage().getCarriageCount();
+		Event stationEvent = new Event(this, "Arrival", this.getCarriage().getCarriageCount(), getStation().getName());
+		parentScene.events.pushEvent(stationEvent);
 	}
 
 	protected void updatePosition() {float totalReliability = (float) ((reliabilityUpgrade) ? reliability*RELIABILITY_UPGRADE : reliability);

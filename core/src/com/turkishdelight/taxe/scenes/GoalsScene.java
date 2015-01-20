@@ -1,10 +1,13 @@
 package com.turkishdelight.taxe.scenes;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.SpriteComponent;
+import com.turkishdelight.taxe.goals.Goal;
 import com.turkishdelight.taxe.guiobjects.Button;
 import com.turkishdelight.taxe.guiobjects.Label;
 import com.turkishdelight.taxe.guiobjects.Pane;
@@ -15,6 +18,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 	SpriteComponent goals;
 	SpriteComponent scrollPaneBackground;
 	Pane pane;
+	String paneType = "Current";
 	
 	public GoalsScene(GameScene parent, Player p1, Player p2)
 	{
@@ -43,12 +47,6 @@ public class GoalsScene extends GameWindowedGUIScene {
 		pane.setPosition(50, 485 - pane.getHeight());
 		Add(pane);
 		
-		Texture scrollPaneBackgroundText = new Texture("location.png"); //TODO needs Obstacles_Scrollpane_Background
-		scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
-		scrollPaneBackground.setSize(922,800);
-		scrollPaneBackground.setLocalPosition(0, 0);
-		pane.Add(scrollPaneBackground);
-		
 		//Min Y is the position the pane must be in to show it's lowest content
 		//Max Y is the position the pane must be in to show it's highest content
 		final float minY = 73;
@@ -73,22 +71,51 @@ public class GoalsScene extends GameWindowedGUIScene {
 	
 	public void drawCurrentGoals()
 	{
+		drawGoals(parentGame.activeGoals);
+		paneType = "Current";
+	}
+	
+	public void drawCompleteGoals()
+	{
+		drawGoals(parentGame.activePlayer().completeGoals);
+		paneType = "Complete";
+	}
+	
+	public void drawIncompleteGoals()
+	{
+		drawGoals(parentGame.activePlayer().failedGoals);
+		paneType = "Incomplete";
+	}
+	
+	public void drawGoals(ArrayList<Goal> goalArray)
+	{
+		System.out.println("Drawing goals");
+		pane.clear();
 		// Loop through number of current goals in array and display in same number of labels displayed at correct y Coord
 		int yCoord = 770;
-		for (int i = 0; i < 8; i++)
+		goalArray.trimToSize();
+		
+		Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png"); //TODO needs Obstacles_Scrollpane_Background
+		scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
+		scrollPaneBackground.setSize(922,800);
+		scrollPaneBackground.setLocalPosition(0, 0);
+		pane.Add(scrollPaneBackground);
+		
+		
+		for (int i = 0; (i < 8 && i < goalArray.size()); i++)
 		{
 			// Main Objective label
 			Texture labelText = new Texture("Clear_Button.png");
 			Label mainObjectiveLabel = new Label(this, labelText, Label.genericFont(Color.BLACK, 30), Game.goalsZ);
-			mainObjectiveLabel.setText("Send a train from London to Rome through Paris");
+			mainObjectiveLabel.setText(goalArray.get(i).mainObjective.toString());
 			mainObjectiveLabel.setLocalPosition(20, yCoord);
 			mainObjectiveLabel.setAlignment(0);
 			pane.Add(mainObjectiveLabel);
 			// ---------------------
 			
-			// Main Objective Points Label
+			// Main Objective Points Label. Score is TODO so hard value used for this
 			Label mainObjectivePointsLabel = new Label(this, labelText, Label.genericFont(Color.BLUE, 30), Game.goalsZ);
-			mainObjectivePointsLabel.setText("100pts");
+			mainObjectivePointsLabel.setText("0pts");
 			mainObjectivePointsLabel.setLocalPosition(700, yCoord);
 			mainObjectivePointsLabel.setAlignment(0);
 			pane.Add(mainObjectivePointsLabel);
@@ -96,7 +123,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Main Objective Money Label
 			Label mainObjectiveMoneyLabel = new Label(this, labelText, Label.genericFont(Color.MAROON, 30), Game.goalsZ);
-			mainObjectiveMoneyLabel.setText("100cr");
+			mainObjectiveMoneyLabel.setText(String.valueOf(goalArray.get(i).mainObjective.getMoneyReward())  + "cr");
 			mainObjectiveMoneyLabel.setLocalPosition(850, yCoord);
 			mainObjectiveMoneyLabel.setAlignment(0);
 			pane.Add(mainObjectiveMoneyLabel);
@@ -104,7 +131,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Second Objective Label
 			Label secondObjectiveLabel = new Label(this, labelText, Label.genericFont(Color.GRAY, 20), Game.goalsZ);
-			secondObjectiveLabel.setText("Train must be Diesel");
+			secondObjectiveLabel.setText(goalArray.get(i).sideObjective1.toString());
 			secondObjectiveLabel.setLocalPosition(20, yCoord - 35);
 			secondObjectiveLabel.setAlignment(0);
 			pane.Add(secondObjectiveLabel);
@@ -112,7 +139,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Second Objective Points Label
 			Label secondObjectivePointsLabel = new Label(this, labelText, Label.genericFont(Color.BLUE, 20), Game.goalsZ);
-			secondObjectivePointsLabel.setText("+30pts");
+			secondObjectivePointsLabel.setText("0pts");
 			secondObjectivePointsLabel.setLocalPosition(700, yCoord - 35);
 			secondObjectivePointsLabel.setAlignment(0);
 			pane.Add(secondObjectivePointsLabel);
@@ -120,7 +147,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Second Objective Money Label
 			Label secondObjectiveMoneyLabel = new Label(this, labelText, Label.genericFont(Color.MAROON, 20), Game.goalsZ);
-			secondObjectiveMoneyLabel.setText("+20cr");
+			secondObjectiveMoneyLabel.setText(String.valueOf(goalArray.get(i).sideObjective1.getMoneyReward())  + "cr");
 			secondObjectiveMoneyLabel.setLocalPosition(850, yCoord - 35);
 			secondObjectiveMoneyLabel.setAlignment(0);
 			pane.Add(secondObjectiveMoneyLabel);
@@ -128,7 +155,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Third Objective Label
 			Label thirdObjectiveLabel = new Label(this, labelText, Label.genericFont(Color.GRAY, 20), Game.goalsZ);
-			thirdObjectiveLabel.setText("Train must have 4 carriages");
+			thirdObjectiveLabel.setText(goalArray.get(i).sideObjective2.toString());
 			thirdObjectiveLabel.setLocalPosition(20, yCoord - 60);
 			thirdObjectiveLabel.setAlignment(0);
 			pane.Add(thirdObjectiveLabel);
@@ -136,7 +163,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Third Objective Points Label
 			Label thirdObjectivePointsLabel = new Label(this, labelText, Label.genericFont(Color.BLUE, 20), Game.goalsZ);
-			thirdObjectivePointsLabel.setText("+40pts");
+			thirdObjectivePointsLabel.setText("0pts");
 			thirdObjectivePointsLabel.setLocalPosition(700, yCoord - 60);
 			thirdObjectivePointsLabel.setAlignment(0);
 			pane.Add(thirdObjectivePointsLabel);
@@ -144,7 +171,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Third Objective Money Label
 			Label thirdObjectiveMoneyLabel = new Label(this, labelText, Label.genericFont(Color.MAROON, 20), Game.goalsZ);
-			thirdObjectiveMoneyLabel.setText("+40cr");
+			thirdObjectiveMoneyLabel.setText(String.valueOf(goalArray.get(i).sideObjective2.getMoneyReward()) + "cr");
 			thirdObjectiveMoneyLabel.setLocalPosition(850, yCoord - 60);
 			thirdObjectiveMoneyLabel.setAlignment(0);
 			pane.Add(thirdObjectiveMoneyLabel);
@@ -183,7 +210,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 				completePressed();
 			}
 		};
-		completeButton.setPosition(608, 518);
+		completeButton.setPosition(798, 518);
 		completeButton.setSize(180, 70);
 		completeButton.setTexture(buttonText);
 		Add(completeButton);
@@ -197,7 +224,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 				incompletePressed();
 			}
 		};
-		incompleteButton.setPosition(798, 518);
+		incompleteButton.setPosition(608, 518);
 		incompleteButton.setSize(180, 70);
 		incompleteButton.setTexture(buttonText);
 		Add(incompleteButton);
@@ -228,6 +255,8 @@ public class GoalsScene extends GameWindowedGUIScene {
 		Texture currentText = new Texture("Goals_Current.png");
 		goals.setTexture(currentText);
 		// ---------------------
+		drawCurrentGoals();
+		paneType = "Current";
 		
 	}
 	
@@ -236,9 +265,11 @@ public class GoalsScene extends GameWindowedGUIScene {
 		System.out.println("completePressed");
 		
 		// Create completes texture and set goals window background to be completes.
-		Texture completeText = new Texture("Goals_Incomplete.png");
+		Texture completeText = new Texture("Goals_Complete.png");
 		goals.setTexture(completeText);
 		// ---------------------
+		drawCompleteGoals();
+		paneType = "Complete";
 		
 	}
 	
@@ -247,9 +278,11 @@ public class GoalsScene extends GameWindowedGUIScene {
 		System.out.println("incompletePressed");
 		
 		// Create incompletes texture and set goals window background to be incompletes.
-		Texture incompletesText = new Texture("Goals_Complete.png");
+		Texture incompletesText = new Texture("Goals_InComplete.png");
 		goals.setTexture(incompletesText);
 		// ---------------------	
+		drawIncompleteGoals();
+		paneType = "Incomplete";
 	}
 	
 	@Override
@@ -257,5 +290,26 @@ public class GoalsScene extends GameWindowedGUIScene {
 	{
 		System.out.println("goalsToolbarPressed");
 		//DO Nothing
+	}
+	
+	//Override focus to update values
+	@Override
+	public void onFocusGained()
+	{
+		//Ensure goals are updated
+		parentGame.updateGoals();
+		System.out.println("Focus Gained: " + paneType);
+		if(paneType.equals("Current"))
+		{
+			drawCurrentGoals();
+		}
+		else if(paneType.equals("Complete"))
+		{
+			drawCompleteGoals();
+		}
+		else if(paneType.equals("Incomplete"))
+		{
+			drawIncompleteGoals();
+		}
 	}
 }
