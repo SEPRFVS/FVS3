@@ -19,6 +19,7 @@ public Goal(GameScene parentGame, Objective main, Objective side1, Objective sid
 	mainObjective = main;
 	sideObjective1 = side1;
 	sideObjective2 = side2;
+	eventIndex = parentGame.getEventHandler().getIndex();
 }
 
 //Getters and setters for objectives
