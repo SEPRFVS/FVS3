@@ -13,7 +13,7 @@ This code is built using the framework LibGDX. This framework runs on Gradle (it
 The main folder for editing the program code is: core/src/com/turkishdelight/taxe
 Graphical assets are stored in: core/assets
 
-There is a .jar packaged up to run the program in the root folder of this git repo.
+A downloadable .jar file is available to http://eurotraingame.co.uk
 
 ## Tips
 
