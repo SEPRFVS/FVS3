@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 
 public class EventHandler {
-	
+//The event handler class acts as a list that can be pushed to, with an index viewable. This acts as a log which
+//Cannot have Events removes
 private int index = 0;
 private ArrayList<Event> Events = new ArrayList<Event>();
 

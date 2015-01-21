@@ -3,7 +3,8 @@ package com.turkishdelight.taxe.goals;
 import com.turkishdelight.taxe.Player;
 
 public class EmptyObjective extends Objective {
-
+	//This class is a subchild of objective. It simply acts as a blank empty objective
+	
 	public static Objective generate()
 	{
 		return new EmptyObjective();

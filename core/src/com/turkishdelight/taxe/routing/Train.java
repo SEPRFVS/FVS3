@@ -1,5 +1,7 @@
 package com.turkishdelight.taxe.routing;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -63,6 +65,17 @@ public class Train extends AiSprite {
 		public float getReliability()
 		{
 			return reliability;
+		}
+		
+		public static ArrayList<Type> getEnumConstants() {
+			ArrayList<Type> types = new ArrayList<Type>();
+			types.add(Type.STEAM);
+			types.add(Type.DIESEL);
+			types.add(Type.ELECTRIC);
+			types.add(Type.MAG_LEV);
+			types.add(Type.NUCLEAR);
+			types.add(Type.THE_KING);
+			return types;
 		}
 
 	}
@@ -283,6 +296,18 @@ public class Train extends AiSprite {
 		} else {
 			// shouldnt occur in normal route selection, for debugging only
 			System.out.println("Invalid route, must start from trains current station");
+		}
+	}
+	
+	public Route getRoute()
+	{
+		if(route != null)
+		{
+			return route;
+		}
+		else
+		{
+			return null;
 		}
 	}
 

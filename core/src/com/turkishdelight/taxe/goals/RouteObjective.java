@@ -7,6 +7,9 @@ import com.turkishdelight.taxe.routing.AiSprite;
 import com.turkishdelight.taxe.routing.Train;
 
 public class RouteObjective extends ArrivalObjective{
+	//This class extends ArrivalObjective, adding a start criteria as well as an end criteria so that
+	//The player must pass a train along a route as apposed to sending it to a single point
+	
 	//This variable stores the first station the player must reach for this objective
 	private String startStation = "";
 	//This array list stores the players who have completed this objective
@@ -23,6 +26,7 @@ public class RouteObjective extends ArrivalObjective{
 		return getGoalText() + startStation + " and " + getDestination();
 	}
 	
+	//Generate method creates a default instance of this class
 	public static Objective generate()
 	{
 		String station1 = getRandomStation();
@@ -42,6 +46,7 @@ public class RouteObjective extends ArrivalObjective{
 		this.startStation = startStation;
 	}
 	
+	//This method checks if a specific train is marked as active
 	public boolean isActive(Train tr)
 	{
 		for(Train t : activeTrains)
@@ -54,11 +59,14 @@ public class RouteObjective extends ArrivalObjective{
 		return false;
 	}
 	
+	//Register a new train as active
 	void registerActiveTrain(Train tr)
 	{
 		activeTrains.add(tr);
 	}
 	
+	//This method builds upon that of ArrivalObjective, adding in the necessity for a train to have passed through the first location in
+	//Order to be eligible to fill the criteria and complete the objective.
 	@Override
 	public boolean fillsCompleteCriteria(Player pl, EventHandler eventLog)
 	{
@@ -74,7 +82,7 @@ public class RouteObjective extends ArrivalObjective{
 				System.out.println("First location reached by " + e.train.getName());
 				registerActiveTrain(e.train);
 			}
-			else
+			else if (isActive(e.train))
 			{
 			System.out.println("Checking event " + e.Station + " vs. " + this.getDestination());
 			//Check for the train in the playerPossessions to see if the player owns that train

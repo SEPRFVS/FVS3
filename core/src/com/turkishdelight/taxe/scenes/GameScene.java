@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -60,7 +65,7 @@ public class GameScene extends GameGUIScene {
 	
 	private LabelButton confirmRouteSelectionButton;
 	private LabelButton routeSelectionButton;
-	protected boolean isSelectingRoute = false;													// boolean that says whether the playyer is currently in route selection mode
+	protected boolean isSelectingRoute = false;													// boolean that says whether the player is currently in route selection mode
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
 	private int newRouteDistance;			
@@ -69,8 +74,31 @@ public class GameScene extends GameGUIScene {
 
 	public GameScene(Player player1In, Player player2In){
 		super(player1In, player2In, false, null);
+		player1In.setActiveGame(this);
+		player2In.setActiveGame(this);
 		player1Go = true;
 		delayedCreate();
+	}
+	
+	//Constructor for loading a game. While the players are loaded before the game is created, further data must be loaded afterwards
+	public GameScene(Player loadedPlayer, Player loadedPlayer2, String gameData)
+	{
+		this(loadedPlayer, loadedPlayer2);
+		System.out.println("Loading game!");
+		loadData(gameData);
+	}
+	
+	public Train.Type getTrainInstanceByName(String name)
+	{
+		for(Train.Type t : Train.Type.getEnumConstants())
+		{
+			System.out.println(t.getName() + " compared to " + name);
+			if(t.getName().equals(name))
+			{
+				return t;
+			}
+		}
+		return null;
 	}
 	
 	public Train getSelectedTrain(){
@@ -325,7 +353,6 @@ public class GameScene extends GameGUIScene {
 		l2.addConnection(l1, path2); 
 	}
 	
-	@SuppressWarnings("unused")
 	private Route restoreRoute(String string) {
 		// creates a route from a string of form "Routelocation1Routelocation2"
 		// Assumes valid input string
@@ -993,7 +1020,6 @@ public class GameScene extends GameGUIScene {
 		System.out.println("shopToolbarPressed");
 		if (!isSelectingRoute)
 			Game.pushScene(shopScene);
-			//Switch to shop scene
 		
 	}
 	
@@ -1022,12 +1048,14 @@ public class GameScene extends GameGUIScene {
 
 	}
 	
+	//This method simply removes the necessary to recreate the dialogue scene by reusing it
 	public Scene makeDialogueScene(String text)
 	{
 		dialogueScene.setText(text);
 		return dialogueScene;
 	}
 	
+	//This method extends cleanup to nullify scenes
 	public void cleanup()
 	{
 		this.goalsScene.parentGame = null;
@@ -1049,4 +1077,160 @@ public class GameScene extends GameGUIScene {
 		System.out.println("Regenerating fuel price:" + priceRatio);
 		this.crPer100Fuel = (int)(10 * priceRatio);
 	}
+	
+	//-----------//
+	//Methods for loading and saving the game
+	//-----------//
+	
+	//This method saves the game
+	public void save()
+	{
+		//We separate our players' data and the game data with "!"
+		//Individual items of data within this are comma delimited
+		String saveString = getPlayerString(getPlayer1()) + "!" + getPlayerString(getPlayer2());
+		//Append whose turn it is
+		if(this.activePlayer().equals(getPlayer1()))
+		{
+			saveString += "!1";
+		}
+		else
+		{
+			saveString += "!2";
+		}
+		//Append game fuel. We do not to store the fuel price as this can be regenerated
+		saveString += "," + fuel;
+		
+		//Get a file location to save to
+		String locRoot = ""; //Local root set by LibGDX
+		String loadFilePath = ""; //Used by the File Chooser to pass path to libGDX FileHandle
+		
+		//Create filter so only .taxe files may be saved
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("TaxE Saves", "taxe");	
+				
+		//Instantiate new JFileChooser, default directory the local root
+		JFileChooser chooser = new JFileChooser(locRoot);
+				
+		//Apply filter created above
+		chooser.setAcceptAllFileFilterUsed(true);
+		chooser.addChoosableFileFilter(filter);
+		chooser.setFileFilter(filter); 
+		
+		// Open Dialog for File Choosing and assign absolute path to loadFilePath
+		int returnVal = chooser.showOpenDialog(chooser);
+			  if(returnVal == JFileChooser.APPROVE_OPTION) {
+			     loadFilePath = chooser.getSelectedFile().getAbsolutePath();
+			  }
+			  else {
+			  	return;
+		   }
+		if(!loadFilePath.endsWith(".taxe"))
+		{
+			loadFilePath += ".taxe";
+		}
+		   
+	    //Load file into libgdx's FileHandle System using absolute path.
+	    //Have to create a new FileHandle loadedFromChooser.. Doesn't work without this
+		FileHandle loadedFromChooser = Gdx.files.absolute(loadFilePath);
+		
+		//We save the file
+		loadedFromChooser.writeString(saveString, false);
+		
+		//Finally notify the player
+
+		Game.pushScene(makeDialogueScene("Game Saved!"));
+	}
+	
+	//This method generates a store-able string of data representing a specific player
+	public String getPlayerString(Player pl)
+	{
+		//Firstly we store the name, money, fuel and score of the player in a comma delimited string
+		String ret = pl.getName() + "," + pl.getMoney() + "," + pl.getFuel() + "," + pl.getScore();
+		//Add a string representation of each train to the return string, still comma delimited
+		for(AiSprite p : pl.getAiSprites())
+		{
+			//A train's data is delimited with "#"
+			if(p.getClass().getSimpleName().equals("Train"))
+			{
+				Train t = (Train)p;
+				//Store the type of train
+				ret = ret + "," + t.getName();
+				if(t.getRoute() != null)
+				{
+					//If the train has a route, store the route, with a start location, current movement and the waypoint it has reached
+					ret = ret + "#" + t.getRoute().getStartLocation().getName() + "#" + t.getCurrent() + "#" + String.valueOf(t.getWaypoint()) + "#" + t.getRouteName();
+				}
+				else
+				{
+					//I the train has no route, simply store it's location
+					ret = ret + "#" + t.getStation().getName();
+				}
+			}
+		}
+		return ret;
+	}
+	
+	//This method is called once the game has been instantiated. It populates the game with trains, and sets the fuel and player turn
+	public void loadData(String gameData)
+	{
+		//Split data into player1, player2 and game, marked in the data by "!"
+		String player1Data = gameData.split("!")[0];
+		String player2Data = gameData.split("!")[1];
+		String coreData = gameData.split("!")[2];
+		loadPlayerData(getPlayer1(), player1Data);
+		loadPlayerData(getPlayer2(), player2Data);
+		//The core data is comma delimited. The first item is the player turn, the second is the fuel reserve of the game. Then fuel price is regenerated
+		String[] coreDataArr = coreData.split(",");
+		if(coreDataArr[0].equals("0"))
+		{
+			super.player1Active();
+		}
+		else
+		{
+			super.player2Active();
+		}
+		fuel = Integer.valueOf(coreDataArr[1]);
+	}
+	
+	//This method loads train data into a specific player
+	public void loadPlayerData(Player pl, String data)
+	{
+		//The first 4 items of data have already been used to create the player, whose data is comma delimited
+		//The player's possessions are cleared
+		pl.clear();
+		String[] playerData = data.split(",");
+		String[] trainData = new String[playerData.length - 4];
+		int i = 4;
+		//Take every piece of data past the 4th index and store it in a new array: This is an array of data items for specific trains
+		while(i < playerData.length)
+		{
+			trainData[i - 4] = playerData[i];
+			i++;
+		}
+		for(String train : trainData)
+		{
+			System.out.println("Loading train! " + train);
+			//A train's data is delimited using the "#" symbol
+			String[] specificTrainData = train.split("#");
+			for(String d : specificTrainData)
+			{
+				System.out.println("Train" + d);
+			}
+			//We have a choice between a train at a station, which can just be generated, and a train on a route, that must be generated, and then positioned along the route
+			System.out.println("Creating train at station");
+			//If there are only 2 data items for the train, it is at a station, and can be generated The type is stored at 0 index, and start location
+			//At 1st index
+			Train t = generateTrainAndCarriage(pl, getStationByName(specificTrainData[1]), getTrainInstanceByName(specificTrainData[0]));
+			if(specificTrainData.length > 2)
+			{
+				//We are working with a train that is along a route, so we must restore it's route. It's start location is at the 1st index
+				//And the rest of the route is stored at the 4th index
+				Route r = this.restoreRoute(specificTrainData[1] + specificTrainData[4]);
+				//The way point is stored at the 3rd index, and the current value is stored at the 2nd index
+				int waypoint = Integer.valueOf(specificTrainData[3]);
+				float current = Float.valueOf(specificTrainData[2]);
+				t.restoreRoute(r, waypoint, current);
+			}
+		}
+	}
+	
 }

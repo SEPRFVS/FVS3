@@ -20,7 +20,6 @@ public abstract class SelectionScene extends Scene {
 	private ArrayList<LabelButton> labelButtons = new ArrayList<LabelButton>();			// arraylist of labelbuttons- index corresponds to same labelbuttons element in elements
 	// Generic Scene that displays an arraylist, with each element being selectable
 
-	private Texture backText;
 	public SelectionScene(Texture backgroundTexture){
 		onCreate(backgroundTexture);
 	}

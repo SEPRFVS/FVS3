@@ -5,10 +5,17 @@ import com.turkishdelight.taxe.Clickable;
 import com.turkishdelight.taxe.Scene;
 
 public class Scroller extends Clickable {
+	//This class is a type of clickable that moves between 2 locations by being dragged, allowing the implementation of scrolling objects
+	//and panes
+	
+	//These variables store the minimum and maximum location of the scroller between which it can travel
 	private float minVal = 0;
 	private float maxVal = 0;
+	//These variables store the previous tick's mouse position for comparison purpose.
 	private int prevMX = 0;
 	private int prevMY = 0;
+	//This boolean is used to determine the direction in which the scroller moves. If xOrientation is true, it moves along the X,
+	//Otherwise it moves along the Y
 	private boolean xOrientation = false;
 	private boolean clickDown = false;
 	
@@ -16,12 +23,13 @@ public class Scroller extends Clickable {
 		super(parentScene, text, z);
 	}
 	
+	//Getter and setter for range
 	public void setRange(int min, int max)
 	{
 		minVal = min;
 		maxVal = max;
 	}
-	
+		
 	public float getMinVal()
 	{
 		return minVal;
@@ -32,7 +40,7 @@ public class Scroller extends Clickable {
 		return maxVal;
 	}
 	
-	//This method sets the orientation of the scroller. True moves it along the x axis, false moves it along the y
+	//Getter and setter for xOrientation
 	public void setOrientation(boolean xO)
 	{
 		xOrientation = xO;
@@ -43,15 +51,17 @@ public class Scroller extends Clickable {
 		return xOrientation;
 	}
 	
+	//We register when the object has been clicked as the start of it's activity.
 	@Override
 	public void onClickStart()
 	{
 		clickDown = true;
+		//Store the mouse coordinates
 		prevMX = getParentScene().getMouseX();
 		prevMY = getParentScene().getMouseY();
-		System.out.println("clickStart!");
 	}
 	
+	//Whenever the click ends, irregardless of whether it is on the scroller, we end the activity.
 	@Override
 	public boolean clickEnd(int x, int y)
 	{
@@ -64,12 +74,16 @@ public class Scroller extends Clickable {
 	@Override
 	public void update()
 	{
+		//Check if the scroller is active
 		if(clickDown)
 		{
 			if(xOrientation)
 			{
+				//If we are moving on the X axis
+				//Calculate the mouse displacement
 				int disX = getParentScene().getMouseX() - prevMX;
 				this.setX(this.getX() - disX);
+				//Ensure that the scroller is constrained within it's range
 				if(this.getX() < minVal)
 				{
 					this.setX(minVal);
@@ -78,13 +92,17 @@ public class Scroller extends Clickable {
 				{
 					this.setX(maxVal);
 				}
+				//Alert the scroller that there has been movement
 				onMove((this.getX() - minVal) / (maxVal - minVal));
 			}
 			if(!xOrientation)
 			{
+				//If we are moving on the Y axis
+				//Calculate the mouse displacement
 				int disY = getParentScene().getMouseY() - prevMY;
 				System.out.println(getParentScene().getMouseY() + " : " + prevMY);
 				this.setY(this.getY() - disY);
+				//Ensure that the scroller is constrained within it's range
 				if(this.getY() < minVal)
 				{
 					this.setY(minVal);
@@ -93,8 +111,10 @@ public class Scroller extends Clickable {
 				{
 					this.setY(maxVal);
 				}
+				//Alert the scroller that there has been movement
 				onMove((this.getY() - minVal) / (maxVal - minVal));
 			}
+			//Store the mouse position for the next instance of movement.
 			prevMX = getParentScene().getMouseX();
 			prevMY = getParentScene().getMouseY();
 		}

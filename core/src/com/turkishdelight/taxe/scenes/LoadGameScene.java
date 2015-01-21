@@ -301,6 +301,36 @@ public class LoadGameScene extends Scene {
 	// Loads when the 'Load Game' button is pressed, currently just prints to console
 	public void loadGame(){
 		System.out.println("Loading game: " + gameToLoad.name());
+		try
+		{
+			String data = gameToLoad.readString();
+			Player p1 = loadPlayer(data.split("!")[0]);
+			Player p2 = loadPlayer(data.split("!")[1]);
+			Game.setScene(new GameScene(p1, p2, data));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			//Corrupted data, notify the player
+			Game.pushScene(new DialogueScene("Cannot load - Corrupted."));
+		}
+	}
+	
+	public Player loadPlayer(String data)
+	{
+		String[] dataArray = data.split(",");
+		Player newPl = new Player();
+		//Name is stored as the first item in the string
+		newPl.setName(dataArray[0]);
+		//Money is stored as the second item in the string
+		newPl.setMoney(Integer.valueOf(dataArray[1]));
+		//Fuel is stored as the 3rd item in the string
+		newPl.setFuel(Integer.valueOf(dataArray[2]));
+		//Score is stored as the 4th item in the string
+		newPl.setScore(Integer.valueOf(dataArray[3]));
+		//Start location does not matter
+		newPl.setStartLocation("London");
+		return newPl;
 	}
 	
 	

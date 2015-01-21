@@ -10,8 +10,14 @@ import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
 
 public class Pane extends Clickable {
+	//This class implements a componentBatch within a scene, allowing a set of sprites to be repositioned and reordered within a scene.
+	
+	//We store the previous location of the pane in these variables for comparison
 	float previousX = 0;
 	float previousY = 0;
+	//This stores the active sprite components of the scene
+	ComponentBatch components;
+	ArrayList<Clickable> clickAbleObjects = new ArrayList<Clickable>();
 	
 	public Pane(Scene parentScene, int z) {
 		super(parentScene, Button.text, z);
@@ -31,11 +37,6 @@ public class Pane extends Clickable {
 			}
 		};
 	}
-
-
-	//This stores the active sprite components of the scene
-	ComponentBatch components;
-	ArrayList<Clickable> clickAbleObjects = new ArrayList<Clickable>();
 	
 	//This method is used to get the component batch
 	public ComponentBatch getComponents()
@@ -88,6 +89,7 @@ public class Pane extends Clickable {
 		}
 	}
 	
+	//This method unregisters a stored clickable sprite
 	public void removeClickAble(SpriteComponent spriteComp)
 	{
 		if(clickAbleObjects.contains(spriteComp))
@@ -139,6 +141,7 @@ public class Pane extends Clickable {
 		return click;
 	}
 	
+	//This method clears the pane while avoiding concurrent arrays.
 	public void clear()
 	{
 		components.clear();

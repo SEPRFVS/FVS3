@@ -2,7 +2,6 @@ package com.turkishdelight.taxe.scenes;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.turkishdelight.taxe.Game;
-import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.Scene;
 import com.turkishdelight.taxe.SpriteComponent;
 import com.turkishdelight.taxe.guiobjects.Button;
@@ -75,7 +74,7 @@ public class PauseMenuScene extends Scene {
 	public void savePressed()
 	{
 		Game.popScene();
-		Game.pushScene(parentGame.makeDialogueScene("Save feature coming soon!"));
+		parentGame.save();
 		
 	}
 	public void quitPressed()

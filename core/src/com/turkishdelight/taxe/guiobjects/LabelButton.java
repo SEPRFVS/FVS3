@@ -9,7 +9,7 @@ import com.turkishdelight.taxe.Game;
 import com.turkishdelight.taxe.Scene;
 
 public class LabelButton extends Button {
-	//This method extends the button object so that is can have text on top of the texture
+	//This class extends the button object so that it can have text on top of the texture
 	
 	//We store the font, text and text alignment as private variables
 	private BitmapFont font;

@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class SpriteComponent extends Sprite{
+	//This class is an extension of LibGDX's sprite class but implements a Z index, as well as a clickable boolean
+	//For use in scenes, and local positions for when a SpriteComponent is added to a pane instead of a scene
+	
 	//All sprites are by default places at z order of 0
 	private int z = 0;
 	
@@ -26,7 +29,7 @@ public class SpriteComponent extends Sprite{
 		this.parentScene = parentScene;
 	}
 	
-	//Return z
+	//Getter and setter methods for z
 	public int getZ()
 	{
 		return z;
@@ -76,20 +79,20 @@ public class SpriteComponent extends Sprite{
 	//Each turn for money updates
 	public void updateTurn()
 	{
-		
+		//TODO for specific SpriteComponent Child
 	}
 	
 	//This method is called based on the game ticks
 	public void update()
 	{
-		
+		//TODO for specific SpriteComponent Child
 	}
 	
 	//Local positions are used for when a sprite component is within another pane, not at the top level of a scene
-	
 	private int localX = 0;
 	private int localY = 0;
 	
+	//Setter and getters for the local position
 	public void setLocalPosition(int x, int y)
 	{
 		localX = x;
@@ -106,11 +109,13 @@ public class SpriteComponent extends Sprite{
 		return localY;
 	}
 	
+	//Getter method for the parent Scene
 	public Scene getParentScene()
 	{
 		return parentScene;
 	}
 	
+	//Getter and setter for paneChild. Used to exclude this from normal clickable events.
 	public boolean isPaneChild()
 	{
 		return this.paneChild;
@@ -121,6 +126,7 @@ public class SpriteComponent extends Sprite{
 		this.paneChild = pane;
 	}
 	
+	//Clean this sprite's references to the parent scene.
 	public void cleanup()
 	{
 		this.parentScene = null;

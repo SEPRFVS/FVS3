@@ -1,7 +1,6 @@
 package com.turkishdelight.taxe.routing;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;

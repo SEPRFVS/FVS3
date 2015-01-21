@@ -5,7 +5,9 @@ import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.scenes.GameScene;
 
 public class Goal {
+//The goal class links objectives to the game. Up to 3 objectives make up a goal, and the goal is checked for completion each player turn
 private GameScene parentGame;
+//We store the 3 objectives and the event Index
 public Objective mainObjective;
 public Objective sideObjective1;
 public Objective sideObjective2;

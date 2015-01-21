@@ -76,6 +76,7 @@ public class ComponentBatch {
 		    });
 	}
 
+	//Getter and setter for reorder Z
 	public boolean getReorderZ() {
 		return reorderZ;
 	}
@@ -84,22 +85,14 @@ public class ComponentBatch {
 		this.reorderZ = reorderZ;
 	}
 	
+	//Generic clean up method, simply empties spriteComponents while avoiding concurrent arrays	
 	public void cleanup()
 	{
-		ArrayList<SpriteComponent> toRemove = new ArrayList<SpriteComponent>();
-		for(SpriteComponent c : spriteComponents)
-		{
-			c.cleanup();
-			toRemove.add(c);
-		}
-		for(SpriteComponent c : toRemove)
-		{
-			spriteComponents.remove(c);
-		}
-		toRemove = null;
+		clear();
 		spriteComponents = null;
 	}
 	
+	//Clear method used to reset a ComponentBatch. Empties the spriteComponents Array while avoiding concurrent arrays
 	public void clear()
 	{
 		//Clearing like this avoids concurrent arrays

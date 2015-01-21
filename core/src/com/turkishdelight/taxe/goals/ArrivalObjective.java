@@ -7,10 +7,12 @@ import com.turkishdelight.taxe.Player;
 import com.turkishdelight.taxe.routing.AiSprite;
 
 public class ArrivalObjective extends Objective {
-
+	//This class is a child of objective. It specifically implements the Absolute objective of reaching a location
+	
 	//This variable stores this Objective's target destination
 	private String destination = "";
 	
+	//Constructor sets destination
 	public ArrivalObjective(int money, String goalText, String destination) {
 		super(money, goalText);
 		this.setDestination(destination);
@@ -22,11 +24,13 @@ public class ArrivalObjective extends Objective {
 		return getGoalText() + destination;
 	}
 	
+	//This static method generates an instance of this class according to generic values
 	public static Objective generate()
 	{
 		return new ArrivalObjective(200, "Transport a train to ", getRandomStation());
 	}
 	
+	//This method simply generates a random station name from the list of station
 	public static String getRandomStation()
 	{
 		String[] stations = {"London", "Paris", "Madrid", "Lisbon", "Rome", "Berlin", "Krakow", "Budapest", "Moscow"};

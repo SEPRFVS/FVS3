@@ -8,8 +8,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Scene implements InputProcessor{
-	//This stores the active sprite components of the scene
+	//This class is a generic scene class that is overridden by various children. It creates a scene framework
+	//That allows easy jumping between menus and game
+	
+	//This object stores the active sprite components of the scene
 	ComponentBatch components = new ComponentBatch();
+	//We also store any object that is explictly clickable seperately for reference without searching
 	ArrayList<Clickable> clickAbleObjects = new ArrayList<Clickable>();
 	
 	private int mouseX = 0;
@@ -100,6 +104,10 @@ public class Scene implements InputProcessor{
 	{
 		components.Reorder();
 	}
+	
+	//--------------------------//
+	//The following methods are implemented by implementing input processor. Their names and times of calls are pretty self
+	//Explanatory, but some methods have have logic coded into them
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -112,8 +120,10 @@ public class Scene implements InputProcessor{
 		//No Action
 		if(keycode == Keys.ESCAPE)
 		{
+			//Detect an escape press
 			onEscPressed();
 		}
+		//We update each clickable item with a keystroke
 		for(Clickable item : clickAbleObjects)
 		{
 			item.onKeyPressed(keycode);
@@ -123,12 +133,13 @@ public class Scene implements InputProcessor{
 	
 	public void onEscPressed()
 	{
+		//Generically, if escape is pressed we pop the scene
 		Game.popScene();
 	}
 
 	@Override
 	public boolean keyTyped(char character) {
-		System.out.println("Typed:" + character);
+		//We update each clickable item with the character pressed
 		for(Clickable item : clickAbleObjects)
 		{
 			item.onCharStroke(character);
@@ -145,14 +156,15 @@ public class Scene implements InputProcessor{
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		//We update the mouse position
 		mouseX = screenX;
 		mouseY = screenY;
-		//No Action
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
+		//We update the mouse position
 		mouseX = screenX;
 		mouseY = screenY;
 		return false;
@@ -211,6 +223,7 @@ public class Scene implements InputProcessor{
 		}
 	}
 	
+	//Getter methods for the mouse position
 	public int getMouseX()
 	{
 		return mouseX;
@@ -221,19 +234,22 @@ public class Scene implements InputProcessor{
 		return mouseY;
 	}
 	
+	//This method is called when the scene becomes the currentScene. Useful for scenes that are created and then returned to
 	public void onFocusGained()
 	{
-		
+		//TODO in children
 	}
-	
+
+	//This method is called when the scene is no longer the currentScene. Useful for scenes that are created and then returned to
 	public void onFocusLost()
 	{
-		
+		//TODO in children
 	}
 	
 	//This method is used to cull a scene for memory sake
 	public void cleanup()
 	{
+		//Clean the sprite components, then notify the garbage collector
 		components.cleanup();
 		components = null;
 		clickAbleObjects = null;

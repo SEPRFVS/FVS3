@@ -6,7 +6,7 @@ import com.turkishdelight.taxe.SpriteComponent;
 
 
 public class Clickable extends SpriteComponent {
-	//This class creates a generic class for click able objects
+	//This class creates a generic class for click able objects in the game
 	public Clickable(Scene parentScene, Texture text, int z) {
 		super(parentScene, text, z);
 		this.setClickAble(true);
@@ -68,11 +68,13 @@ public class Clickable extends SpriteComponent {
 		
 	}
 
+	//This method is overwritten to set up events when the a specific character ch is typed
 	public void onCharStroke(char ch)
 	{
 		
 	}
-	
+
+	//This method is overwritten to set up events when a specific keystroke with keycode is pressed
 	public void onKeyPressed(int keycode)
 	{
 		

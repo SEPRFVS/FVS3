@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.turkishdelight.taxe.Player;
 
 public class Objective {
+//This class acts as a base class from which we can create Absolute and Quantifiable objectives in the game	
+	
 //This array list stores the players who have completed this objective
 private ArrayList<Player> completePlayers = new ArrayList<Player>();
 //When a player completes an objective they are rewarded it's value
@@ -73,6 +75,7 @@ public boolean isComplete(Player player)
 	return false;
 }
 
+//This method registers a new player as having completed the objective
 void registerCompletePlayer(Player pl)
 {
 	completePlayers.add(pl);
