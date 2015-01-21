@@ -198,7 +198,7 @@ public class Train extends AiSprite {
 		parentScene.events.pushEvent(stationEvent);
 	}
 
-	protected void updatePosition() {float totalReliability = (float) ((reliabilityUpgrade) ? reliability*RELIABILITY_UPGRADE : reliability);
+	public void updatePosition() {float totalReliability = (float) ((reliabilityUpgrade) ? reliability*RELIABILITY_UPGRADE : reliability);
 	if (MathUtils.randomBoolean(totalReliability)) {
 		DialogueScene dialogueScene = new DialogueScene("Broken down train!");
 		dialogueScene.setText("Broken down train!");
@@ -292,7 +292,7 @@ public class Train extends AiSprite {
 			routeDistance = 0;
 			pathDistance =0;
 			completed = false;
-			carriage.setRoute(route);
+			carriage.setRoute();
 		} else {
 			// shouldnt occur in normal route selection, for debugging only
 			System.out.println("Invalid route, must start from trains current station");
@@ -328,7 +328,7 @@ public class Train extends AiSprite {
 			routeDistance += route.getConnection(i).getPath().getFinalDistance();
 		}
 		move();
-		carriage.restoreRoute(route, waypoint, current);
+		carriage.restoreRoute();
 	}
 
 	@Override 
