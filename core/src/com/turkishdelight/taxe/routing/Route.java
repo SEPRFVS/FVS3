@@ -32,12 +32,13 @@ public class Route {
 			} else {
 				if (previousLocation.isConnected(location)){
 					this.connections.add(new Connection(location, previousLocation.getCurvedPath(location)));
-					name += location.getName();
+					
 				} else {
 					// if the previous location isnt connected to the current location, invalid route.
-					System.out.println("NOT A VALID ROUTE"); // be stricter here
+					throw new IllegalArgumentException("Route must be connected");
 				}
 			}
+			name += location.getName();
 			previousLocation = location;	
 			size++;
 		}

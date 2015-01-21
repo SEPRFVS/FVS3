@@ -50,7 +50,6 @@ public class Carriage extends AiSprite {
 				// if next move will go past waypoint
 				prevDistances+= path.getFinalDistance();
 				// if carriage at intermediate waypoint, move to next path and calculate overshootDistance into next route
-				System.out.println("Carriage reached waypoint");
 				float overshootDistance = nextDistance- path.getFinalDistance();
 				waypoint++;
 				connection = route.getConnection(waypoint);
@@ -61,8 +60,6 @@ public class Carriage extends AiSprite {
 			}
 			else if (train.hasCompleted()){
 				// if at final waypoint, fix to final waypoint
-				// may not be being reached?
-				System.out.println("Carriage final waypoint reached");
 				current = path.getTFromDistance(path.getFinalDistance()-SPRITEWIDTH);
 				pathDistance = path.getFinalDistance()-SPRITEWIDTH;
 				routeDistance = prevDistances + pathDistance;
