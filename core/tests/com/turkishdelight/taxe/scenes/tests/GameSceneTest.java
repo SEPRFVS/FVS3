@@ -147,7 +147,7 @@ public class GameSceneTest {
 		newLocations.add((Station) routeLocations.get(5));
 		System.out.println(((Station) routeLocations.get(0)).isConnected((Station) routeLocations.get(4)));
 		Route expectedRoute = new Route(newLocations);
-		assertEquals(expectedRoute, actualRoute);
+		assertEquals(expectedRoute.getName(), actualRoute.getName());
 		
 	}
 	
@@ -197,7 +197,7 @@ public class GameSceneTest {
 	public void testGetStationByNameInvalidName() {
 		// testing getStationByName with a string that isnt a name of any station
 		// will return null station
-		Station station = parentScene.getStationByName("Word");	
+		Station station = (Station) parentScene.getStationByName("Word");	
 		assertNull(station);
 	}
 
@@ -205,7 +205,7 @@ public class GameSceneTest {
 	public void testGetStationByNameValidName() {
 		// testing getStationByName with a string that is a name of a station
 		// will return True, returns london station
-		Station actualStation = parentScene.getStationByName("London");	
+		Station actualStation = (Station) parentScene.getStationByName("London");	
 		Station expectedStation = new Station(parentScene, "London", 210, 390);
 		assertTrue(expectedStation.equals(actualStation));
 	}

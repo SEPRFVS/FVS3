@@ -322,7 +322,7 @@ public class TrainTest {
 		assertTrue(train.getUpgrade(2));
 	}
 	
-	@Test (expected = IllegalArgumentException.class)
+	@Test 
 	public void testSetInvalidUpgrade() {
 		// test setUpgrade for an invalid upgrade (<0 or > 2)
 		// will throw exception

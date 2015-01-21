@@ -93,7 +93,6 @@ public class GameScene extends GameGUIScene {
 	{
 		for(Train.Type t : Train.Type.getEnumConstants())
 		{
-			System.out.println(t.getName() + " compared to " + name);
 			if(t.getName().equals(name))
 			{
 				return t;
@@ -171,7 +170,6 @@ public class GameScene extends GameGUIScene {
 		Station krakow = createStation(this, "Krakow", 520, 350);
 		Junction junction1 = createJunction(this, "J1", 352, 268);
 		Junction junction2 = createJunction(this, "J2", 455, 321);
-		System.out.println("Locations created");
 		
 		paths = getPaths();
 		
@@ -242,7 +240,6 @@ public class GameScene extends GameGUIScene {
 						Train trainSelected = selectedTrains.get(0);
 						trainSelected.setRoute(new Route(newRoute));
 						trainSelected.getCarriage().setRoute();
-						System.out.println("Route completed: " + newRoute.toString());
 						endSelectingRoute();
 						isSelectingRoute = false;
 					}
@@ -339,7 +336,6 @@ public class GameScene extends GameGUIScene {
 		{
 			if(station.getName().equals(stationName))
 			{
-				System.out.println("Station found: " + stationName);
 				return station;
 			}
 		}
@@ -628,7 +624,6 @@ public class GameScene extends GameGUIScene {
 				((Station) connectedLocation).setFont(Label.genericFont(Color.RED, 20));
 			}
 		}
-		System.out.println("Selected trains: " + selectedTrains.size());
 		
 		// all other trains have alpha lowered to see locations, ensure player knows which train is selected
 		ArrayList<AiSprite> aiSprites = activePlayer().getAiSprites();
@@ -1009,12 +1004,10 @@ public class GameScene extends GameGUIScene {
 	
 	public void updateGoals()
 	{
-		System.out.println("Updating goals. Size" + activeGoals.size());
 		for(Goal g : goalsToDrop)
 		{
 			activeGoals.remove(g);
 		}
-		System.out.println("Size" + activeGoals.size());
 		goalsToDrop = new ArrayList<Goal>();
 		generateGoals();
 	}
@@ -1058,7 +1051,6 @@ public class GameScene extends GameGUIScene {
 	@Override
 	public void goalsToolbarPressed() 
 	{
-		System.out.println("goalsToolbarPressed");
 		if (!isSelectingRoute)
 			Game.pushScene(goalsScene);
 	}
@@ -1066,7 +1058,6 @@ public class GameScene extends GameGUIScene {
 	@Override
 	public void shopToolbarPressed() 
 	{
-		System.out.println("shopToolbarPressed");
 		if (!isSelectingRoute)
 			Game.pushScene(shopScene);
 		
@@ -1075,7 +1066,6 @@ public class GameScene extends GameGUIScene {
 	@Override
 	public void resourcesToolbarPressed() 
 	{
-		System.out.println("resourcesToolbarPressed");
 		if (!isSelectingRoute)
 			Game.pushScene(resourceScene);
 	}
@@ -1123,7 +1113,6 @@ public class GameScene extends GameGUIScene {
 	public void regenerateFuelPrice()
 	{
 		float priceRatio = 10000.0f / fuel;
-		System.out.println("Regenerating fuel price:" + priceRatio);
 		this.crPer100Fuel = (int)(10 * priceRatio);
 	}
 	
@@ -1257,7 +1246,6 @@ public class GameScene extends GameGUIScene {
 		}
 		for(String train : trainData)
 		{
-			System.out.println("Loading train! " + train);
 			//A train's data is delimited using the "#" symbol
 			String[] specificTrainData = train.split("#");
 			for(String d : specificTrainData)
