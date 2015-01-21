@@ -1,5 +1,7 @@
 package com.turkishdelight.taxe.routing;
 
+import java.security.InvalidParameterException;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
@@ -17,8 +19,8 @@ public abstract class AiSprite extends Clickable {
 	private AIType type = AIType.TRAIN;
 	// abstract class for anything that follows a path on every turn (extended by carriage, train)
 	protected Player player; 
-	protected static final int SPRITEWIDTH = 50;		// could change to widths/ heights of corresponding trains
-	protected static final float SPRITEHEIGHT = 20;
+	public static final int SPRITEWIDTH = 50;		// could change to widths/ heights of corresponding trains
+	public static final float SPRITEHEIGHT = 20;
 	protected Route route;							// the complete route from start to end
 	protected Connection connection;				// current connection the Train is on
 	protected int waypoint = 0;						// index of route (which route in route) currently on
@@ -39,6 +41,9 @@ public abstract class AiSprite extends Clickable {
 
 	public AiSprite(Scene parentScene, Texture texture, Player player, Station station) {
 		super(parentScene, texture, Game.objectsZ);
+		if (player == null || station == null){
+			throw new InvalidParameterException();
+		}
 		setSize(SPRITEWIDTH, SPRITEHEIGHT);	
 		setOriginCenter();																	// used for rotation
 		
@@ -46,7 +51,7 @@ public abstract class AiSprite extends Clickable {
 		
 		midSpritex = (int) SPRITEWIDTH/2;  
 		midSpritey = (int) SPRITEHEIGHT/2;
-		Vector2 startLocation = station.getCoords();
+		Vector2 startLocation = station.getPosition();
 		setPosition(startLocation.x-midSpritex, startLocation.y-midSpritey);
 
 		// polygon for collision detection
@@ -58,29 +63,81 @@ public abstract class AiSprite extends Clickable {
 
 	@Override
 	public abstract void updateTurn();
-	protected abstract void updatePosition();
-	public abstract void setRoute(Route route);
-	public abstract void restoreRoute(Route route, int waypoint, float current);
+	public abstract void updatePosition();
 	public abstract int getWeight();
-
+	
+	public Player getPlayer(){
+		return this.player;
+	}
+	
 	public Polygon getPolygon(){
 		return polygon;
 	}
 
+	public Vector2 getPosition(){
+		return new Vector2(getX(), getY());
+	}
+	
+	public void setAiSpritePosition(int x, int y){
+		// sets the image location and polygon location
+		this.setPosition(x, y);
+		this.polygon.setPosition(x, y);
+	}
+	
 	public float getCurrent(){
 		return current;
+	}
+	
+	public void setCurrent(float current){
+		// used purely for testing purposes
+		this.current = current;
+	}
+	
+	public void setPath(CurvedPath path){
+		// used purely for testing purposes
+		this.path = path;
 	}
 	
 	public float getRouteDistance(){
 		return routeDistance;
 	}
+	
+	public float getPathDistance(){
+		return pathDistance;
+	}
+	
+	public Route getRoute(){
+		return route;
+	}
+	
+	public CurvedPath getPath(){
+		return path;
+	}
+	
+	public Connection getConnection(){
+		return connection;
+	}
 
+	public Vector2 getSize(){
+		return new Vector2(SPRITEWIDTH, SPRITEHEIGHT);
+	}
+	
+	public Vector2 getSizeOffset(){
+		// offset applied to centralise the aiSprite
+		return new Vector2(midSpritex, midSpritey);
+	}
+	
+	public boolean hasCompleted(){
+		// has aisprite completed path?
+		return this.completed;
+	}
+	
 	public void stopSprite(){
 		// currently unused, was used in collisions
 		this.hasStopped = true;
 	}
 	
-	protected void move(){
+	public void move(){
 		// calculations for moving sprite, called from updatePosition of aiSprite
 		path.valueAt(out,current);
 		float xposition = out.x - midSpritex;
@@ -103,5 +160,4 @@ public abstract class AiSprite extends Clickable {
 	public void setAIType(AIType type) {
 		this.type = type;
 	}
-
 }

@@ -141,7 +141,7 @@ public class Player {
 		{
 			//If we have passed the checks, we update our money and place the train in the game
 			setMoney(getMoney() - price);
-			s.generateTrainAndCarriage(this, s.getStationByName(station), type);
+			s.generateTrainAndCarriage(this, (Station)s.getStationByName(station), type);
 			return true;
 		}
 	}

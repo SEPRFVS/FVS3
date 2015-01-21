@@ -63,6 +63,7 @@ public class Game extends ApplicationAdapter {
 		gray.setSize(targetWindowsWidth, targetWindowsHeight);
 		gray.setColor(Color.GRAY);
 		gray.setAlpha(0.5f);
+
 	}
 
 	//This method is used to set a scene that has been pushed as the current top scene

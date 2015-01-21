@@ -53,6 +53,10 @@ public class CurvedPath extends CatmullRomSpline<Vector2> {
 		return tvals.get(closestIndex(distance,distances));
 	}
 
+	public Float getT(int i){
+		return tvals.get(i);
+	}
+	
 	public Vector2 getPoint(int i) {
 		return points.get(i);
 	}
@@ -79,24 +83,6 @@ public class CurvedPath extends CatmullRomSpline<Vector2> {
 			}
 		}
 		return i;
-		
-		
-		// more efficient algorithm TODO actually get the closest (max?)
-		/*if (in.size() == 1){
-			return 0;
-		}
-		float min = Integer.MAX_VALUE;
-		int i = in.size()/2;
-		Float currentval = in.get(i);
-		
-		if (currentval == number ) {
-			return i;
-		} else if (currentval > number ){
-			return closestIndex(number, in.subList(0, i));
-		} else {
-			return (closestIndex(number,in.subList(i, in.size())) + i);
-		}	*/
-		
 		
 	}
 
