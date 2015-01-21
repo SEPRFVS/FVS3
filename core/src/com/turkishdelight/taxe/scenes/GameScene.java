@@ -399,8 +399,7 @@ public class GameScene extends GameGUIScene {
 				return null;
 			}
 		}
-		
-		
+		System.out.println(string);
 		Route tempRoute;
 		try {
 			tempRoute = new Route(newRouteLocations);
@@ -1252,6 +1251,7 @@ public class GameScene extends GameGUIScene {
 			{
 				System.out.println("Train" + d);
 			}
+			System.out.println(specificTrainData.length);
 			//We have a choice between a train at a station, which can just be generated, and a train on a route, that must be generated, and then positioned along the route
 			System.out.println("Creating train at station");
 			//If there are only 2 data items for the train, it is at a station, and can be generated The type is stored at 0 index, and start location
@@ -1259,9 +1259,11 @@ public class GameScene extends GameGUIScene {
 			Train t = generateTrainAndCarriage(pl, (Station)getStationByName(specificTrainData[1]), getTrainInstanceByName(specificTrainData[0]));
 			if(specificTrainData.length > 2)
 			{
+				System.out.println("Restoring Train Route");
 				//We are working with a train that is along a route, so we must restore it's route. It's start location is at the 1st index
 				//And the rest of the route is stored at the 4th index
-				Route r = this.restoreRoute(specificTrainData[1] + specificTrainData[4]);
+				Route r = this.restoreRoute(specificTrainData[4]);
+				System.out.println(r.getName());
 				//The way point is stored at the 3rd index, and the current value is stored at the 2nd index
 				int waypoint = Integer.valueOf(specificTrainData[3]);
 				float current = Float.valueOf(specificTrainData[2]);

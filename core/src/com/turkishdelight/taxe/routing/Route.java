@@ -34,6 +34,7 @@ public class Route {
 					this.connections.add(new Connection(location, previousLocation.getCurvedPath(location)));
 					
 				} else {
+					System.out.println("Route connection failing");
 					// if the previous location isnt connected to the current location, invalid route.
 					throw new IllegalArgumentException("Route must be connected");
 				}

@@ -82,7 +82,10 @@ public class LoadGameScene extends Scene {
 		loadGame = new Button(this, clrButton, 152,45) {
 			//Pass load file to game and restore it
 			public void onClickEnd() {
-				loadGame();
+				if(gameToLoad != null)
+				{
+					loadGame();
+				}
 			}
 		};
 		loadGame.setPosition(587,39);
@@ -115,12 +118,13 @@ public class LoadGameScene extends Scene {
 		        }
 		    }
 		}); 
-		
+		Texture label = new Texture("Clear_Button.png");
+		if(files.length > 0)
+		{
 		// Set default game to load as most recently modified (helps user and you, the coder)
 		gameToLoad = files[0];
 		
 		// Clear button overlay
-		Texture label = new Texture("Clear_Button.png");
 		
 		//g1-11 are the buttons, g1 is top, g11 bottom
 		//
@@ -141,9 +145,11 @@ public class LoadGameScene extends Scene {
 		//Draw label
 		Add(g1);
 		labelSelected = g1;
+		}
 		
 		//The rest follow a v. similar pattern!!
-		
+		if(files.length > 1)
+		{
 		g2 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -154,7 +160,9 @@ public class LoadGameScene extends Scene {
 		g2.setPosition(281, 465);
 		g2.setAlignment(0);
 		Add(g2);
-		
+		}
+		if(files.length > 2)
+		{
 		g3 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -165,7 +173,9 @@ public class LoadGameScene extends Scene {
 		g3.setPosition(281, 430);
 		g3.setAlignment(0);
 		Add(g3);
-		
+		}
+		if(files.length > 3)
+		{
 		g4 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -176,7 +186,9 @@ public class LoadGameScene extends Scene {
 		g4.setPosition(281, 395);
 		g4.setAlignment(0);
 		Add(g4);
-		
+		}
+		if(files.length > 4)
+		{
 		g5 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -187,7 +199,9 @@ public class LoadGameScene extends Scene {
 		g5.setPosition(281, 360);
 		g5.setAlignment(0);
 		Add(g5);
-		
+		}
+		if(files.length > 5)
+		{
 		g6 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -198,7 +212,9 @@ public class LoadGameScene extends Scene {
 		g6.setPosition(281, 325);
 		g6.setAlignment(0);
 		Add(g6);
-		
+		}
+		if(files.length > 6)
+		{
 		g7 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -209,7 +225,9 @@ public class LoadGameScene extends Scene {
 		g7.setPosition(281, 290);
 		g7.setAlignment(0);
 		Add(g7);
-		
+		}
+		if(files.length > 7)
+		{
 		g8 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -220,7 +238,9 @@ public class LoadGameScene extends Scene {
 		g8.setPosition(281, 255);
 		g8.setAlignment(0);
 		Add(g8);
-		
+		}
+		if(files.length > 8)
+		{
 		g9 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -231,7 +251,9 @@ public class LoadGameScene extends Scene {
 		g9.setPosition(281, 220);
 		g9.setAlignment(0);
 		Add(g9);
-		
+		}
+		if(files.length > 9)
+		{
 		g10 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -242,7 +264,9 @@ public class LoadGameScene extends Scene {
 		g10.setPosition(281, 185);
 		g10.setAlignment(0);
 		Add(g10);
-		
+		}
+		if(files.length > 10)
+		{
 		g11 = new LabelButton(this, label, 479, 26, Label.genericFont(Color.BLACK, 30)) {
 			public void onClickEnd(){
 				selectLoad(this);
@@ -253,7 +277,7 @@ public class LoadGameScene extends Scene {
 		g11.setPosition(281, 150);
 		g11.setAlignment(0);
 		Add(g11);
-		
+		}
 	}
 	
 	//Changes the colour of the selected save game

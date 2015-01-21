@@ -20,7 +20,7 @@ public class Train extends AiSprite {
 		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 40, 20, 0.3f), 
 		ELECTRIC("Electric", new Texture("elec1.png"), new Texture("elec1Carriage.png"), 1, 160, 10, 0.3f), 
 		NUCLEAR("Nuclear", new Texture("elec2.png"), new Texture("elec2Carriage.png"), 2, 180, 50, 0.002f), 
-		MAG_LEV("Mag", new Texture("mag.png"), new Texture("magCarriage.png"), 3, 200, 4, 0.05f), 
+		MAG_LEV("Mag", new Texture("Mag.png"), new Texture("MagCarriage.png"), 3, 200, 4, 0.05f), 
 		THE_KING("TheKing", new Texture("TheKing.png"), new Texture("TheKingCarriage.png"), 4, 350, 2, 0.02f);
 		private String name;
 		private Texture train;
@@ -322,11 +322,12 @@ public class Train extends AiSprite {
 		// put a train and carriagepartially on a route
 		if (newRoute == null){
 			return;
-		} if (newWaypoint <0 || newCurrent > 1 || newCurrent < 0){
-			throw new IllegalArgumentException("current must be 0 <= c <= 1 , waypoint must be >0");
+		} if (newWaypoint < - 1 || newCurrent > 1 || newCurrent < 0){
+			throw new IllegalArgumentException("current must be 0 <= c <= 1 , waypoint must be > -1");
 		} else if (newWaypoint+2 > newRoute.getSize() ){
 			throw new IllegalArgumentException("waypoint+2 cannot exceed route size");
 		}
+		System.out.println("Attempting Restore");
 		this.route = newRoute;
 		this.waypoint = newWaypoint;
 		this.current = newCurrent;
