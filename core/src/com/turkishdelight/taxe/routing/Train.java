@@ -16,11 +16,11 @@ import com.turkishdelight.taxe.worldobjects.Station;
 public class Train extends AiSprite {
 	public enum Type
 	{
-		STEAM("Steam", new Texture("steam.png"), new Texture("steamCarriage.png"), 1, 25, 20, 0.4f),
-		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 40, 20, 0.3f), 
-		ELECTRIC("Electric", new Texture("elec1.png"), new Texture("elec1Carriage.png"), 1, 160, 10, 0.3f), 
+		STEAM("Steam", new Texture("steam.png"), new Texture("steamCarriage.png"), 1, 25, 20, 0.2f),
+		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 40, 20, 0.1f), 
+		ELECTRIC("Electric", new Texture("elec1.png"), new Texture("elec1Carriage.png"), 1, 160, 10, 0.05f), 
 		NUCLEAR("Nuclear", new Texture("elec2.png"), new Texture("elec2Carriage.png"), 2, 180, 50, 0.002f), 
-		MAG_LEV("Mag", new Texture("Mag.png"), new Texture("MagCarriage.png"), 3, 200, 4, 0.05f), 
+		MAG_LEV("Mag", new Texture("Mag.png"), new Texture("MagCarriage.png"), 3, 200, 4, 0.01f), 
 		THE_KING("TheKing", new Texture("TheKing.png"), new Texture("TheKingCarriage.png"), 4, 350, 2, 0.02f);
 		private String name;
 		private Texture train;
@@ -165,11 +165,13 @@ public class Train extends AiSprite {
 		else if (atStation){
 			if (waypoint == 0 && current == 0){
 				return (Station) route.getStartLocation();
-			} else if (waypoint == 0 && current ==1){
-				return (Station) route.getConnection(waypoint).getTargetLocation();
+			} else if ((waypoint == 0 && current ==1) || completed){
+				return (Station) connection.getTargetLocation();
+			} else {
+				return (Station) route.getConnection((waypoint-1)).getTargetLocation();
 			}
-			return (Station) route.getConnection((waypoint)-1).getTargetLocation();
 		}
+	
 		return null;
 	}
 
