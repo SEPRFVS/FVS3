@@ -278,7 +278,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 		System.out.println("incompletePressed");
 		
 		// Create incompletes texture and set goals window background to be incompletes.
-		Texture incompletesText = new Texture("Goals_InComplete.png");
+		Texture incompletesText = new Texture("Goals_Incomplete.png");
 		goals.setTexture(incompletesText);
 		// ---------------------	
 		drawIncompleteGoals();

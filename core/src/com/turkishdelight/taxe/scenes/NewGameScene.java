@@ -549,6 +549,7 @@ public class NewGameScene extends Scene   {
 	{
 		Player p = new Player();
 		p.setName(playerNameText.getText());
+		//Money and fuel changes with difficulty
 		if(currentDifficultyPlayer.getText().equals("Easy"))
 		{
 			p.setMoney(500);
