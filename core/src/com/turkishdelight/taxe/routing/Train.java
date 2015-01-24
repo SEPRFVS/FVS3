@@ -18,8 +18,8 @@ public class Train extends AiSprite {
 	{
 		STEAM("Steam", new Texture("steam.png"), new Texture("steamCarriage.png"), 1, 25, 20, 0.2f),
 		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 40, 20, 0.1f), 
-		ELECTRIC("Electric", new Texture("elec1.png"), new Texture("elec1Carriage.png"), 1, 160, 10, 0.05f), 
-		NUCLEAR("Nuclear", new Texture("elec2.png"), new Texture("elec2Carriage.png"), 2, 180, 50, 0.002f), 
+		ELECTRIC("Electric", new Texture("electric.png"), new Texture("electricCarriage.png"), 1, 160, 10, 0.05f), 
+		NUCLEAR("Nuclear", new Texture("nuclear.png"), new Texture("nuclearCarriage.png"), 2, 180, 50, 0.002f), 
 		MAG_LEV("Mag", new Texture("Mag.png"), new Texture("MagCarriage.png"), 3, 200, 4, 0.01f), 
 		THE_KING("TheKing", new Texture("TheKing.png"), new Texture("TheKingCarriage.png"), 4, 350, 2, 0.02f);
 		private String name;
