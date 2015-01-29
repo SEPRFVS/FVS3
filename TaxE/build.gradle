@@ -47,6 +47,7 @@ project(":core") {
     sourceSets.test.resources.srcDirs = ["assets/"]
 
     dependencies {
+        compile files('lib/commons-lang3-3.3.2.jar')
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
