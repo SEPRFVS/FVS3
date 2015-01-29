@@ -142,6 +142,7 @@ public class Player {
 		{
 			//If we have passed the checks, we update our money and place the train in the game
 			setMoney(getMoney() - price);
+			//Modify scenes.GameScene.GenerateTrainAndCarriage
 			s.generateTrainAndCarriage(this, (Station)s.getStationByName(station), type);
 			return true;
 		}
@@ -158,7 +159,6 @@ public class Player {
 			Train t = getTrain(name);
 			aiSprites.remove(t);
 			s.Remove(t);
-			s.Remove(t.getCarriage());
 			setMoney(getMoney() + price);
 			return true;
 		}

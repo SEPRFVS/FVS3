@@ -16,24 +16,22 @@ import com.fvs.taxe.worldobjects.Station;
 public class Train extends AiSprite {
 	public enum Type
 	{
-		STEAM("Steam", new Texture("steam.png"), new Texture("steamCarriage.png"), 1, 25, 20, 0.2f),
-		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 40, 20, 0.1f), 
-		ELECTRIC("Electric", new Texture("electric.png"), new Texture("electricCarriage.png"), 1, 160, 10, 0.05f), 
-		NUCLEAR("Nuclear", new Texture("nuclear.png"), new Texture("nuclearCarriage.png"), 2, 180, 50, 0.002f), 
-		MAG_LEV("Mag", new Texture("Mag.png"), new Texture("MagCarriage.png"), 3, 200, 4, 0.01f), 
-		THE_KING("TheKing", new Texture("TheKing.png"), new Texture("TheKingCarriage.png"), 4, 350, 2, 0.02f);
+		STEAM("Steam", new Texture("steam.png"), 1, 25, 20, 0.2f),
+		DIESEL("Diesel", new Texture("diesel.png"), 1, 40, 20, 0.1f), 
+		ELECTRIC("Electric", new Texture("electric.png"), 1, 160, 10, 0.05f), 
+		NUCLEAR("Nuclear", new Texture("nuclear.png"), 2, 180, 50, 0.002f), 
+		MAG_LEV("Mag", new Texture("Mag.png"), 3, 200, 4, 0.01f), 
+		THE_KING("TheKing", new Texture("TheKing.png"), 4, 350, 2, 0.02f);
 		private String name;
 		private Texture train;
-		private Texture carraige;
 		private int weight;
 		private int speed;
 		private int efficiency;
 		private float reliability;
-		private Type(String name, Texture trainText, Texture carraigeText, int weightIn, int speedIn, int efficiencyIn, float reliabilityIn)
+		private Type(String name, Texture trainText, int weightIn, int speedIn, int efficiencyIn, float reliabilityIn)
 		{
 			this.name = name;
 			this.train = trainText;
-			this.carraige = carraigeText;
 			this.weight = weightIn;
 			this.speed = speedIn;
 			this.efficiency = efficiencyIn;
@@ -46,10 +44,6 @@ public class Train extends AiSprite {
 		public Texture getTrainTexture()
 		{
 			return train;
-		}
-		public Texture getCarraigeTexture()
-		{
-			return carraige;
 		}
 		public int getWeight() {
 			return weight;
@@ -88,7 +82,6 @@ public class Train extends AiSprite {
 	private static final double FUEL_UPGRADE = 0.6;
 
 
-	Carriage carriage;								// carriage train is currently connected to - CANNOT BE NULL
 	protected boolean completed;					// has train completed entire route?
 	protected float overshoot;						// amount that the train passes the station by
 	protected float previouscurrent = 0;			// the previous current value for the previous turn- used for distance calculation
@@ -129,14 +122,6 @@ public class Train extends AiSprite {
 		}
 	}
 
-	public void setCarriage(Carriage carriage){
-		this.carriage = carriage;
-	}
-
-	public Carriage getCarriage(){
-		return this.carriage;
-	}
-
 	public int getSpeed(){
 		return (int) speed;
 	}
@@ -146,7 +131,7 @@ public class Train extends AiSprite {
 	}
 
 	public int getWeight(){
-		return weight + carriage.getWeight();
+		return weight;
 	}
 
 	public int getWaypoint() {
@@ -200,7 +185,7 @@ public class Train extends AiSprite {
 
 	public void atStation(){
 		/// method called when train is at a station
-		Event stationEvent = new Event(this, "Arrival", this.getCarriage().getCarriageCount(), getStation().getName());
+		Event stationEvent = new Event(this, "Arrival", getStation().getName());
 		parentScene.events.pushEvent(stationEvent);
 	}
 
@@ -300,7 +285,6 @@ public class Train extends AiSprite {
 			routeDistance = 0;
 			pathDistance =0;
 			completed = false;
-			carriage.setRoute();
 		} else {
 			// shouldnt occur in normal route selection, for debugging only
 			System.out.println("Invalid route, must start from trains current station");
@@ -321,7 +305,7 @@ public class Train extends AiSprite {
 	}
 
 	public void restoreRoute(Route newRoute, int newWaypoint, float newCurrent){
-		// put a train and carriagepartially on a route
+		// put a train partially on a route
 		if (newRoute == null){
 			return;
 		} if (newWaypoint < - 1 || newCurrent > 1 || newCurrent < 0){
@@ -345,7 +329,6 @@ public class Train extends AiSprite {
 			routeDistance += newRoute.getConnection(i).getPath().getFinalDistance();
 		}
 		move();
-		carriage.restoreRoute();
 		if (newCurrent == 0 || newCurrent ==1){
 			atStation = true;
 		} else {
