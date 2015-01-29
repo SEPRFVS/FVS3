@@ -11,6 +11,11 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.fvs.taxe.Game;
 import com.fvs.taxe.Scene;
 import com.fvs.taxe.SpriteComponent;
+import util.Stopwatch;
+import util.Tuple;
+
+import java.util.Dictionary;
+import java.util.HashMap;
 
 public class Label extends SpriteComponent {
 	//This class is used to create sprites with text on top of them, allowing us to add
@@ -20,6 +25,8 @@ public class Label extends SpriteComponent {
 	private BitmapFont font;
 	private String text;
 	private int alignment = 1;
+	private static FreeTypeFontGenerator generator = null;
+	private static HashMap<Tuple<Color, Integer>, BitmapFont> memoizeFont = new HashMap<Tuple<Color, Integer>, BitmapFont>();
 	
 	public Label(Scene parentScene, Texture targText, BitmapFont font) {
 		super(parentScene, targText, Game.shopZ);
@@ -32,8 +39,17 @@ public class Label extends SpriteComponent {
 	//This method creates a new font object of a specific color and size for our default font file GOST.ttf
 	public static BitmapFont genericFont(Color fontColor, int fontSize)
 	{
-		//We use GOST.ttf
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("GOST.ttf"));
+		if (generator == null) {
+			//We use GOST.ttf
+			generator = new FreeTypeFontGenerator(Gdx.files.internal("GOST.ttf"));
+		}
+
+		Tuple<Color, Integer> fontTuple = new Tuple<Color, Integer>(fontColor, fontSize);
+
+		if(memoizeFont.containsKey(fontTuple)) {
+			return memoizeFont.get(fontTuple);
+		}
+
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		
 		//This size of the font is set and the font is generated
@@ -42,7 +58,9 @@ public class Label extends SpriteComponent {
 		
 		//Set the color of the font and return is
 		font.setColor(fontColor);
-		generator.dispose();
+		//generator.dispose();
+		memoizeFont.put(fontTuple, font);
+
 		return font;
 	}
 	

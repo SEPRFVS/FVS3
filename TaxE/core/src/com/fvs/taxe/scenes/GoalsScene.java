@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.PerformanceCounter;
 import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.SpriteComponent;
@@ -12,6 +13,7 @@ import com.fvs.taxe.guiobjects.Button;
 import com.fvs.taxe.guiobjects.Label;
 import com.fvs.taxe.guiobjects.Pane;
 import com.fvs.taxe.guiobjects.Scroller;
+import util.Stopwatch;
 
 public class GoalsScene extends GameWindowedGUIScene {
 	
@@ -90,6 +92,9 @@ public class GoalsScene extends GameWindowedGUIScene {
 	public void drawGoals(ArrayList<Goal> goalArray)
 	{
 		System.out.println("Drawing goals");
+
+		Stopwatch sw = new Stopwatch();
+
 		pane.clear();
 		// Loop through number of current goals in array and display in same number of labels displayed at correct y Coord
 		int yCoord = 770;
@@ -100,12 +105,13 @@ public class GoalsScene extends GameWindowedGUIScene {
 		scrollPaneBackground.setSize(922,800);
 		scrollPaneBackground.setLocalPosition(0, 0);
 		pane.Add(scrollPaneBackground);
-		
-		
+
+		Texture labelText = new Texture("Clear_Button.png");
+
 		for (int i = 0; (i < 8 && i < goalArray.size()); i++)
 		{
 			// Main Objective label
-			Texture labelText = new Texture("Clear_Button.png");
+
 			Label mainObjectiveLabel = new Label(this, labelText, Label.genericFont(Color.BLACK, 30), Game.goalsZ);
 			mainObjectiveLabel.setText(goalArray.get(i).mainObjective.toString());
 			mainObjectiveLabel.setLocalPosition(20, yCoord);
@@ -179,7 +185,10 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Update Y Coordinate
 			yCoord = yCoord - 100;
+
+			sw.marker("end of loop");
 		}
+
 		// ---------------------
 	}
 	
