@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.fvs.taxe.Player;
-import com.fvs.taxe.routing.Carriage;
 import com.fvs.taxe.routing.CurvedPath;
 import com.fvs.taxe.routing.Route;
 import com.fvs.taxe.routing.Train;
@@ -35,7 +34,6 @@ public class TrainTest {
 	private static CurvedPath parisBerlin;
 	private static CurvedPath berlinj1;
 	private Train train;
-	private Carriage carriage;
 	private static Route route1;
 	private static CurvedPath j1Rome;
 	
@@ -109,8 +107,6 @@ public class TrainTest {
 	@Before 
 	public void beforeTest(){
 		train = new Train(parentScene,player1,"train1", texture,station,10,10,10,0f);
-		carriage = new Carriage(parentScene, texture, player1, station, train);
-		train.setCarriage(carriage);
 	}
 	
 	@Test

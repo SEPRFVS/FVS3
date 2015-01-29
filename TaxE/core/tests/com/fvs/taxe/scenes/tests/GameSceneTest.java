@@ -18,7 +18,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.routing.AiSprite;
-import com.fvs.taxe.routing.Carriage;
 import com.fvs.taxe.routing.CurvedPath;
 import com.fvs.taxe.routing.Route;
 import com.fvs.taxe.routing.Train;
@@ -217,10 +216,7 @@ public class GameSceneTest {
 		Player player = new Player();
 		Train expectedTrain = parentScene.generateTrainAndCarriage(player, station, Train.Type.ELECTRIC);
 		assertNotNull(expectedTrain);
-		assertNotNull(expectedTrain.getCarriage());
-		assertEquals(player.getAiSprites().get(0), expectedTrain);
-		assertEquals(player.getAiSprites().get(1), expectedTrain.getCarriage());
-		
+		assertEquals(player.getAiSprites().get(0), expectedTrain);		
 	}
 	
 	@Test
@@ -471,132 +467,5 @@ public class GameSceneTest {
 		expectedCollisions.add(train4);
 		
 		assertEquals(expectedCollisions, actualCollisions);
-	}
-	
-	@Test
-	public void testCalculateCollisionsNoCollision() {
-		// test calculateCollisions with no collision occuring
-		// will return no change in either trains carriages (both will be 3)
-		Player player = new Player();
-		Player otherPlayer = new Player();
-		GameScene scene = new GameScene(player, otherPlayer);
-		Train train1 = new Train(scene, player, "train1", texture, station, 1, 1, 1, 1);
-		Station station2 = new Station(scene, "station2", 10, 10);
-		Train train2 = new Train(scene, otherPlayer, "train2", texture, station2 , 10, 1, 1, 1);
-		Carriage carriage1 = new Carriage(scene, texture, player1, station, train1);
-		Carriage carriage2 = new Carriage(scene, texture, player2, station2, train2);
-		train1.setCarriage(carriage1);
-		train2.setCarriage(carriage2);
-		
-		train1.setPosition(100, 100);
-		train2.setPosition(500, 500);
-		ArrayList<AiSprite> collisions = new ArrayList<AiSprite>();
-		collisions.add(train1);
-		collisions.add(train2);
-		scene.calculateCollisions(collisions);
-		assertEquals(3,carriage1.getCarriageCount());
-		assertEquals(3,carriage2.getCarriageCount());
-	}
-	
-	@Test
-	public void testCalculateCollisionsOneCollision() {
-		// test calculateCollisions with only one collision occuring, between train1 and train
-		// will lower train1's carriage count by 1, as train2 is the heavier train
-		Player player = new Player();
-		Player otherPlayer = new Player();
-		GameScene scene = new GameScene(player, otherPlayer);
-		Train train1 = new Train(scene, player, "train1", texture, station, 1, 1, 1, 1);
-		Station station2 = new Station(scene, "station2", 10, 10);
-		Train train2 = new Train(scene, otherPlayer, "train2", texture, station2 , 10, 1, 1, 1);
-		Carriage carriage1 = new Carriage(scene, texture, player1, station, train1);
-		Carriage carriage2 = new Carriage(scene, texture, player2, station2, train2);
-		train1.setCarriage(carriage1);
-		train2.setCarriage(carriage2);
-		
-		train1.setAiSpritePosition(100, 100);
-		train2.setAiSpritePosition(100, 100);
-		ArrayList<AiSprite> collisions = new ArrayList<AiSprite>();
-		collisions.add(train1);
-		collisions.add(train2);
-		scene.calculateCollisions(collisions);
-		assertEquals(2, carriage1.getCarriageCount());
-		assertEquals(3, carriage2.getCarriageCount());
-	}
-	
-	@Test
-	public void testCalculateCollisionsMultipleDifferentCollision() {
-		// test calculateCollisions with multiple collisions- train1- train2, train 3-train4 in different collisions
-		// will return train1 with a carriagecount of 3, train2 = 2 (as train1 heavier), train3 = 3, train4 =2 (as train3 heavier)
-		Player player = new Player();
-		Player otherPlayer = new Player();
-		GameScene scene = new GameScene(player, otherPlayer);
-		Train train1 = new Train(scene, player, "train1", texture, station, 10, 1, 1, 1);
-		Station station2 = new Station(scene, "station2", 10, 10);
-		Train train2 = new Train(scene, otherPlayer, "train2", texture, station2 , 1, 1, 1, 1);
-		Station station3 = new Station(scene, "station3", 1000, 10);
-		Train train3 = new Train(scene, player, "train3", texture, station3, 10, 1, 1, 1);
-		Station station4 = new Station(scene, "station4", 500, 10);
-		Train train4 = new Train(scene, otherPlayer, "train4", texture, station4, 1, 1, 1, 1);
-		
-		Carriage carriage1 = new Carriage(scene, texture, player, station, train1);
-		Carriage carriage2 = new Carriage(scene, texture, otherPlayer, station2, train2);
-		Carriage carriage3 = new Carriage(scene, texture, player, station3, train3);
-		Carriage carriage4 = new Carriage(scene, texture, otherPlayer, station4, train4);
-		
-		train1.setCarriage(carriage1);
-		train2.setCarriage(carriage2);
-		train3.setCarriage(carriage3);
-		train4.setCarriage(carriage4);
-
-		train1.setAiSpritePosition(100, 100);
-		train2.setAiSpritePosition(100, 100);
-		train3.setAiSpritePosition(500, 500);
-		train4.setAiSpritePosition(500, 500);
-		
-		ArrayList<AiSprite> collisions = new ArrayList<AiSprite>();
-		collisions.add(train1);
-		collisions.add(train2);
-		collisions.add(train3);
-		collisions.add(train4);
-		scene.calculateCollisions(collisions);
-		assertEquals(3, carriage1.getCarriageCount());
-		assertEquals(2, carriage2.getCarriageCount());
-		assertEquals(3, carriage3.getCarriageCount());
-		assertEquals(2, carriage4.getCarriageCount());
-	}
-	
-	@Test
-	public void testCalculateCollisionsMultipleSameCollision() {
-		// test calculatecollision, where it is called twice with the samecollision
-		// will only register this as one collision, train1 carriage count = 2, train2 = 3, train3 = 2, train4 = 2
-		GameScene scene = new GameScene(player1, player2);
-		Train train1 = new Train(scene, player1, "train1", texture, station, 1, 1, 1, 1);
-		Carriage carriage1 = new Carriage(scene, texture, player1, station, train1);
-		Train train2 = new Train(scene, player2, "train2", texture, station, 10, 1, 1, 1);
-		Carriage carriage2 = new Carriage(scene, texture, player2, station, train2);
-		train1.setCarriage(carriage1);
-		train2.setCarriage(carriage2);
-		
-		Train train3 = new Train(scene, player1, "train1", texture, station, 1, 1, 1, 1);
-		Carriage carriage3 = new Carriage(scene, texture, player1, station, train3);
-		Train train4 = new Train(scene, player2, "train2", texture, station, 10, 1, 1, 1);
-		Carriage carriage4 = new Carriage(scene, texture, player2, station, train4);
-		train3.setCarriage(carriage3);
-		train4.setCarriage(carriage4);
-
-		train1.setAiSpritePosition(100, 100);
-		train2.setAiSpritePosition(100, 100);
-		
-		ArrayList<AiSprite> collisions = new ArrayList<AiSprite>();
-		collisions.add(train1);
-		collisions.add(train2);
-		collisions.add(train3);
-		collisions.add(train4);
-		scene.calculateCollisions(collisions);
-		scene.calculateCollisions(collisions);
-		assertEquals(2, carriage1.getCarriageCount());
-		assertEquals(3, carriage2.getCarriageCount());
-		assertEquals(2, carriage3.getCarriageCount());
-		assertEquals(3, carriage4.getCarriageCount());
 	}
 }
