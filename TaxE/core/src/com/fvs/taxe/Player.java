@@ -143,7 +143,7 @@ public class Player {
 			//If we have passed the checks, we update our money and place the train in the game
 			setMoney(getMoney() - price);
 			//Modify scenes.GameScene.GenerateTrainAndCarriage
-			s.generateTrainAndCarriage(this, (Station)s.getStationByName(station), type);
+			s.generateTrain(this, (Station)s.getStationByName(station), type);
 			return true;
 		}
 	}

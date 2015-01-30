@@ -214,7 +214,7 @@ public class GameSceneTest {
 		// testing generateTrainAndCarriage with valid inputs
 		// will return a new train with a connected carriage, and said train being in the players aiSprites.
 		Player player = new Player();
-		Train expectedTrain = parentScene.generateTrainAndCarriage(player, station, Train.Type.ELECTRIC);
+		Train expectedTrain = parentScene.generateTrain(player, station, Train.Type.ELECTRIC);
 		assertNotNull(expectedTrain);
 		assertEquals(player.getAiSprites().get(0), expectedTrain);		
 	}
@@ -223,7 +223,7 @@ public class GameSceneTest {
 	public void testGenerateTrainsAndCarriagesInvalidPlayer() {
 		// testing generateTrainAndCarriage with null player
 		// will return null train
-		Train train = parentScene.generateTrainAndCarriage(null, station, Train.Type.ELECTRIC);
+		Train train = parentScene.generateTrain(null, station, Train.Type.ELECTRIC);
 		assertNull(train);
 	}
 	
@@ -231,7 +231,7 @@ public class GameSceneTest {
 	public void testCreateTrainsAndCarriagesInvalidStation() {
 		// testing generateTrainAndCarriage with null station
 		// will return null train
-		Train train = parentScene.generateTrainAndCarriage(player1, null, Train.Type.ELECTRIC);
+		Train train = parentScene.generateTrain(player1, null, Train.Type.ELECTRIC);
 		assertNull(train);
 	}
 	

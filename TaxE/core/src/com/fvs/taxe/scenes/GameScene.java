@@ -29,7 +29,6 @@ import com.fvs.taxe.guiobjects.Button;
 import com.fvs.taxe.guiobjects.Label;
 import com.fvs.taxe.guiobjects.LabelButton;
 import com.fvs.taxe.routing.AiSprite;
-import com.fvs.taxe.routing.Carriage;
 import com.fvs.taxe.routing.Connection;
 import com.fvs.taxe.routing.CurvedPath;
 import com.fvs.taxe.routing.Route;
@@ -190,8 +189,8 @@ public class GameScene extends GameGUIScene {
 		connectRouteLocations(lisbon, madrid);
 
 		// add trains
-		generateTrainAndCarriage(getPlayer1(), (Station)getStationByName(getPlayer1().getStartLocation()), Train.Type.STEAM);
-		generateTrainAndCarriage(getPlayer2(), (Station)getStationByName(getPlayer2().getStartLocation()), Train.Type.STEAM);
+		generateTrain(getPlayer1(), (Station)getStationByName(getPlayer1().getStartLocation()), Train.Type.STEAM);
+		generateTrain(getPlayer2(), (Station)getStationByName(getPlayer2().getStartLocation()), Train.Type.STEAM);
 
 		
 		// draw route (with dotted line)
@@ -239,7 +238,6 @@ public class GameScene extends GameGUIScene {
 						// route must be at least 2 locations, finish on a station
 						Train trainSelected = selectedTrains.get(0);
 						trainSelected.setRoute(new Route(newRoute));
-						trainSelected.getCarriage().setRoute();
 						endSelectingRoute();
 						isSelectingRoute = false;
 					}
@@ -304,24 +302,20 @@ public class GameScene extends GameGUIScene {
 		return routeLocations;
 	}
 	
-	private Train createTrainAndCarriage(final Player player, String trainName, Station station, Texture trainTexture, Texture carriageTexture, int weight, int speed, int fuelEfficiency, float reliability) {
+	private Train createTrain(final Player player, String trainName, Station station, Texture trainTexture, int weight, int speed, int fuelEfficiency, float reliability) {
 		// create a train, carriage and connect them
 		Train train = new Train(this, player, trainName, trainTexture, station, weight, speed, fuelEfficiency, reliability) ;
 		
-		Carriage carriage = new Carriage(this, carriageTexture, player, station, train);
-		Add(carriage);
 		Add(train);
 		player.addAiSprite(train);
-		player.addAiSprite(carriage);
-		train.setCarriage(carriage);
 		return train;
 	}
 	
-	public Train generateTrainAndCarriage(Player player, Station station, Train.Type type) {
+	public Train generateTrain(Player player, Station station, Train.Type type) {
 		if (player == null || station == null){
 			return null;
 		}
-		return this.createTrainAndCarriage(player, type.getName(), station, type.getTrainTexture(), type.getCarraigeTexture(), type.getWeight(), type.getSpeed(), type.getEfficiency(), type.getReliability());
+		return this.createTrain(player, type.getName(), station, type.getTrainTexture(), type.getWeight(), type.getSpeed(), type.getEfficiency(), type.getReliability());
 	}
 
 	private Station createStation(GameScene parentScene, String locationName, int x , int y) {
@@ -428,12 +422,10 @@ public class GameScene extends GameGUIScene {
 			if (!previousCollision){
 				switch(collisionType){
 				case(1):
-					((Carriage) p2AiSprite).decreaseCarriageCount();
 					currentCollisions.add(p1AiSprite);
 					currentCollisions.add(p2AiSprite);
 				break;
 				case(2):
-					((Carriage) p1AiSprite).decreaseCarriageCount();
 					currentCollisions.add(p1AiSprite);
 					currentCollisions.add(p2AiSprite);
 				break;
@@ -461,28 +453,22 @@ public class GameScene extends GameGUIScene {
 				return true;
 			} else if (collisionType == 1){
 				// p1 train, p2 carriage
-				if (p1CollidedSprite.equals(p1AiSprite) && p2CollidedSprite.equals(((Carriage) p2AiSprite).getTrain())){
+				if (p1CollidedSprite.equals(p1AiSprite)){
 					// if the p1 train collided with the p2 train
-					return true;
-				} else if (p1CollidedSprite.equals(((Train) p1AiSprite).getCarriage()) && p2CollidedSprite.equals(((Carriage) p2AiSprite).getTrain())){
-					// if the p1 carriage collided with p2 train 
 					return true;
 				}
 			} else if (collisionType == 2){
 				// p1 carriage, p2 train
-				if (p1CollidedSprite.equals(((Carriage) p1AiSprite).getTrain()) && p2CollidedSprite.equals(p2AiSprite)){
+				if (p2CollidedSprite.equals(p2AiSprite)){
 					// if the p1 train collided with the p2 train
-					return true;
-				} else if (p1CollidedSprite.equals(((Carriage) p1AiSprite).getTrain()) && p2CollidedSprite.equals(((Train) p1AiSprite).getCarriage())){
-					// if the p1 train collided with p2 carriage
 					return true;
 				}
 			} else if (collisionType == 3){
 				// p1 train, p2 train
-				if (p1CollidedSprite.equals(p1AiSprite) && p2CollidedSprite.equals(((Train) p2AiSprite).getCarriage())){
+				if (p1CollidedSprite.equals(p1AiSprite)){
 					// if the p1 train collided with the p2 train
 					return true;
-				} else if (p1CollidedSprite.equals(((Train) p1AiSprite).getCarriage()) && p2CollidedSprite.equals(p2AiSprite)){
+				} else if (p2CollidedSprite.equals(p2AiSprite)){
 					// if the p1 carriage collided with p2 train
 					return true;
 				}
@@ -495,13 +481,9 @@ public class GameScene extends GameGUIScene {
 		//special method for resolving train-train collisions only
 		if ((p1Train.getWeight()*p1Train.getSpeed()) > (p2Train.getWeight()*p2Train.getSpeed())){
 			System.out.println("p1 wins!");
-			Carriage carriage = ((Train) p2Train).getCarriage();
-			carriage.decreaseCarriageCount();
 			
 		} else if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
 			System.out.println("p2 wins!");
-			Carriage carriage = ((Train) p1Train).getCarriage();
-			carriage.decreaseCarriageCount();
 			
 		} else {
 			System.out.println("its a draw!");
@@ -531,18 +513,9 @@ public class GameScene extends GameGUIScene {
 			// no collision
 			return -1;
 		// otherwise a collision has occured
-		} else if (aiSprite1.getClass() == Train.class && aiSprite2.getClass() == Carriage.class){
-			// train->carriage collision
-			return 1;
-		} else if (aiSprite1.getClass() == Carriage.class && aiSprite1.getClass() == Train.class){
-			// carriage->train collision
-			return 2;
-		} else if (aiSprite1.getClass() == Train.class && aiSprite2.getClass() == Train.class) {
+		} else {
 			// train->train collision
 			return 3;
-		} else {
-			// carriage-> carriage collision
-			return 0;
 		}
 		
 	}
@@ -570,19 +543,9 @@ public class GameScene extends GameGUIScene {
 		for (AiSprite aiSprite : otherAiSprites){
 			aiSprite.setColor(Color.LIGHT_GRAY);
 			aiSprite.setAlpha(0.2f);
-			if (aiSprite.getClass() == Carriage.class){
-				((Carriage) aiSprite).setLabelAlpha(0.2f);
-			}
 		}
 		
 		// change alpha of own players carriages so can see locations the carriage covers
-		ArrayList<AiSprite> playerAiSprites = activePlayer().getAiSprites();
-		for (AiSprite aiSprite : playerAiSprites){
-			if (aiSprite.getClass() == Carriage.class){
-				aiSprite.setAlpha(0.5f);
-				((Carriage) aiSprite).setLabelAlpha(0.5f);
-			}
-		}
 		isSelectingRoute = true;
 	}
 	
@@ -726,18 +689,12 @@ public class GameScene extends GameGUIScene {
 		for (AiSprite aiSprite : otherAiSprites){
 			aiSprite.setColor(Color.WHITE);
 			aiSprite.setAlpha(1f);
-			if (aiSprite.getClass() == Carriage.class){
-				((Carriage) aiSprite).setLabelAlpha(1f);
-			}
 		}
 		
 		// reset alpha of players other trains and carriages
 		ArrayList<AiSprite> aiSprites = activePlayer().getAiSprites();
 		for (AiSprite aiSprite: aiSprites){
 			aiSprite.setAlpha(1f);
-			if (aiSprite.getClass() == Carriage.class){
-				((Carriage) aiSprite).setLabelAlpha(1f);
-			}
 		}
 		
 		selectedTrains = new ArrayList<Train>();
@@ -1249,7 +1206,7 @@ public class GameScene extends GameGUIScene {
 			//We have a choice between a train at a station, which can just be generated, and a train on a route, that must be generated, and then positioned along the route
 			//If there are only 2 data items for the train, it is at a station, and can be generated The type is stored at 0 index, and start location
 			//At 1st index
-			Train t = generateTrainAndCarriage(pl, (Station)getStationByName(specificTrainData[1]), getTrainInstanceByName(specificTrainData[0]));
+			Train t = generateTrain(pl, (Station)getStationByName(specificTrainData[1]), getTrainInstanceByName(specificTrainData[0]));
 			if(specificTrainData.length > 2)
 			{
 				//We are working with a train that is along a route, so we must restore it's route. It's start location is at the 1st index
