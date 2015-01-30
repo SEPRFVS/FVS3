@@ -16,12 +16,12 @@ import com.fvs.taxe.worldobjects.Station;
 public class Train extends AiSprite {
 	public enum Type
 	{
-		STEAM("Steam", new Texture("steam.png"), new Texture("steamCarriage.png"), 1, 25, 20, 0.2f),
-		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 40, 20, 0.1f), 
-		ELECTRIC("Electric", new Texture("electric.png"), new Texture("electricCarriage.png"), 1, 160, 10, 0.05f), 
-		NUCLEAR("Nuclear", new Texture("nuclear.png"), new Texture("nuclearCarriage.png"), 2, 180, 50, 0.002f), 
+		STEAM("Steam", new Texture("steam.png"), new Texture("steamCarriage.png"), 1, 25, 20, 0.0002f),
+		DIESEL("Diesel", new Texture("diesel.png"), new Texture("dieselCarriage.png"), 1, 40, 20, 0.0001f), 
+		ELECTRIC("Electric", new Texture("electric.png"), new Texture("electricCarriage.png"), 1, 160, 10, 0.00005f), 
+		NUCLEAR("Nuclear", new Texture("nuclear.png"), new Texture("nuclearCarriage.png"), 2, 180, 50, 0.000002f), 
 		MAG_LEV("Mag", new Texture("Mag.png"), new Texture("MagCarriage.png"), 3, 200, 4, 0.01f), 
-		THE_KING("TheKing", new Texture("TheKing.png"), new Texture("TheKingCarriage.png"), 4, 350, 2, 0.02f);
+		THE_KING("TheKing", new Texture("TheKing.png"), new Texture("TheKingCarriage.png"), 4, 350, 2, 0.00002f);
 		private String name;
 		private Texture train;
 		private Texture carraige;
