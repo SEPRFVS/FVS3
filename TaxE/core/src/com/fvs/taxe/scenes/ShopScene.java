@@ -320,7 +320,7 @@ public class ShopScene extends GameWindowedGUIScene {
             }
         };
         junctionObstacleButton.setTexture(buyButtonText);
-        junctionObstacleButton.setText("Buy");
+        junctionObstacleButton.setText("Buy: 300cr");
         junctionObstacleButton.setLocalPosition(65, 720);
         junctionObstacleButton.setSize(115, 34);
         junctionObstacleButton.setAlignment(1);
