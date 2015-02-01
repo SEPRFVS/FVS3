@@ -306,7 +306,8 @@ public class GameScene extends GameGUIScene {
 	}
 
     public void generateJunctionObstacle(RouteLocation location) {
-        //Obstacle obstacle = new Obstacle(Obstacle.Type.JUNCTION, location);
+        Obstacle obstacle = new Obstacle(this, location.getPosition());
+        Add(obstacle);
     }
 
 	private Train createTrainAndCarriage(final Player player, String trainName, Station station, Texture trainTexture, Texture carriageTexture, int weight, int speed, int fuelEfficiency, float reliability) {
