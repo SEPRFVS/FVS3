@@ -35,6 +35,7 @@ import com.fvs.taxe.routing.CurvedPath;
 import com.fvs.taxe.routing.Route;
 import com.fvs.taxe.routing.Train;
 import com.fvs.taxe.worldobjects.Junction;
+import com.fvs.taxe.worldobjects.Obstacle;
 import com.fvs.taxe.worldobjects.RouteLocation;
 import com.fvs.taxe.worldobjects.Station;
 
@@ -303,7 +304,11 @@ public class GameScene extends GameGUIScene {
 	public ArrayList<RouteLocation> getLocations(){
 		return routeLocations;
 	}
-	
+
+    public void generateJunctionObstacle(RouteLocation location) {
+        //Obstacle obstacle = new Obstacle(Obstacle.Type.JUNCTION, location);
+    }
+
 	private Train createTrainAndCarriage(final Player player, String trainName, Station station, Texture trainTexture, Texture carriageTexture, int weight, int speed, int fuelEfficiency, float reliability) {
 		// create a train, carriage and connect them
 		Train train = new Train(this, player, trainName, trainTexture, station, weight, speed, fuelEfficiency, reliability) ;

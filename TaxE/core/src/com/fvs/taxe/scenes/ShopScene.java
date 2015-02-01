@@ -14,6 +14,7 @@ import com.fvs.taxe.guiobjects.Pane;
 import com.fvs.taxe.guiobjects.Scroller;
 import com.fvs.taxe.routing.Train;
 import com.fvs.taxe.routing.Train.Type;
+import com.fvs.taxe.worldobjects.Obstacle;
 
 public class ShopScene extends GameWindowedGUIScene {
 
@@ -30,6 +31,8 @@ public class ShopScene extends GameWindowedGUIScene {
 	private LabelButton kingButton;
 	private Label fuelLabel, fuelPriceLabel;
 	private LabelButton fuelButton;
+    private Label junctionObstacleLabel;
+    private LabelButton junctionObstacleButton;
 	ArrayList<LabelButton> upgradeButtons = new ArrayList<LabelButton>();
 	
 	public ShopScene(GameScene parent, Player player1, Player player2)
@@ -87,6 +90,20 @@ public class ShopScene extends GameWindowedGUIScene {
 		
 		drawTrainButtons();
 	}
+
+    public void drawObstacleScrollPane()
+    {
+        paneType = "Obstacle";
+        pane.clear();
+
+        Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png");
+        scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
+        scrollPaneBackground.setSize(922,800);
+        scrollPaneBackground.setLocalPosition(0, 0);
+        pane.Add(scrollPaneBackground);
+
+        drawObstacleButtons();
+    }
 	
 	public void drawResourceScrollPane()
 	{
@@ -265,7 +282,54 @@ public class ShopScene extends GameWindowedGUIScene {
 				pane.Add(kingButton);
 				// ---------------------
 	}
-	
+
+    public void drawObstacleButtons() {
+        final int junctionObstaclePrice = 300;
+        Texture buyButtonText = new Texture("buy_bg.png");
+
+        Texture LabelText = new Texture("Clear_Button.png");
+        junctionObstacleLabel = new Label(this, LabelText, Label.genericFont(Color.BLACK, 40));
+        junctionObstacleLabel.setText("Junction obstacle");
+        junctionObstacleLabel.setLocalPosition(65, 800);
+        junctionObstacleLabel.setAlignment(0);
+        pane.Add(junctionObstacleLabel);
+
+
+        junctionObstacleButton = new LabelButton(this) {
+            @Override
+            public void onClickEnd(){
+                if(parentGame.activePlayer().getMoney() < junctionObstaclePrice)
+                {
+                    Game.pushScene(parentGame.makeDialogueScene("Requires " + junctionObstaclePrice + "cr"));
+                    return;
+                }
+                ArrayList<String> lstIn = new ArrayList<String>();
+                lstIn.add("Left junction");
+                lstIn.add("Right junction");
+
+                SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselection.png"), lstIn) {
+                    @Override
+                    public void onSelectionEnd() {
+                        String selectedJunction = (String)elements.get(selectedElementIndex);
+                        parentGame.activePlayer().buyObstacle(Obstacle.Type.JUNCTION, junctionObstaclePrice, selectedJunction, parentGame);
+                        Game.popScene();
+                        updateValues();
+                    }
+                };
+                Game.pushScene(locationSelectionScene);
+            }
+        };
+        junctionObstacleButton.setTexture(buyButtonText);
+        junctionObstacleButton.setText("Buy");
+        junctionObstacleButton.setLocalPosition(65, 720);
+        junctionObstacleButton.setSize(115, 34);
+        junctionObstacleButton.setAlignment(1);
+        junctionObstacleButton.setAlpha(1);
+        junctionObstacleButton.setFont(Label.genericFont(Color.WHITE, 22));
+        pane.Add(junctionObstacleButton);
+
+    }
+
 	public void drawResourceButtons()
 	{
 		Texture buyButtonText = new Texture("buy_bg.png");
@@ -560,7 +624,10 @@ public class ShopScene extends GameWindowedGUIScene {
 	public void obstaclePressed()
 	{
 		System.out.println("obstaclePressed");
-		Game.pushScene(parentGame.makeDialogueScene("Coming soon!"));
+        this.drawObstacleScrollPane();
+        Texture obstaclesText = new Texture("Shop_Obstacles.png");
+        shop.setTexture(obstaclesText);
+		//Game.pushScene(parentGame.makeDialogueScene("Coming soon!"));
 		
 	}
 	
