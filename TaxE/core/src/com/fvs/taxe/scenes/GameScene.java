@@ -72,6 +72,7 @@ public class GameScene extends GameGUIScene {
 	private int newRouteDistance;		
 	public EventHandler events;
 	private HashMap<String, CurvedPath> paths;
+    private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 	
 
 	public GameScene(Player player1In, Player player2In){
@@ -306,7 +307,8 @@ public class GameScene extends GameGUIScene {
 	}
 
     public void generateJunctionObstacle(RouteLocation location) {
-        Obstacle obstacle = new Obstacle(this, location.getPosition());
+        Obstacle obstacle = new Obstacle(this, (Junction) location);
+        obstacles.add(obstacle);
         Add(obstacle);
     }
 
@@ -589,6 +591,10 @@ public class GameScene extends GameGUIScene {
 				((Carriage) aiSprite).setLabelAlpha(0.5f);
 			}
 		}
+
+        for (Obstacle obstacle : obstacles) {
+            obstacle.setAlpha(0f);
+        }
 		isSelectingRoute = true;
 	}
 	
@@ -701,8 +707,22 @@ public class GameScene extends GameGUIScene {
 	}
 
 	public void endSelectingRoute(){
-		// reverse everything changed in startSelectingRoute 
-		// reset buttons
+        boolean hasObstacle = false;
+        for (RouteLocation routeLocation: newRoute) {
+            if (routeLocation instanceof Junction) {
+                if (((Junction) routeLocation).hasObstacle()) {
+                    hasObstacle = true;
+                    break;
+                }
+            }
+        }
+
+        if (hasObstacle) {
+            Game.pushScene(this.makeDialogueScene("Obstacle on the route!"));
+        }
+
+        // reverse everything changed in startSelectingRoute
+        // reset buttons
 		nextGoButton.setSize(83, 44);
 		confirmRouteSelectionButton.setText(" ");
 		confirmRouteSelectionButton.setSize(0, 0);
@@ -745,6 +765,10 @@ public class GameScene extends GameGUIScene {
 				((Carriage) aiSprite).setLabelAlpha(1f);
 			}
 		}
+
+        for (Obstacle obstacle : obstacles) {
+            obstacle.setAlpha(1f);
+        }
 		
 		selectedTrains = new ArrayList<Train>();
 		newRoute = new ArrayList<RouteLocation>();

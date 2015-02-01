@@ -63,7 +63,7 @@ public class DialogueScene extends Scene {
 		Add(okayButton);
 		
 		Texture dialLabelText  = new Texture("Clear_Button.png");
-		dialLabel = new Label(this, dialLabelText, Label.genericFont(Color.LIGHT_GRAY, 30), Game.goalsZ);
+		dialLabel = new Label(this, dialLabelText, Label.genericFont(Color.DARK_GRAY, 20), Game.goalsZ);
 		dialLabel.setText(text);
 		dialLabel.setPosition(Game.targetWindowsWidth / 2, 528);
 		dialLabel.setAlignment(1);

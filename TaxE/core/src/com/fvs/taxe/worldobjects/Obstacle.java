@@ -15,12 +15,12 @@ public class Obstacle extends SpriteComponent {
     static int size = 10;
     private Vector2 coords;
 
-    public Obstacle(Scene parentScene, Vector2 coords){
+    public Obstacle(Scene parentScene, Junction junction){
         super(parentScene, text, Game.objectsZ);
-        this.coords = coords;
+        this.coords = junction.coords;
         setSize(size, size);
         setPosition(coords.x, coords.y);
-
+        junction.setObstacle(this);
     }
 
     static Texture text = new Texture("junction_obstacle.png");
