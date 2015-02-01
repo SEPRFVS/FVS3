@@ -117,6 +117,13 @@ public class Player {
 		return aiSprites;
 	}
 
+    public ArrayList<Train> getTrains() {
+        ArrayList<Train> retList = new ArrayList<Train>();
+        for (AiSprite sprite : aiSprites) {
+            if (sprite instanceof Train) retList.add((Train) sprite);
+        }
+        return retList;
+    }
 	//When the turn is updated, we execute the next turn logic of this player's possessions. 
 	public void updateTurn(boolean activePlayer)
 	{
@@ -159,7 +166,7 @@ public class Player {
         else
         {
             String junctionIdentifier;
-            if (junction == "Left junction") junctionIdentifier = "J1";
+            if (junction.equals("Left junction")) junctionIdentifier = "J1";
             else {
                 junctionIdentifier = "J2";
             }

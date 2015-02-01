@@ -336,7 +336,7 @@ public class GameScene extends GameGUIScene {
 		Station routeLocation = new Station(parentScene, locationName, x,y);
 		Add(routeLocation);
 		routeLocations.add(routeLocation);
-		return (Station) routeLocation;
+		return routeLocation;
 	}	
 
 	public RouteLocation getStationByName(String stationName) {
@@ -354,7 +354,7 @@ public class GameScene extends GameGUIScene {
 		Junction routeLocation = new Junction(parentScene, locationName, x,y);
 		Add(routeLocation);
 		routeLocations.add(routeLocation);
-		return (Junction) routeLocation;
+		return routeLocation;
 		}
 	
 	public void connectRouteLocations(RouteLocation l1, RouteLocation l2){
@@ -424,7 +424,7 @@ public class GameScene extends GameGUIScene {
 		// main method that resolves valid collisions
 		ArrayList<AiSprite> currentCollisions = new ArrayList<AiSprite>(); // collisions that have been resolved, tracked to stop repeated collisions
 		for (int i = 0; i < collisions.size(); i+=2){
-			boolean previousCollision = false;
+			boolean previousCollision;
 			AiSprite p1AiSprite = collisions.get(i);
 			AiSprite p2AiSprite = collisions.get(i+1);
 			int collisionType = getCollisionType(p1AiSprite, p2AiSprite);
@@ -503,12 +503,12 @@ public class GameScene extends GameGUIScene {
 		//special method for resolving train-train collisions only
 		if ((p1Train.getWeight()*p1Train.getSpeed()) > (p2Train.getWeight()*p2Train.getSpeed())){
 			System.out.println("p1 wins!");
-			Carriage carriage = ((Train) p2Train).getCarriage();
+			Carriage carriage = p2Train.getCarriage();
 			carriage.decreaseCarriageCount();
 			
 		} else if ((p1Train.getWeight()*p1Train.getSpeed()) < (p2Train.getWeight()*p2Train.getSpeed())){
 			System.out.println("p2 wins!");
-			Carriage carriage = ((Train) p1Train).getCarriage();
+			Carriage carriage = p1Train.getCarriage();
 			carriage.decreaseCarriageCount();
 			
 		} else {
@@ -999,7 +999,13 @@ public class GameScene extends GameGUIScene {
 		}
 		return rdataSet1;
 	}
-	
+
+    public void checkObstacles(Player player) {
+        for (Train train : player.getTrains()) {
+            train.checkObstacles();
+        }
+    }
+
 	@Override
 	public void player1Active()
 	{
@@ -1014,6 +1020,8 @@ public class GameScene extends GameGUIScene {
 		updateGoals();
 		//We recalculate the fuel price every player 1 turn
 		regenerateFuelPrice();
+
+        checkObstacles(getPlayer1());
 	}
 	
 	@Override
@@ -1028,7 +1036,9 @@ public class GameScene extends GameGUIScene {
 			g.nextTurn(getPlayer2());
 		}
 		updateGoals();
-	}
+
+        checkObstacles(getPlayer2());
+    }
 	
 	public void updateGoals()
 	{
@@ -1168,7 +1178,7 @@ public class GameScene extends GameGUIScene {
 		
 		//Get a file location to save to
 		String locRoot = ""; //Local root set by LibGDX
-		String loadFilePath = ""; //Used by the File Chooser to pass path to libGDX FileHandle
+		String loadFilePath; //Used by the File Chooser to pass path to libGDX FileHandle
 		
 		//Create filter so only .taxe files may be saved
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("TaxE Saves", "taxe");	

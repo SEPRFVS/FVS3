@@ -1,6 +1,7 @@
 package com.fvs.taxe.routing;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
@@ -11,6 +12,7 @@ import com.fvs.taxe.goals.Event;
 import com.fvs.taxe.scenes.DialogueScene;
 import com.fvs.taxe.scenes.GameScene;
 import com.fvs.taxe.worldobjects.Junction;
+import com.fvs.taxe.worldobjects.RouteLocation;
 import com.fvs.taxe.worldobjects.Station;
 
 public class Train extends AiSprite {
@@ -103,6 +105,7 @@ public class Train extends AiSprite {
 	private boolean speedUpgrade = false;
 	private GameScene parentScene;
 	private String name;
+    private int stationsPassed;
 
 	public Train(GameScene parentScene, Player player, String trainName, Texture text, Station station, int weight, int speed, int fuelEfficiency, float reliability) {
 		super(parentScene, text, player, station);
@@ -118,6 +121,7 @@ public class Train extends AiSprite {
 		this.reliability = reliability;
 		this.name = trainName;
 		super.setAIType(AIType.TRAIN);
+        stationsPassed = 0;
 	}
 
 	@Override
@@ -215,6 +219,7 @@ public class Train extends AiSprite {
 			Game.pushScene(dialogueScene);
 			return;
 		}
+
 		atStation = false;
 		int totalSpeed = (int) ((speedUpgrade) ? speed*SPEED_UPGRADE : speed);
 		if ((pathDistance + totalSpeed) >= path.getFinalDistance()){
@@ -229,6 +234,7 @@ public class Train extends AiSprite {
 				routeDistance += distanceToStation;
 				atStation = true;
 				atStation();
+                setRoute(null); //reset route
 			} else {
 				// if at intermediate waypoint
 				if (connection.getTargetLocation().getClass() == Junction.class){
@@ -239,6 +245,7 @@ public class Train extends AiSprite {
 					current = path.getTFromDistance(overshootDistance);
 					routeDistance += totalSpeed;
 					pathDistance = overshootDistance;
+                    stationsPassed++;
 				} else {
 					// if the routeLocation currently at is a station, fix to station for that turn
 					waypoint++; 								// move to next waypoint
@@ -249,6 +256,7 @@ public class Train extends AiSprite {
 					routeDistance += distanceToStation;
 					atStation = true;
 					atStation();
+                    stationsPassed++;
 				}
 			}
 		} else {
@@ -263,6 +271,25 @@ public class Train extends AiSprite {
 		move();
 	}
 
+    public void checkObstacles() {
+        //Check if obstacles on the route
+        if (route == null) return;
+
+        List<RouteLocation> routeLocations = route.getRouteLocations();
+        if (routeLocations == null) return;
+
+        routeLocations = routeLocations.subList(stationsPassed + 1, routeLocations.size());
+        for (RouteLocation routeLocation : routeLocations) {
+            if (routeLocation instanceof Junction) {
+                if (((Junction) routeLocation).hasObstacle()) {
+                    DialogueScene dialogueScene = new DialogueScene("Obstacle warning for " + this.getName() + " train!");
+                    Game.pushScene(dialogueScene);
+                    break;
+                }
+            }
+        }
+    }
+
 	@Override
 	public void updateTurn() {
 		if (hasStopped){
@@ -272,7 +299,7 @@ public class Train extends AiSprite {
 		if (route != null && !completed) {
 			// if the train is on a route
 			if (player.getFuel()-fuelEfficiency > 0 ){
-				// if theres enough fuel 
+				// if theres enough fuel
 				updatePosition();
 			} else {
 				// TODO if theres not enough fuel, send a dialog
@@ -301,11 +328,11 @@ public class Train extends AiSprite {
 			pathDistance =0;
 			completed = false;
 			carriage.setRoute();
+            stationsPassed = 0;
 		} else {
 			// shouldnt occur in normal route selection, for debugging only
 			System.out.println("Invalid route, must start from trains current station");
-			return;
-		}
+        }
 	}
 
 	public Route getRoute()
