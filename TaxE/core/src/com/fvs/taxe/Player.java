@@ -31,6 +31,7 @@ public class Player {
 	//These 2 arrays track the completed and failed goals of the player for the purpose of displaying in the GUI
 	public ArrayList<Goal> completeGoals = new ArrayList<Goal>();
 	public ArrayList<Goal> failedGoals = new ArrayList<Goal>();
+    public boolean trainCrashed = false;
 	
 	//Setter and getter methods for variables
 	public void setActiveGame(GameScene game)

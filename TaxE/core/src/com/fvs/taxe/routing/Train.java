@@ -239,6 +239,9 @@ public class Train extends AiSprite {
 				// if at intermediate waypoint
 				if (connection.getTargetLocation().getClass() == Junction.class){
 					// if a junction, do not stop at junction
+                    Junction junction = (Junction) connection.getTargetLocation();
+                    if (junction.hasObstacle()) trainCrashed(junction);
+
 					waypoint++;
 					connection = route.getConnection(waypoint);	// get next connection in route
 					path = connection.getPath();			// get next route in route
@@ -270,6 +273,15 @@ public class Train extends AiSprite {
 		player.setFuel((int) (player.getFuel()- totalFuelEfficiency)); 
 		move();
 	}
+
+    public void trainCrashed(Junction junction) {
+        player.trainCrashed = true;
+        parentScene.obstacles.remove(junction.getObstacle());
+        parentScene.Remove(junction.getObstacle());
+        parentScene.Remove(this);
+        junction.setObstacle(null);
+        player.aiSprites.remove(this);
+    }
 
     public void checkObstacles() {
         //Check if obstacles on the route

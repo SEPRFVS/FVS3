@@ -72,7 +72,7 @@ public class GameScene extends GameGUIScene {
 	private int newRouteDistance;		
 	public EventHandler events;
 	private HashMap<String, CurvedPath> paths;
-    private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
+    public ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 	
 
 	public GameScene(Player player1In, Player player2In){
@@ -1006,6 +1006,11 @@ public class GameScene extends GameGUIScene {
         }
     }
 
+    public void crashDialog() {
+        DialogueScene dialogueScene = new DialogueScene("Your train collided with an obstacle!");
+        Game.pushScene(dialogueScene);
+    }
+
 	@Override
 	public void player1Active()
 	{
@@ -1022,6 +1027,10 @@ public class GameScene extends GameGUIScene {
 		regenerateFuelPrice();
 
         checkObstacles(getPlayer1());
+        if (getPlayer1().trainCrashed) {
+            crashDialog();
+            getPlayer1().trainCrashed = false;
+        }
 	}
 	
 	@Override
@@ -1038,6 +1047,10 @@ public class GameScene extends GameGUIScene {
 		updateGoals();
 
         checkObstacles(getPlayer2());
+        if (getPlayer2().trainCrashed) {
+            crashDialog();
+            getPlayer2().trainCrashed = false;
+        }
     }
 	
 	public void updateGoals()
@@ -1303,5 +1316,6 @@ public class GameScene extends GameGUIScene {
 			}
 		}
 	}
+
 	
 }
