@@ -212,7 +212,7 @@ public class GameScene extends GameGUIScene {
 		resourceScene = new CurrentResourcesScene(this, this.getPlayer1(), this.getPlayer2());
 		dialogueScene = new DialogueScene("");
 		Texture clearButtonTexture = new Texture("Clear_Button.png");
-		routeSelectionButton = new LabelButton(this, clearButtonTexture , 100 , 40, Label.genericFont(Color.WHITE, 20)) {
+		routeSelectionButton = new LabelButton(this, clearButtonTexture , 100 , 40, Label.genericFont(Color.BLACK, 30)) {
 			@Override
 			public void onClickEnd()
 			{
@@ -225,11 +225,11 @@ public class GameScene extends GameGUIScene {
 				}
 			}
 		};
-		routeSelectionButton.setPosition(Game.targetWindowsWidth/2, Game.targetWindowsHeight - 200);
+		routeSelectionButton.setPosition(Game.targetWindowsWidth/2, Game.targetWindowsHeight - 205);
 		routeSelectionButton.setText("Select Route");
 		routeSelectionButton.setAlignment(0);
 		Add(routeSelectionButton);
-		confirmRouteSelectionButton = new LabelButton(this, clearButtonTexture, 100 , 40, Label.genericFont(Color.WHITE, 20)){
+		confirmRouteSelectionButton = new LabelButton(this, clearButtonTexture, 100 , 40, Label.genericFont(Color.BLACK, 30)){
 			@Override
 			public void onClickEnd()
 			{
@@ -244,7 +244,7 @@ public class GameScene extends GameGUIScene {
 				} 
 			}
 		};
-		confirmRouteSelectionButton.setPosition(Game.targetWindowsWidth -150, Game.targetWindowsHeight -200);
+		confirmRouteSelectionButton.setPosition(Game.targetWindowsWidth -150, Game.targetWindowsHeight -205);
 		confirmRouteSelectionButton.setSize(0, 0);
 		confirmRouteSelectionButton.setText("");
 		confirmRouteSelectionButton.setAlignment(0);
