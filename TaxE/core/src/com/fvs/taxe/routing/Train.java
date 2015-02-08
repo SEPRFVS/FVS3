@@ -319,11 +319,12 @@ public class Train extends AiSprite {
 			this.route = route;
 			waypoint = 0;
 			current = 0;
+            stationsPassed = 0;
 			out = new Vector2(1,1);
 			connection= route.getConnection(waypoint);
 			path = connection.getPath();
 			routeDistance = 0;
-			pathDistance =0;
+			pathDistance = 0;
 			completed = false;
 		} else {
 			// shouldnt occur in normal route selection, for debugging only
