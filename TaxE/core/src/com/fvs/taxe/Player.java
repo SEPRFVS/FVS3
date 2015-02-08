@@ -8,6 +8,7 @@ import com.fvs.taxe.routing.Train;
 import com.fvs.taxe.routing.AiSprite.AIType;
 import com.fvs.taxe.routing.Train.Type;
 import com.fvs.taxe.scenes.GameScene;
+import com.fvs.taxe.worldobjects.Junction;
 import com.fvs.taxe.worldobjects.Obstacle;
 import com.fvs.taxe.worldobjects.Station;
 
@@ -158,7 +159,7 @@ public class Player {
 	}
 
     //This method is used to purchase a train for the player, updating their money and adding the train to the game
-    public boolean buyObstacle(Obstacle.Type type, int price, String junction, GameScene s)
+    public boolean buyObstacle(Obstacle.Type type, int price, Junction junction, GameScene s)
     {
         //We do our checks of possession, count (max 3 trains per player!) and price
         if( this.getMoney() < price)
@@ -167,14 +168,9 @@ public class Player {
         }
         else
         {
-            String junctionIdentifier;
-            if (junction.equals("Left junction")) junctionIdentifier = "J1";
-            else {
-                junctionIdentifier = "J2";
-            }
 
             setMoney(getMoney() - price);
-            s.generateJunctionObstacle(s.getStationByName(junctionIdentifier));
+            s.generateJunctionObstacle(junction);
             return true;
         }
     }

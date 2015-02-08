@@ -1,6 +1,8 @@
 package com.fvs.taxe.scenes;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,6 +16,7 @@ import com.fvs.taxe.guiobjects.Pane;
 import com.fvs.taxe.guiobjects.Scroller;
 import com.fvs.taxe.routing.Train;
 import com.fvs.taxe.routing.Train.Type;
+import com.fvs.taxe.worldobjects.Junction;
 import com.fvs.taxe.worldobjects.Obstacle;
 
 public class ShopScene extends GameWindowedGUIScene {
@@ -303,14 +306,28 @@ public class ShopScene extends GameWindowedGUIScene {
                     Game.pushScene(parentGame.makeDialogueScene("Requires " + junctionObstaclePrice + "cr"));
                     return;
                 }
-                ArrayList<String> lstIn = new ArrayList<String>();
-                lstIn.add("Left junction");
-                lstIn.add("Right junction");
 
-                SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselection.png"), lstIn) {
+                final HashMap<String, String> juncDict = new HashMap<String, String>();
+                juncDict.put("Left junction", "J1");
+                juncDict.put("Right junction", "J2");
+
+                ArrayList<String> lstIn = new ArrayList<String>();
+                for (String junctionDescription : juncDict.keySet()) {
+                    lstIn.add(junctionDescription);
+                }
+
+
+
+                final SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselection.png"), lstIn) {
                     @Override
                     public void onSelectionEnd() {
-                        String selectedJunction = (String)elements.get(selectedElementIndex);
+                        Junction selectedJunction = (Junction) parentGame.getStationByName(juncDict.get(elements.get(selectedElementIndex)));
+                        if (selectedJunction.hasObstacle()) {
+                            Game.popScene();
+                            Game.pushScene(parentGame.makeDialogueScene("Obstacle already exists"));
+                            return;
+                        }
+
                         parentGame.activePlayer().buyObstacle(Obstacle.Type.JUNCTION, junctionObstaclePrice, selectedJunction, parentGame);
                         Game.popScene();
                         updateValues();
