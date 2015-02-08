@@ -71,7 +71,7 @@ public class Station extends RouteLocation{
 
     public void decrementObstacleTurns() {
         if (obstacleTurns == -1) return;
-        if (obstacleTurns == 1) {
+        if (obstacleTurns == 0) {
             removeObstacle();
             obstacleTurns = -1;
             return;
