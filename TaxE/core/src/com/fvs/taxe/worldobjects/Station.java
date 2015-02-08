@@ -12,6 +12,8 @@ public class Station extends RouteLocation{
 	// Class that is designed to hold information on locations- position and connections- connected locations and route to other locations 
 	static Texture text = new Texture("location.png");
 	private LabelButton lbutton;
+    // -1 when no obstacle
+    private int obstacleTurns;
 	
 	
 	public Station(final GameScene parentScene, String locationName, int x, int y) {
@@ -31,6 +33,7 @@ public class Station extends RouteLocation{
 		lbutton.setText(locationName);
 		lbutton.setSize(30, 30);
 		parentScene.Add(lbutton);
+        obstacleTurns = -1;
 		
 	}
 	
@@ -55,5 +58,24 @@ public class Station extends RouteLocation{
 		}
 		return false;
 	}
-	
+
+    public void setObstacleTurns(int turns) {
+        obstacleTurns = turns;
+    }
+
+    public void removeObstacle() {
+        parentScene.obstacles.remove(this.getObstacle());
+        parentScene.Remove(this.getObstacle());
+        this.setObstacle(null);
+    }
+
+    public void decrementObstacleTurns() {
+        if (obstacleTurns == -1) return;
+        if (obstacleTurns == 1) {
+            removeObstacle();
+            obstacleTurns = -1;
+            return;
+        }
+        obstacleTurns--;
+    }
 }

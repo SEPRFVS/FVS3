@@ -33,6 +33,7 @@ public class Player {
 	public ArrayList<Goal> completeGoals = new ArrayList<Goal>();
 	public ArrayList<Goal> failedGoals = new ArrayList<Goal>();
     public boolean trainCrashed = false;
+    public boolean trainDelayed = false;
 	
 	//Setter and getter methods for variables
 	public void setActiveGame(GameScene game)

@@ -101,10 +101,19 @@ public class GameScene extends GameGUIScene {
 			return null;
 		}
 	}
-	
+
+    public void updateObstacles() {
+        for (RouteLocation routeLoc : routeLocations) {
+            if (routeLoc instanceof Station) {
+                ((Station) routeLoc).decrementObstacleTurns();
+            }
+        }
+    }
+
 	public void nextTurn() {
 		if (map != null){
 			numberTurns++;
+            updateObstacles();
 			ArrayList<AiSprite> collisions = getCollisions();
 			if (collisions.size() > 0) {
 				calculateCollisions(collisions);
@@ -970,6 +979,11 @@ public class GameScene extends GameGUIScene {
         Game.pushScene(dialogueScene);
     }
 
+    public void delayedDialog() {
+        DialogueScene dialogueScene = new DialogueScene("Your train was delayed at a station!");
+        Game.pushScene(dialogueScene);
+    }
+
 	@Override
 	public void player1Active()
 	{
@@ -990,6 +1004,11 @@ public class GameScene extends GameGUIScene {
             crashDialog();
             getPlayer1().trainCrashed = false;
         }
+
+        if (getPlayer1().trainDelayed) {
+            delayedDialog();
+            getPlayer1().trainDelayed = false;
+        }
 	}
 	
 	@Override
@@ -1009,6 +1028,11 @@ public class GameScene extends GameGUIScene {
         if (getPlayer2().trainCrashed) {
             crashDialog();
             getPlayer2().trainCrashed = false;
+        }
+
+        if (getPlayer2().trainDelayed) {
+            delayedDialog();
+            getPlayer2().trainDelayed = false;
         }
     }
 	

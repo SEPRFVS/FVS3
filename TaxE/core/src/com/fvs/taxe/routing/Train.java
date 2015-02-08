@@ -100,6 +100,7 @@ public class Train extends AiSprite {
 	private GameScene parentScene;
 	private String name;
     private int stationsPassed;
+    private boolean delayed;
 
 	public Train(GameScene parentScene, Player player, String trainName, Texture text, Station station, int weight, int speed, int fuelEfficiency, float reliability) {
 		super(parentScene, text, player, station);
@@ -116,6 +117,7 @@ public class Train extends AiSprite {
 		this.name = trainName;
 		super.setAIType(AIType.TRAIN);
         stationsPassed = 0;
+        delayed = false;
 	}
 
 	@Override
@@ -235,7 +237,11 @@ public class Train extends AiSprite {
 					routeDistance += totalSpeed;
 					pathDistance = overshootDistance;
                     stationsPassed++;
-				} else {
+				} else if (connection.getTargetLocation().hasObstacle() && !delayed) {
+                    delayed = true;
+                    System.out.println("delayed");
+                    delayedTrain();
+                } else {
 					// if the routeLocation currently at is a station, fix to station for that turn
 					waypoint++; 								// move to next waypoint
 					connection = route.getConnection(waypoint);	// get next connection in route
@@ -246,6 +252,7 @@ public class Train extends AiSprite {
 					atStation = true;
 					atStation();
                     stationsPassed++;
+                    if (delayed) delayed = false;
 				}
 			}
 		} else {
@@ -259,6 +266,10 @@ public class Train extends AiSprite {
 		player.setFuel((int) (player.getFuel()- totalFuelEfficiency)); 
 		move();
 	}
+
+    private void delayedTrain() {
+        player.trainDelayed = true;
+    }
 
     public void trainCrashed(Junction junction) {
         player.trainCrashed = true;
@@ -278,7 +289,7 @@ public class Train extends AiSprite {
 
         routeLocations = routeLocations.subList(stationsPassed + 1, routeLocations.size());
         for (RouteLocation routeLocation : routeLocations) {
-            if (routeLocation instanceof Junction) {
+            if (routeLocation.hasObstacle()) {
                 DialogueScene dialogueScene = new DialogueScene("Obstacle warning for " + this.getName() + " train!");
                 Game.pushScene(dialogueScene);
                 break;
