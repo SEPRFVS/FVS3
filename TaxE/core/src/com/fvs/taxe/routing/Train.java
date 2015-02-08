@@ -1,8 +1,5 @@
 package com.fvs.taxe.routing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -14,6 +11,9 @@ import com.fvs.taxe.scenes.GameScene;
 import com.fvs.taxe.worldobjects.Junction;
 import com.fvs.taxe.worldobjects.RouteLocation;
 import com.fvs.taxe.worldobjects.Station;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Train extends AiSprite {
 	public enum Type
@@ -279,11 +279,9 @@ public class Train extends AiSprite {
         routeLocations = routeLocations.subList(stationsPassed + 1, routeLocations.size());
         for (RouteLocation routeLocation : routeLocations) {
             if (routeLocation instanceof Junction) {
-                if (((Junction) routeLocation).hasObstacle()) {
-                    DialogueScene dialogueScene = new DialogueScene("Obstacle warning for " + this.getName() + " train!");
-                    Game.pushScene(dialogueScene);
-                    break;
-                }
+                DialogueScene dialogueScene = new DialogueScene("Obstacle warning for " + this.getName() + " train!");
+                Game.pushScene(dialogueScene);
+                break;
             }
         }
     }

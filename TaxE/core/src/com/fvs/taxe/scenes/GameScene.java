@@ -309,15 +309,15 @@ public class GameScene extends GameGUIScene {
         Obstacle obstacle;
         switch (type) {
             case JUNCTION:
-                if (!(location instanceof Junction)) throw new AssertionError();
                 obstacle = new JunctionObstacle(this, (Junction) location);
                 obstacles.add(obstacle);
                 Add(obstacle);
+                break;
             case STATION:
-                if (!(location instanceof Station)) throw new AssertionError();
                 obstacle = new StationObstacle(this, (Station) location);
                 obstacles.add(obstacle);
                 Add(obstacle);
+                break;
             default:
                 throw new Exception("Wrong type when generating an obstacle");
 
@@ -676,11 +676,9 @@ public class GameScene extends GameGUIScene {
 	public void endSelectingRoute(){
         boolean hasObstacle = false;
         for (RouteLocation routeLocation: newRoute) {
-            if (routeLocation instanceof Junction) {
-                if (((Junction) routeLocation).hasObstacle()) {
+            if (routeLocation.hasObstacle()) {
                     hasObstacle = true;
                     break;
-                }
             }
         }
 
