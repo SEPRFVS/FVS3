@@ -10,6 +10,7 @@ import com.fvs.taxe.guiobjects.Scroller;
 
 public class CurrentResourcesScene extends GameWindowedGUIScene {
 	
+	Pane pane;
 	
 	public CurrentResourcesScene(GameScene parent, Player p1, Player p2) {
 		super(parent, p1, p2);
@@ -18,12 +19,12 @@ public class CurrentResourcesScene extends GameWindowedGUIScene {
 	SpriteComponent currentResources;
 	SpriteComponent scrollPaneBackground;
 	
-	SpriteComponent steamInUse;
-	SpriteComponent dieselInUse;
-	SpriteComponent electricInUse;
-	SpriteComponent nuclearInUse;
-	SpriteComponent magLevInUse;
-	SpriteComponent kingInUse;
+	SpriteComponent steamUsage;
+	SpriteComponent dieselUsage;
+	SpriteComponent electricUsage;
+	SpriteComponent nuclearUsage;
+	SpriteComponent magLevUsage;
+	SpriteComponent kingUsage;
 	
 	@Override
 	public void drawGUIBackground()
@@ -40,7 +41,7 @@ public class CurrentResourcesScene extends GameWindowedGUIScene {
 	
 	public void drawCurrentResourcesScrollpane()
 	{
-		final Pane pane = new Pane(this, -1);
+		pane = new Pane(this, -1);
 		pane.setSize(922, 800);
 		pane.setPosition(50, 485 - pane.getHeight());
 		Add(pane);
@@ -70,58 +71,87 @@ public class CurrentResourcesScene extends GameWindowedGUIScene {
 		scrollPane.setPosition(35, 454);
 		Add(scrollPane);
 		
-		Texture inUseText = new Texture("in-use.png");
+		drawTrainButtons();
 
-		// Create Steam In Use sprite
-		steamInUse = new SpriteComponent(this, inUseText, Game.guiZ);
-		steamInUse.setLocalPosition(65, 555);
-		steamInUse.setSize(115,34);
-		steamInUse.setAlpha(1);
-		pane.Add(steamInUse);
+	}
+	
+	private void drawTrainButtons() {
+		Texture inUseText = new Texture("in-use.png");
+		Texture availableText = new Texture("available.png");
+		//Texture readyText = new Texture("ready.png");
+
+		// Create Steam Usage sprite
+		if(parentGame.activePlayer().hasTrain("Steam")) {
+			steamUsage = new SpriteComponent(this, inUseText, Game.guiZ);
+		} else {
+			steamUsage = new SpriteComponent(this, availableText, Game.guiZ);
+		}
+		steamUsage.setLocalPosition(65, 555);
+		steamUsage.setSize(115,34);
+		steamUsage.setAlpha(1);
+		pane.Add(steamUsage);
 		// ---------------------
 		
 		// Create Diesel In Use sprite
-		dieselInUse = new SpriteComponent(this, inUseText, Game.guiZ);
-		dieselInUse.setLocalPosition(530, 555);
-		dieselInUse.setSize(115,34);
-		dieselInUse.setAlpha(1);
-		pane.Add(dieselInUse);
+		if(parentGame.activePlayer().hasTrain("Diesel")) {
+			dieselUsage = new SpriteComponent(this, inUseText, Game.guiZ);
+		} else {
+			dieselUsage = new SpriteComponent(this, availableText, Game.guiZ);
+		}
+		dieselUsage.setLocalPosition(530, 555);
+		dieselUsage.setSize(115,34);
+		dieselUsage.setAlpha(1);
+		pane.Add(dieselUsage);
 		// ---------------------
 		
 		// Create Electric In Use sprite
-		electricInUse = new SpriteComponent(this, inUseText, Game.guiZ);
-		electricInUse.setLocalPosition(65, 305);
-		electricInUse.setSize(115,34);
-		electricInUse.setAlpha(1);
-		pane.Add(electricInUse);
+		if(parentGame.activePlayer().hasTrain("Electric")) {
+			electricUsage = new SpriteComponent(this, inUseText, Game.guiZ);
+		} else {
+			electricUsage = new SpriteComponent(this, availableText, Game.guiZ);
+		}
+		electricUsage.setLocalPosition(65, 305);
+		electricUsage.setSize(115,34);
+		electricUsage.setAlpha(1);
+		pane.Add(electricUsage);
 		// ---------------------
 		
 		// Create Nuclear In Use sprite
-		nuclearInUse = new SpriteComponent(this, inUseText, Game.guiZ);
-		nuclearInUse.setLocalPosition(530, 305);
-		nuclearInUse.setSize(115,34);
-		nuclearInUse.setAlpha(1);
-		pane.Add(nuclearInUse);
+		if(parentGame.activePlayer().hasTrain("Nuclear")) {
+			nuclearUsage = new SpriteComponent(this, inUseText, Game.guiZ);
+		} else {
+			nuclearUsage = new SpriteComponent(this, availableText, Game.guiZ);
+		}
+		nuclearUsage.setLocalPosition(530, 305);
+		nuclearUsage.setSize(115,34);
+		nuclearUsage.setAlpha(1);
+		pane.Add(nuclearUsage);
 		// ---------------------
 		
 		// Create MagLev In Use sprite
-		magLevInUse = new SpriteComponent(this, inUseText, Game.guiZ);
-		magLevInUse.setLocalPosition(65, 45);
-		magLevInUse.setSize(115,34);
-		magLevInUse.setAlpha(1);
-		pane.Add(magLevInUse);
+		if(parentGame.activePlayer().hasTrain("Mag")) {
+			magLevUsage = new SpriteComponent(this, inUseText, Game.guiZ);
+		} else {
+			magLevUsage = new SpriteComponent(this, availableText, Game.guiZ);
+		}
+		magLevUsage.setLocalPosition(65, 45);
+		magLevUsage.setSize(115,34);
+		magLevUsage.setAlpha(1);
+		pane.Add(magLevUsage);
 		// ---------------------
 		
 		// Create King In Use sprite
-		kingInUse = new SpriteComponent(this, inUseText, Game.guiZ);
-		kingInUse.setLocalPosition(530, 45);
-		kingInUse.setSize(115,34);
-		kingInUse.setAlpha(1);
-		pane.Add(kingInUse);
+		if(parentGame.activePlayer().hasTrain("TheKing")) {
+			kingUsage = new SpriteComponent(this, inUseText, Game.guiZ);
+		} else {
+			kingUsage = new SpriteComponent(this, availableText, Game.guiZ);
+		}
+		kingUsage.setLocalPosition(530, 45);
+		kingUsage.setSize(115,34);
+		kingUsage.setAlpha(1);
+		pane.Add(kingUsage);
 		// ---------------------
-
 	}
-
 	
 	@Override
 	public void drawWindowButtons()
@@ -191,12 +221,12 @@ public class CurrentResourcesScene extends GameWindowedGUIScene {
 		// ---------------------
 		
 		// Set in use sprites to be visible
-		steamInUse.setAlpha(1);
-		dieselInUse.setAlpha(1);
-		electricInUse.setAlpha(1);
-		nuclearInUse.setAlpha(1);
-		magLevInUse.setAlpha(1);
-		kingInUse.setAlpha(1);
+		steamUsage.setAlpha(1);
+		dieselUsage.setAlpha(1);
+		electricUsage.setAlpha(1);
+		nuclearUsage.setAlpha(1);
+		magLevUsage.setAlpha(1);
+		kingUsage.setAlpha(1);
 		// ---------------------
 		
 	}
@@ -213,5 +243,11 @@ public class CurrentResourcesScene extends GameWindowedGUIScene {
 	{
 		System.out.println("resourcesToolbarPressed");
 		//Do nothing
+	}
+	
+	@Override
+	public void onFocusGained() {
+		super.onFocusGained();
+		drawTrainButtons();
 	}
 }
