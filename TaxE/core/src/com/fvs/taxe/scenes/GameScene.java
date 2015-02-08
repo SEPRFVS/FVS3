@@ -1,12 +1,5 @@
 package com.fvs.taxe.scenes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -19,24 +12,23 @@ import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.Scene;
 import com.fvs.taxe.SpriteComponent;
-import com.fvs.taxe.goals.ArrivalObjective;
-import com.fvs.taxe.goals.EmptyObjective;
-import com.fvs.taxe.goals.EventHandler;
-import com.fvs.taxe.goals.Goal;
-import com.fvs.taxe.goals.Objective;
-import com.fvs.taxe.goals.RouteObjective;
+import com.fvs.taxe.goals.*;
 import com.fvs.taxe.guiobjects.Button;
 import com.fvs.taxe.guiobjects.Label;
 import com.fvs.taxe.guiobjects.LabelButton;
-import com.fvs.taxe.routing.AiSprite;
-import com.fvs.taxe.routing.Connection;
-import com.fvs.taxe.routing.CurvedPath;
-import com.fvs.taxe.routing.Route;
-import com.fvs.taxe.routing.Train;
+import com.fvs.taxe.routing.*;
 import com.fvs.taxe.worldobjects.Junction;
-import com.fvs.taxe.worldobjects.Obstacle;
 import com.fvs.taxe.worldobjects.RouteLocation;
 import com.fvs.taxe.worldobjects.Station;
+import com.fvs.taxe.worldobjects.obstacles.JunctionObstacle;
+import com.fvs.taxe.worldobjects.obstacles.Obstacle;
+import com.fvs.taxe.worldobjects.obstacles.StationObstacle;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 public class GameScene extends GameGUIScene {
 
@@ -313,10 +305,23 @@ public class GameScene extends GameGUIScene {
         return train;
     }
 
-    public void generateJunctionObstacle(RouteLocation location) {
-        Obstacle obstacle = new Obstacle(this, (Junction) location);
-        obstacles.add(obstacle);
-        Add(obstacle);
+    public void generateObstacle(RouteLocation location, Obstacle.Type type) throws Exception {
+        Obstacle obstacle;
+        switch (type) {
+            case JUNCTION:
+                if (!(location instanceof Junction)) throw new AssertionError();
+                obstacle = new JunctionObstacle(this, (Junction) location);
+                obstacles.add(obstacle);
+                Add(obstacle);
+            case STATION:
+                if (!(location instanceof Station)) throw new AssertionError();
+                obstacle = new StationObstacle(this, (Station) location);
+                obstacles.add(obstacle);
+                Add(obstacle);
+            default:
+                throw new Exception("Wrong type when generating an obstacle");
+
+        }
     }
     
     

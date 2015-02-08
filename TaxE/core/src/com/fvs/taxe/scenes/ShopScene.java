@@ -1,23 +1,19 @@
 package com.fvs.taxe.scenes;
 
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.SpriteComponent;
-import com.fvs.taxe.guiobjects.Button;
-import com.fvs.taxe.guiobjects.Label;
-import com.fvs.taxe.guiobjects.LabelButton;
-import com.fvs.taxe.guiobjects.Pane;
-import com.fvs.taxe.guiobjects.Scroller;
+import com.fvs.taxe.guiobjects.*;
 import com.fvs.taxe.routing.Train;
 import com.fvs.taxe.routing.Train.Type;
 import com.fvs.taxe.worldobjects.Junction;
-import com.fvs.taxe.worldobjects.Obstacle;
+import com.fvs.taxe.worldobjects.RouteLocation;
+import com.fvs.taxe.worldobjects.obstacles.Obstacle;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ShopScene extends GameWindowedGUIScene {
 
@@ -287,10 +283,10 @@ public class ShopScene extends GameWindowedGUIScene {
 	}
 
     public void drawObstacleButtons() {
-        final int junctionObstaclePrice = 300;
         Texture buyButtonText = new Texture("buy_bg.png");
-
         Texture LabelText = new Texture("Clear_Button.png");
+
+        final int junctionObstaclePrice = 300;
         junctionObstacleLabel = new Label(this, LabelText, Label.genericFont(Color.BLACK, 40));
         junctionObstacleLabel.setText("Junction obstacle");
         junctionObstacleLabel.setLocalPosition(65, 800);
@@ -345,6 +341,28 @@ public class ShopScene extends GameWindowedGUIScene {
         junctionObstacleButton.setFont(Label.genericFont(Color.WHITE, 22));
         pane.Add(junctionObstacleButton);
 
+
+        final int stationObstaclePrice = 200;
+        Label stationObstacleLabel = new Label(this, LabelText, Label.genericFont(Color.BLACK, 40));
+        stationObstacleLabel.setText("Station obstacle (expires in 5 turns)");
+        stationObstacleLabel.setLocalPosition(65, 640);
+        stationObstacleLabel.setAlignment(0);
+        pane.Add(stationObstacleLabel);
+
+        LabelButton stationObstacleButton = new LabelButton(this) {
+            @Override
+            public void onClickEnd(){
+                buyStationObstaclePressed(stationObstaclePrice);
+            }
+        };
+        stationObstacleButton.setTexture(buyButtonText);
+        stationObstacleButton.setText("Buy: " + stationObstaclePrice + "cr");
+        stationObstacleButton.setSize(115, 34);
+        stationObstacleButton.setLocalPosition(65, 560);
+        stationObstacleButton.setAlignment(1);
+        stationObstacleButton.setAlpha(1);
+        stationObstacleButton.setFont(Label.genericFont(Color.WHITE, 22));
+        pane.Add(stationObstacleButton);
     }
 
 	public void drawResourceButtons()
@@ -851,6 +869,36 @@ public class ShopScene extends GameWindowedGUIScene {
 		};
 		Game.pushScene(locationSelectionScene);
 	}
+
+    public void buyStationObstaclePressed(final int price) {
+        if(parentGame.activePlayer().getMoney() < price)
+        {
+            Game.pushScene(parentGame.makeDialogueScene("Requires " + price + "cr"));
+            return;
+        }
+
+        ArrayList<String> lstIn = new ArrayList<String>();
+        lstIn.add("London");
+        lstIn.add("Rome");
+        lstIn.add("Moscow");
+        lstIn.add("Lisbon");
+        lstIn.add("Paris");
+        lstIn.add("Berlin");
+        lstIn.add("Madrid");
+        lstIn.add("Budapest");
+        SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselection.png"), lstIn) {
+            @Override
+            public void onSelectionEnd() {
+                String selectedStation = (String)elements.get(selectedElementIndex);
+                RouteLocation loc = parentGame.getStationByName(selectedStation);
+                parentGame.activePlayer().buyObstacle(Obstacle.Type.STATION, price, loc, parentGame);
+                Game.popScene();
+                refreshButtons();
+                updateValues();
+            }
+        };
+        Game.pushScene(locationSelectionScene);
+    }
 	@Override
 	public void onFocusGained()
 	{

@@ -1,16 +1,16 @@
 package com.fvs.taxe;
 
-import java.util.ArrayList;
-
 import com.fvs.taxe.goals.Goal;
 import com.fvs.taxe.routing.AiSprite;
-import com.fvs.taxe.routing.Train;
 import com.fvs.taxe.routing.AiSprite.AIType;
+import com.fvs.taxe.routing.Train;
 import com.fvs.taxe.routing.Train.Type;
 import com.fvs.taxe.scenes.GameScene;
-import com.fvs.taxe.worldobjects.Junction;
-import com.fvs.taxe.worldobjects.Obstacle;
+import com.fvs.taxe.worldobjects.RouteLocation;
 import com.fvs.taxe.worldobjects.Station;
+import com.fvs.taxe.worldobjects.obstacles.Obstacle;
+
+import java.util.ArrayList;
 
 public class Player {
 	//This class stores information about a specific player. It tracks their belongings, goals, and values
@@ -159,19 +159,20 @@ public class Player {
 	}
 
     //This method is used to purchase a train for the player, updating their money and adding the train to the game
-    public boolean buyObstacle(Obstacle.Type type, int price, Junction junction, GameScene s)
+    public boolean buyObstacle(Obstacle.Type type, int price, RouteLocation loc, GameScene s)
     {
         //We do our checks of possession, count (max 3 trains per player!) and price
         if( this.getMoney() < price)
         {
             return false;
         }
-        else
-        {
 
+        try {
+            s.generateObstacle(loc, type);
             setMoney(getMoney() - price);
-            s.generateJunctionObstacle(junction);
             return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 	

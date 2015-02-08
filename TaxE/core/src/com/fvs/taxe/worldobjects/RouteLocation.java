@@ -1,7 +1,5 @@
 package com.fvs.taxe.worldobjects;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.fvs.taxe.Clickable;
@@ -9,6 +7,9 @@ import com.fvs.taxe.Game;
 import com.fvs.taxe.routing.Connection;
 import com.fvs.taxe.routing.CurvedPath;
 import com.fvs.taxe.scenes.GameScene;
+import com.fvs.taxe.worldobjects.obstacles.Obstacle;
+
+import java.util.ArrayList;
 
 public abstract class RouteLocation extends Clickable {
 
@@ -18,6 +19,7 @@ public abstract class RouteLocation extends Clickable {
 	protected ArrayList<Connection> connections = new ArrayList<Connection>();  	// connected locations
 	protected int numConnections = 0;												// number of connected locations
 	protected Boolean selectingRoute = false;
+    private Obstacle obstacle;
 	
 	// abstract class for anything that can lie on a route and have multiple routes converging to it
 	public RouteLocation(GameScene parentScene, Texture text, String name,  int x, int y) {
@@ -79,6 +81,18 @@ public abstract class RouteLocation extends Clickable {
 	public Boolean getSelectingRoute(){
 		return this.selectingRoute;
 	}
+
+    public void setObstacle(Obstacle obstacle) {
+        this.obstacle = obstacle;
+    }
+
+    public Obstacle getObstacle() {
+        return obstacle;
+    }
+
+    public boolean hasObstacle() {
+        return obstacle != null;
+    }
 	
 	@Override
 	public void onClickEnd(){
