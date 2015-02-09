@@ -15,27 +15,24 @@ public class RouteObjective extends ArrivalObjective{
 	//This array list stores the players who have completed this objective
 	private ArrayList<Train> activeTrains = new ArrayList<Train>();
 	
-	public RouteObjective(int money, String goalText, String startStation, String destination) {
-		super(money, goalText, destination);
-		this.setStartStation(startStation);
+	public RouteObjective() {
+		setMoneyReward(400);
+		setGoalText("Transport a train between ");
+
+		String station1 = getRandomStation();
+		String station2 = getRandomStation();
+
+		while(station2.equals(station1)) {
+			station2 = getRandomStation();
+		}
+
+		setStartStation(station1);
 	}
 	
 	//Override toString method
 	public String toString()
 	{
 		return getGoalText() + startStation + " and " + getDestination();
-	}
-	
-	//Generate method creates a default instance of this class
-	public static Objective generate()
-	{
-		String station1 = getRandomStation();
-		String station2 = getRandomStation();
-		while(station2.equals(station1))
-		{
-			station2 = getRandomStation();
-		}
-		return new RouteObjective(400, "Transport a train between ", station1, station2);
 	}
 	
 	//Getters and setters for start station
