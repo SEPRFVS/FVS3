@@ -1,12 +1,15 @@
-package com.fvs.taxe.goals;
+package com.fvs.taxe.goals.objectives;
 
 import java.util.ArrayList;
 
 import com.fvs.taxe.Player;
+import com.fvs.taxe.goals.Event;
+import com.fvs.taxe.goals.EventHandler;
+import com.fvs.taxe.goals.objectives.ArrivalObjective;
 import com.fvs.taxe.routing.AiSprite;
 import com.fvs.taxe.routing.Train;
 
-public class RouteObjective extends ArrivalObjective{
+public class RouteObjective extends ArrivalObjective {
 	//This class extends ArrivalObjective, adding a start criteria as well as an end criteria so that
 	//The player must pass a train along a route as apposed to sending it to a single point
 	

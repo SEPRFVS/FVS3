@@ -1,9 +1,11 @@
-package com.fvs.taxe.goals;
+package com.fvs.taxe.goals.objectives;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import com.fvs.taxe.Player;
+import com.fvs.taxe.goals.Event;
+import com.fvs.taxe.goals.EventHandler;
 import com.fvs.taxe.routing.AiSprite;
 
 public class ArrivalObjective extends Objective {

@@ -2,6 +2,7 @@ package com.fvs.taxe.goals;
 
 import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
+import com.fvs.taxe.goals.objectives.Objective;
 import com.fvs.taxe.scenes.GameScene;
 
 public class Goal {
