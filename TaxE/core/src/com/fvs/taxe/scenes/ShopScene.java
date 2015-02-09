@@ -288,8 +288,8 @@ public class ShopScene extends GameWindowedGUIScene {
 
         final int junctionObstaclePrice = 300;
         junctionObstacleLabel = new Label(this, LabelText, Label.genericFont(Color.BLACK, 40));
-        junctionObstacleLabel.setText("Junction obstacle");
-        junctionObstacleLabel.setLocalPosition(65, 800);
+        junctionObstacleLabel.setText("");
+        junctionObstacleLabel.setLocalPosition(350, 570);
         junctionObstacleLabel.setAlignment(0);
         pane.Add(junctionObstacleLabel);
 
@@ -334,7 +334,7 @@ public class ShopScene extends GameWindowedGUIScene {
         };
         junctionObstacleButton.setTexture(buyButtonText);
         junctionObstacleButton.setText("Buy: 300cr");
-        junctionObstacleButton.setLocalPosition(65, 720);
+        junctionObstacleButton.setLocalPosition(420, 530);
         junctionObstacleButton.setSize(115, 34);
         junctionObstacleButton.setAlignment(1);
         junctionObstacleButton.setAlpha(1);
@@ -344,8 +344,8 @@ public class ShopScene extends GameWindowedGUIScene {
 
         final int stationObstaclePrice = 200;
         Label stationObstacleLabel = new Label(this, LabelText, Label.genericFont(Color.BLACK, 40));
-        stationObstacleLabel.setText("Station obstacle (expires in 5 turns)");
-        stationObstacleLabel.setLocalPosition(65, 640);
+        stationObstacleLabel.setText("");
+        stationObstacleLabel.setLocalPosition(35, 570);
         stationObstacleLabel.setAlignment(0);
         pane.Add(stationObstacleLabel);
 
@@ -358,7 +358,7 @@ public class ShopScene extends GameWindowedGUIScene {
         stationObstacleButton.setTexture(buyButtonText);
         stationObstacleButton.setText("Buy: " + stationObstaclePrice + "cr");
         stationObstacleButton.setSize(115, 34);
-        stationObstacleButton.setLocalPosition(65, 560);
+        stationObstacleButton.setLocalPosition(90, 530);
         stationObstacleButton.setAlignment(1);
         stationObstacleButton.setAlpha(1);
         stationObstacleButton.setFont(Label.genericFont(Color.WHITE, 22));
