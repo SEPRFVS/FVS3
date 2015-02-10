@@ -11,21 +11,23 @@ public class Objective {
 private ArrayList<Player> completePlayers = new ArrayList<Player>();
 //When a player completes an objective they are rewarded it's value
 private int moneyReward = 0;
+private int scoreReward = 0;
 //Score reward TODO with score implementation
 protected String goalText = "";
 //Track the objective's progress through the event log with this variable
 private int eventIndex = 0;
 
-public Objective(int money, String goalText)
+public Objective(int money, int score, String goalText)
 {
 	this.moneyReward = money;
+	this.scoreReward = score;
 	this.setGoalText(goalText);
 }
 
 //Generate method, overridden by different children
 public static Objective generate()
 {
-	return new Objective(0, "Default objective instance");
+	return new Objective(0, 0, "Default objective instance");
 }
 
 //Override toString method
@@ -44,6 +46,14 @@ public int getMoneyReward()
 public void setMoneyReward(int value)
 {
 	moneyReward = value;
+}
+
+public void setScoreReward(int value) {
+	scoreReward = value;
+}
+
+public int getScoreReward() {
+	return scoreReward;
 }
 
 public String getGoalText() {

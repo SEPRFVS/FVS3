@@ -5,6 +5,8 @@ import java.util.Random;
 
 import com.fvs.taxe.Player;
 import com.fvs.taxe.routing.AiSprite;
+import com.fvs.taxe.scenes.GameScene;
+import com.fvs.taxe.goals.Dijkstra;
 
 public class ArrivalObjective extends Objective {
 	//This class is a child of objective. It specifically implements the Absolute objective of reaching a location
@@ -13,8 +15,8 @@ public class ArrivalObjective extends Objective {
 	private String destination = "";
 	
 	//Constructor sets destination
-	public ArrivalObjective(int money, String goalText, String destination) {
-		super(money, goalText);
+	public ArrivalObjective(int money, int score, String goalText, String destination) {
+		super(money, score, goalText);
 		this.setDestination(destination);
 	}
 	
@@ -24,10 +26,14 @@ public class ArrivalObjective extends Objective {
 		return getGoalText() + destination;
 	}
 	
-	//This static method generates an instance of this class according to generic values
-	public static Objective generate()
+	//This static method generates an instance of
+	//this class according to generic values
+	public static Objective generate(GameScene parentScene)
 	{
-		return new ArrivalObjective(200, "Transport a train to ", getRandomStation());
+		String randomStation = getRandomStation();
+		int distance = Dijkstra.calculate(parentScene.getLocations(), parentScene.getStationByName(parentScene.activePlayer().getStartLocation()), parentScene.getStationByName("Paris"));
+		System.out.println(distance);
+		return new ArrivalObjective(distance, distance,"Transport a train to ", randomStation);
 	}
 	
 	//This method simply generates a random station name from the list of station

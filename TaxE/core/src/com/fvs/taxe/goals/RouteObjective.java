@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.routing.AiSprite;
 import com.fvs.taxe.routing.Train;
+import com.fvs.taxe.scenes.GameScene;
 
 public class RouteObjective extends ArrivalObjective{
 	//This class extends ArrivalObjective, adding a start criteria as well as an end criteria so that
@@ -15,8 +16,8 @@ public class RouteObjective extends ArrivalObjective{
 	//This array list stores the players who have completed this objective
 	private ArrayList<Train> activeTrains = new ArrayList<Train>();
 	
-	public RouteObjective(int money, String goalText, String startStation, String destination) {
-		super(money, goalText, destination);
+	public RouteObjective(int money, int score, String goalText, String startStation, String destination) {
+		super(money, score, goalText, destination);
 		this.setStartStation(startStation);
 	}
 	
@@ -27,7 +28,7 @@ public class RouteObjective extends ArrivalObjective{
 	}
 	
 	//Generate method creates a default instance of this class
-	public static Objective generate()
+	public static Objective generate(GameScene parentScene)
 	{
 		String station1 = getRandomStation();
 		String station2 = getRandomStation();
@@ -35,7 +36,8 @@ public class RouteObjective extends ArrivalObjective{
 		{
 			station2 = getRandomStation();
 		}
-		return new RouteObjective(400, "Transport a train between ", station1, station2);
+		int distance = Dijkstra.calculate(parentScene.getLocations(),parentScene.getStationByName(station1), parentScene.getStationByName(station2));
+		return new RouteObjective(distance, distance + ((int) (distance*0.25)), "Transport a train between ", station1, station2);
 	}
 	
 	//Getters and setters for start station

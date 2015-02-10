@@ -11,7 +11,7 @@ public class EmptyObjective extends Objective {
 	}
 	
 	public EmptyObjective() {
-		super(0, "No Objective");
+		super(0, 0, "No Objective");
 	}
 	
 	//Override toString method

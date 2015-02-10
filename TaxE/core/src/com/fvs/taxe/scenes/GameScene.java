@@ -281,11 +281,11 @@ public class GameScene extends GameGUIScene {
 		Add(leaderButton);
 		
 		events = new EventHandler();
-		Objective mainObjective = ArrivalObjective.generate();
+		Objective mainObjective = ArrivalObjective.generate(this);
 		Objective sideObjective = EmptyObjective.generate();
 		Goal g = new Goal(this, mainObjective, sideObjective, sideObjective);
 		this.activeGoals.add(g);
-		mainObjective = RouteObjective.generate();
+		mainObjective = RouteObjective.generate(this);
 		sideObjective = EmptyObjective.generate();
 		g = new Goal(this, mainObjective, sideObjective, sideObjective);
 		this.activeGoals.add(g);
@@ -975,11 +975,11 @@ public class GameScene extends GameGUIScene {
 			Objective mainObjective;
 			if(new Random().nextDouble() > 0.5)
 			{
-				mainObjective = ArrivalObjective.generate();
+				mainObjective = ArrivalObjective.generate(this);
 			}
 			else
 			{
-				mainObjective = RouteObjective.generate();
+				mainObjective = RouteObjective.generate(this);
 			}
 			Objective sideObjective = EmptyObjective.generate();
 			Goal g = new Goal(this, mainObjective, sideObjective, sideObjective);
