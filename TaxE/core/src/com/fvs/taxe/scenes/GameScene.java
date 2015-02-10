@@ -19,12 +19,12 @@ import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.Scene;
 import com.fvs.taxe.SpriteComponent;
-import com.fvs.taxe.goals.ArrivalObjective;
-import com.fvs.taxe.goals.EmptyObjective;
+import com.fvs.taxe.goals.objectives.ArrivalObjective;
+import com.fvs.taxe.goals.objectives.EmptyObjective;
 import com.fvs.taxe.goals.EventHandler;
 import com.fvs.taxe.goals.Goal;
-import com.fvs.taxe.goals.Objective;
-import com.fvs.taxe.goals.RouteObjective;
+import com.fvs.taxe.goals.objectives.Objective;
+import com.fvs.taxe.goals.objectives.RouteObjective;
 import com.fvs.taxe.guiobjects.Button;
 import com.fvs.taxe.guiobjects.Label;
 import com.fvs.taxe.guiobjects.LabelButton;
@@ -281,14 +281,14 @@ public class GameScene extends GameGUIScene {
 		Add(leaderButton);
 		
 		events = new EventHandler();
-		Objective mainObjective = ArrivalObjective.generate(this);
-		Objective sideObjective = EmptyObjective.generate();
-		Goal g = new Goal(this, mainObjective, sideObjective, sideObjective);
+		Objective sideObjective = new EmptyObjective();
+		Goal g = new Goal(this, new ArrivalObjective(this), sideObjective, sideObjective);
 		this.activeGoals.add(g);
-		mainObjective = RouteObjective.generate(this);
-		sideObjective = EmptyObjective.generate();
-		g = new Goal(this, mainObjective, sideObjective, sideObjective);
+
+		sideObjective = new EmptyObjective();
+		g = new Goal(this,  new RouteObjective(this), sideObjective, sideObjective);
 		this.activeGoals.add(g);
+
 		generateGoals();
 		player1Active();
 	}
@@ -975,13 +975,13 @@ public class GameScene extends GameGUIScene {
 			Objective mainObjective;
 			if(new Random().nextDouble() > 0.5)
 			{
-				mainObjective = ArrivalObjective.generate(this);
+				mainObjective = new ArrivalObjective(this);
 			}
 			else
 			{
-				mainObjective = RouteObjective.generate(this);
+				mainObjective = new RouteObjective(this);
 			}
-			Objective sideObjective = EmptyObjective.generate();
+			Objective sideObjective = new EmptyObjective();
 			Goal g = new Goal(this, mainObjective, sideObjective, sideObjective);
 			this.activeGoals.add(g);
 		}

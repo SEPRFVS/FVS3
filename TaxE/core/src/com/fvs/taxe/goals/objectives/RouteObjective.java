@@ -1,13 +1,17 @@
-package com.fvs.taxe.goals;
+package com.fvs.taxe.goals.objectives;
 
 import java.util.ArrayList;
 
 import com.fvs.taxe.Player;
+import com.fvs.taxe.goals.Dijkstra;
+import com.fvs.taxe.goals.Event;
+import com.fvs.taxe.goals.EventHandler;
+import com.fvs.taxe.goals.objectives.ArrivalObjective;
 import com.fvs.taxe.routing.AiSprite;
 import com.fvs.taxe.routing.Train;
 import com.fvs.taxe.scenes.GameScene;
 
-public class RouteObjective extends ArrivalObjective{
+public class RouteObjective extends ArrivalObjective {
 	//This class extends ArrivalObjective, adding a start criteria as well as an end criteria so that
 	//The player must pass a train along a route as apposed to sending it to a single point
 	
@@ -16,28 +20,27 @@ public class RouteObjective extends ArrivalObjective{
 	//This array list stores the players who have completed this objective
 	private ArrayList<Train> activeTrains = new ArrayList<Train>();
 	
-	public RouteObjective(int money, int score, String goalText, String startStation, String destination) {
-		super(money, score, goalText, destination);
-		this.setStartStation(startStation);
+	public RouteObjective(GameScene parentScene) {
+		//TODO calling the constructor does nothing useful so needs to be avoided
+		super(parentScene);
+		String station1 = getRandomStation();
+		String station2 = getRandomStation();
+
+		while(station2.equals(station1)) {
+			station2 = getRandomStation();
+		}
+
+		setStartStation(station1);
+		
+		int distance = Dijkstra.calculate(parentScene.getLocations(),parentScene.getStationByName(station1), parentScene.getStationByName(station2));
+		setMoneyReward(distance);
+		setGoalText("Transport a train between ");
 	}
 	
 	//Override toString method
 	public String toString()
 	{
 		return getGoalText() + startStation + " and " + getDestination();
-	}
-	
-	//Generate method creates a default instance of this class
-	public static Objective generate(GameScene parentScene)
-	{
-		String station1 = getRandomStation();
-		String station2 = getRandomStation();
-		while(station2.equals(station1))
-		{
-			station2 = getRandomStation();
-		}
-		int distance = Dijkstra.calculate(parentScene.getLocations(),parentScene.getStationByName(station1), parentScene.getStationByName(station2));
-		return new RouteObjective(distance, distance + ((int) (distance*0.25)), "Transport a train between ", station1, station2);
 	}
 	
 	//Getters and setters for start station
