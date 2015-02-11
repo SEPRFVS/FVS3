@@ -68,11 +68,6 @@ public class NewGameScene extends Scene   {
 		// Set defaults on create
 		currentDifficultyPlayer1 = player1Easy;
 		currentDifficultyPlayer2 = player2Easy;
-		prevDifficultyPlayer1 = player1Easy;
-		prevDifficultyPlayer2 = player2Easy;
-		
-		prevStartCityPlayer1 = player1London;
-		prevStartCityPlayer2 = player2London;
 		startCityPlayer1 = player1London;
 		startCityPlayer2 = player2London;
 		
@@ -494,21 +489,24 @@ public class NewGameScene extends Scene   {
 	//Set Difficulties for P1 & P2, Highlight in GUI
 	public void setDifficultyPlayer1(LabelButton label)
 	{
-		System.out.println("Difficulty set:" + label.getText());
-		currentDifficultyPlayer1.getFont().setColor(Color.GRAY);
-		label.getFont().setColor(Color.BLUE);
 		prevDifficultyPlayer1 = currentDifficultyPlayer1;
+		prevDifficultyPlayer1.setFont(Label.genericFont(Color.GRAY, 30));
+
+		label.setFont(Label.genericFont(Color.BLUE, 30));
 		currentDifficultyPlayer1 = label;
 		
+		System.out.println("Player 1 difficulty set:" + label.getText());
 	}
 	
 	public void setDifficultyPlayer2(LabelButton label)
 	{
-		System.out.println("Difficulty set:" + label.getText());
-		currentDifficultyPlayer2.getFont().setColor(Color.GRAY);
-		label.getFont().setColor(Color.RED);
 		prevDifficultyPlayer2 = currentDifficultyPlayer2;
+		prevDifficultyPlayer2.setFont(Label.genericFont(Color.GRAY, 30));
+
+		label.setFont(Label.genericFont(Color.RED, 30));
 		currentDifficultyPlayer2 = label;
+		
+		System.out.println("Player 2 difficulty set:" + label.getText());
 		
 	}
 
@@ -518,17 +516,19 @@ public class NewGameScene extends Scene   {
 
 	// Sets Start City for P1, highlights in GUI
 	public void startCityPlayer1(LabelButton label) {
-		prevStartCityPlayer1.getFont().setColor(Color.GRAY);
-		label.getFont().setColor(Color.BLUE);
-		prevStartCityPlayer1 = label;
+		prevStartCityPlayer1 = startCityPlayer1;
+		prevStartCityPlayer1.setFont(Label.genericFont(Color.GRAY, 30));
+		
+		label.setFont(Label.genericFont(Color.BLUE, 30));
 		startCityPlayer1 = label;
 	}
 	
 	// Sets Start City for P2, highlights in GUI
 	public void startCityPlayer2(LabelButton label) {
-		prevStartCityPlayer2.getFont().setColor(Color.GRAY);
-		label.getFont().setColor(Color.RED);
-		prevStartCityPlayer2 = label;
+		prevStartCityPlayer2 = startCityPlayer2;
+		prevStartCityPlayer2.setFont(Label.genericFont(Color.GRAY, 30));
+		
+		label.setFont(Label.genericFont(Color.RED, 30));
 		startCityPlayer2 = label;
 	}
 	
