@@ -27,7 +27,6 @@ import com.fvs.taxe.goals.objectives.Objective;
 import com.fvs.taxe.goals.objectives.RouteObjective;
 import com.fvs.taxe.guiobjects.Button;
 import com.fvs.taxe.guiobjects.Label;
-import com.fvs.taxe.guiobjects.LabelButton;
 import com.fvs.taxe.routing.AiSprite;
 import com.fvs.taxe.routing.Connection;
 import com.fvs.taxe.routing.CurvedPath;
@@ -62,8 +61,13 @@ public class GameScene extends GameGUIScene {
 	private ArrayList<AiSprite> previousCollisions = new ArrayList<AiSprite>();					// used for remembering the collisions that occured in the previous turn, ensures not multiple collisions detected
 	private int prevCollision;
 	
-	private LabelButton confirmRouteSelectionButton;
-	private LabelButton routeSelectionButton;
+	//BUTTONS
+	Button routeSelectionButton;
+	Button confirmRouteSelectionButton;
+	Texture selectRoute = new Texture("select_route.png");
+	Texture cancelRoute = new Texture("cancel_route.png");
+	Texture confirmRoute = new Texture("confirm_route.png");
+	
 	protected boolean isSelectingRoute = false;													// boolean that says whether the player is currently in route selection mode
 	private ArrayList<Train> selectedTrains = new ArrayList<Train>();							// the train that is being used to use in route selection mode 
 	private ArrayList<RouteLocation> newRoute = new ArrayList<RouteLocation>();					// the (potentially incomplete) route at that point
@@ -211,9 +215,7 @@ public class GameScene extends GameGUIScene {
 		goalsScene = new GoalsScene(this, this.getPlayer1(), this.getPlayer2());
 		resourceScene = new CurrentResourcesScene(this, this.getPlayer1(), this.getPlayer2());
 		dialogueScene = new DialogueScene("");
-		Texture clearButtonTexture = new Texture("Clear_Button.png");
-		routeSelectionButton = new LabelButton(this, clearButtonTexture , 100 , 40, Label.genericFont(Color.BLACK, 30)) {
-			@Override
+		routeSelectionButton = new Button (this) {
 			public void onClickEnd()
 			{
 				if (!isSelectingRoute) {
@@ -225,30 +227,10 @@ public class GameScene extends GameGUIScene {
 				}
 			}
 		};
-		routeSelectionButton.setPosition(Game.targetWindowsWidth/2, Game.targetWindowsHeight - 205);
-		routeSelectionButton.setText("Select Route");
-		routeSelectionButton.setAlignment(0);
+		routeSelectionButton.setPosition(350,627);
+		routeSelectionButton.setSize(323,23);
+		routeSelectionButton.setTexture(selectRoute);
 		Add(routeSelectionButton);
-		confirmRouteSelectionButton = new LabelButton(this, clearButtonTexture, 100 , 40, Label.genericFont(Color.BLACK, 30)){
-			@Override
-			public void onClickEnd()
-			{
-				if (isSelectingRoute) {
-					if (newRoute.size() > 1 && (newRoute.get(newRoute.size()-1).getClass() == Station.class)) {
-						// route must be at least 2 locations, finish on a station
-						Train trainSelected = selectedTrains.get(0);
-						trainSelected.setRoute(new Route(newRoute));
-						endSelectingRoute();
-						isSelectingRoute = false;
-					}
-				} 
-			}
-		};
-		confirmRouteSelectionButton.setPosition(Game.targetWindowsWidth -150, Game.targetWindowsHeight -205);
-		confirmRouteSelectionButton.setSize(0, 0);
-		confirmRouteSelectionButton.setText("");
-		confirmRouteSelectionButton.setAlignment(0);
-		Add(confirmRouteSelectionButton);
 		
 		//Buttons set up
 		Texture buttonText = new Texture("Clear_Button.png");
@@ -523,9 +505,29 @@ public class GameScene extends GameGUIScene {
 	public void startSelectingRoute() {
 		// change buttons accordingly
 		nextGoButton.setSize(0,0);
-		confirmRouteSelectionButton.setText("Confirm Route");
-		confirmRouteSelectionButton.setSize(100, 40);
-		routeSelectionButton.setText("Cancel Routing");
+		
+		confirmRouteSelectionButton = new Button(this){
+			@Override
+			public void onClickEnd()
+			{
+				if (isSelectingRoute) {
+					if (newRoute.size() > 1 && (newRoute.get(newRoute.size()-1).getClass() == Station.class)) {
+						// route must be at least 2 locations, finish on a station
+						Train trainSelected = selectedTrains.get(0);
+						trainSelected.setRoute(new Route(newRoute));
+						endSelectingRoute();
+						isSelectingRoute = false;
+					}
+				} 
+			}
+		};
+		confirmRouteSelectionButton.setTexture(confirmRoute);
+		confirmRouteSelectionButton.setPosition(515,627);
+		confirmRouteSelectionButton.setSize(158,23);
+		Add(confirmRouteSelectionButton);
+		
+		routeSelectionButton.setSize(158,23);
+		routeSelectionButton.setTexture(cancelRoute);
 		// enable the routeLocations to be clickable
 		newRoute = new ArrayList<RouteLocation>();
 		for (RouteLocation routeLocation:routeLocations){
@@ -661,9 +663,9 @@ public class GameScene extends GameGUIScene {
 		// reverse everything changed in startSelectingRoute 
 		// reset buttons
 		nextGoButton.setSize(83, 44);
-		confirmRouteSelectionButton.setText(" ");
-		confirmRouteSelectionButton.setSize(0, 0);
-		routeSelectionButton.setText("Select Route");
+		Remove(confirmRouteSelectionButton);
+		routeSelectionButton.setSize(323,23);
+		routeSelectionButton.setTexture(selectRoute);
 		// reset routeLocations
 		Texture locationTexture = new Texture("location.png");
 		Texture junctionTexture = new Texture("location.png");
