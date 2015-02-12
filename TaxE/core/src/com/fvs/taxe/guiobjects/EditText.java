@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.fvs.taxe.Scene;
+import com.fvs.taxe.scenes.NewGameScene;
 
 public class EditText extends LabelButton {
 	//This class extends the label button such that it can be clicked to enable setting of the text
@@ -26,7 +27,7 @@ public class EditText extends LabelButton {
 		focus = true;
 		this.setFont(Label.genericFont(Color.GREEN, 40));
 		//Clear the editText
-		this.setText("");
+		if (this.getText() == "Name"){this.setText("");}
 	}
 	
 	//We override clickEnd so that any click outside of the edit text drops focus
@@ -61,8 +62,10 @@ public class EditText extends LabelButton {
 		{
 			this.setText(this.getText().substring(0, this.getText().length() - 2));
 		}
+		if(keycode == Keys.TAB && focus) //Allows us to switch to player 2 name entry using tab key
+		{
+			this.clickEnd(0,0);
+			NewGameScene.getPlayer2NameText().onClickEnd();
+		}
 	}
-	
-
 }
-
