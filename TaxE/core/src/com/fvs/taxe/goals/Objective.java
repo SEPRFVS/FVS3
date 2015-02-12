@@ -11,7 +11,6 @@ public class Objective {
 	private ArrayList<Player> completePlayers = new ArrayList<Player>();
 	//When a player completes an objective they are rewarded it's value
 	private int moneyReward = 0;
-	private int scoreReward = 0;
 	//Score reward TODO with score implementation
 	protected String goalText = "";
 	//Track the objective's progress through the event log with this variable
@@ -19,7 +18,6 @@ public class Objective {
 
 	public Objective(int money, int score, String goalText)	{
 		this.moneyReward = money;
-		this.scoreReward = score;
 		this.setGoalText(goalText);
 	}
 
@@ -42,15 +40,7 @@ public class Objective {
 	public void setMoneyReward(int value) {
 		moneyReward = value;
 	}
-
-	public void setScoreReward(int value) {
-		scoreReward = value;
-	}
-
-	public int getScoreReward() {
-		return scoreReward;
-	}
-
+	
 	public String getGoalText() {
 		return goalText;
 	}
