@@ -26,7 +26,7 @@ public class NewGameScene extends Scene   {
 
 	//Labels & Buttons
 	//Labels for Fields (P1 & P2)
-	EditText player1NameText, player2NameText;
+	static EditText player1NameText, player2NameText;
 	Label title, player1TitleLabel, player1Difficulty, player1StartLocation;
 	Label player2TitleLabel, player2NameLabel, player2Difficulty, player2StartLocation;
 	
@@ -271,6 +271,14 @@ public class NewGameScene extends Scene   {
 	}
 	
 	// All player 2 info drawn with relevant onClicks defined
+	
+	public static EditText getPlayer1NameText(){
+		return player1NameText;
+	}
+	
+	public static EditText getPlayer2NameText(){
+		return player2NameText;
+	}
 	
 	public void drawPlayer2Info()
 	{
@@ -574,6 +582,4 @@ public class NewGameScene extends Scene   {
 		System.out.println("Didn't want you to play anyway!");
 		Game.setScene(new MainMenuScene());
 	}
-	
-	
-	}
+}
