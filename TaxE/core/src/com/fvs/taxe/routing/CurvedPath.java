@@ -52,6 +52,14 @@ public class CurvedPath extends CatmullRomSpline<Vector2> {
 		// from a given routeDistance, get the corresponding t value
 		return tvals.get(closestIndex(distance,distances));
 	}
+	
+	public float getTotalDistance(){
+		float total = (float) 0;
+		for(int i = 0; i < distances.size(); i++){
+			total += distances.get(i);
+		}
+		return total;
+	}
 
 	public Float getT(int i){
 		return tvals.get(i);

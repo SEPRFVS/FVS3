@@ -7,6 +7,8 @@ import com.fvs.taxe.Player;
 import com.fvs.taxe.goals.Event;
 import com.fvs.taxe.goals.EventHandler;
 import com.fvs.taxe.routing.AiSprite;
+import com.fvs.taxe.scenes.GameScene;
+import com.fvs.taxe.goals.Dijkstra;
 
 public class ArrivalObjective extends Objective {
 	//This class is a child of objective. It specifically implements the Absolute objective of reaching a location
@@ -15,10 +17,19 @@ public class ArrivalObjective extends Objective {
 	private String destination = "";
 	
 	//Constructor sets destination
-	public ArrivalObjective() {
-		setMoneyReward(200);
+
+	public ArrivalObjective(GameScene parentScene) {
 		setGoalText("Transport a train to ");
-		setDestination(getRandomStation());
+		String randomStation = getRandomStation();
+		int distance;
+		if(parentScene.activePlayer().getStartLocation().equals(randomStation)) {
+			distance = 200;
+		} else {
+			distance = Dijkstra.calculate(parentScene.getLocations(), parentScene.getStationByName(parentScene.activePlayer().getStartLocation()), parentScene.getStationByName(randomStation));
+		}
+		setMoneyReward(distance);
+		setScoreReward(distance);
+		setDestination(randomStation);
 	}
 	
 	//Override toString method
