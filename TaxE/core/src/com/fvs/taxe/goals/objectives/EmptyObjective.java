@@ -9,6 +9,7 @@ public class EmptyObjective extends Objective {
 
 	public EmptyObjective() {
 		setMoneyReward(0);
+		setScoreReward(0);
 		setGoalText("No Objective");
 	}
 

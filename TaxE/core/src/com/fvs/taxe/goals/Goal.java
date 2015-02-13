@@ -40,18 +40,21 @@ public class Goal {
         //Update the eventIndex for next turn
         eventIndex = parentGame.getEventHandler().getIndex();
 
-        int reward = 0;
+        int moneyReward = 0;
+        int scoreReward = 0;
 
         boolean sideObjOneComplete = sideObjective1.checkComplete(player, parentGame.getEventHandler());
 
         if (sideObjOneComplete) {
-            reward += sideObjective1.getMoneyReward();
+            moneyReward += sideObjective1.getMoneyReward();
+            scoreReward += sideObjective1.getScoreReward();
         }
 
         boolean sideObjTwoComplete = sideObjective2.checkComplete(player, parentGame.getEventHandler());
 
         if (sideObjTwoComplete) {
-            reward += sideObjective2.getMoneyReward();
+            moneyReward += sideObjective2.getMoneyReward();
+            scoreReward += sideObjective2.getScoreReward();
         }
 
         //Check the main objective. If the player is player 2 and the main
@@ -73,10 +76,12 @@ public class Goal {
             //We need to register the goal being completed and notify the player
             player.completeGoals.add(this);
 
-            reward += mainObjective.getMoneyReward();
-            player.setMoney(player.getMoney() + reward);
+            moneyReward += mainObjective.getMoneyReward();
+            scoreReward += mainObjective.getScoreReward();
+            player.setMoney(player.getMoney() + moneyReward);
+            player.setScore(player.getScore() + scoreReward);
 
-            Game.pushScene(parentGame.makeDialogueScene("Goal complete! +" + reward + "cr!"));
+            Game.pushScene(parentGame.makeDialogueScene("Goal complete! +" + moneyReward + "cr! +" + scoreReward + "pts!"));
 
             //If player 2 has succeeded then we need to drop the goal
             if (parentGame.getPlayer2().equals(player)) {

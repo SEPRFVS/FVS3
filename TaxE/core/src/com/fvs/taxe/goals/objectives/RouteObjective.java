@@ -34,6 +34,7 @@ public class RouteObjective extends ArrivalObjective {
 		
 		int distance = Dijkstra.calculate(parentScene.getLocations(),parentScene.getStationByName(station1), parentScene.getStationByName(station2));
 		setMoneyReward(distance);
+		setScoreReward(distance + Math.round(((float) distance)*((float) 0.25)));
 		setGoalText("Transport a train between ");
 	}
 	
