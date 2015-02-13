@@ -76,7 +76,7 @@ public class Goal {
             reward += mainObjective.getMoneyReward();
             player.setMoney(player.getMoney() + reward);
 
-            Game.pushScene(parentGame.makeDialogueScene("Goal complete! +" + reward + "cr!"));
+            Game.pushScene(parentGame.makeDialogueScene("Goal complete! + $" + reward + "!"));
 
             //If player 2 has succeeded then we need to drop the goal
             if (parentGame.getPlayer2().equals(player)) {
