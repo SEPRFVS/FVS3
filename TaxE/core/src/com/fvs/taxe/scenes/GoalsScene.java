@@ -119,9 +119,9 @@ public class GoalsScene extends GameWindowedGUIScene {
 			pane.Add(mainObjectiveLabel);
 			// ---------------------
 			
-			// Main Objective Points Label. Score is TODO so hard value used for this
+			// Main Objective Points Label.
 			Label mainObjectivePointsLabel = new Label(this, labelText, Label.genericFont(Color.BLUE, 30), Game.goalsZ);
-			mainObjectivePointsLabel.setText("0pts");
+			mainObjectivePointsLabel.setText(goalArray.get(i).mainObjective.getScoreReward() + "pts");
 			mainObjectivePointsLabel.setLocalPosition(700, yCoord);
 			mainObjectivePointsLabel.setAlignment(0);
 			pane.Add(mainObjectivePointsLabel);
