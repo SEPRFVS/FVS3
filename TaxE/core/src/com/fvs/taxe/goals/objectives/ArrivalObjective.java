@@ -21,7 +21,12 @@ public class ArrivalObjective extends Objective {
 	public ArrivalObjective(GameScene parentScene) {
 		setGoalText("Transport a train to ");
 		String randomStation = getRandomStation();
-		int distance = Dijkstra.calculate(parentScene.getLocations(), parentScene.getStationByName(parentScene.activePlayer().getStartLocation()), parentScene.getStationByName(randomStation));
+		int distance;
+		if(parentScene.activePlayer().getStartLocation().equals(randomStation)) {
+			distance = 200;
+		} else {
+			distance = Dijkstra.calculate(parentScene.getLocations(), parentScene.getStationByName(parentScene.activePlayer().getStartLocation()), parentScene.getStationByName(randomStation));
+		}
 		setMoneyReward(distance);
 		setScoreReward(distance);
 		setDestination(randomStation);
