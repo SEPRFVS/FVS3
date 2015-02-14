@@ -119,9 +119,9 @@ public class GoalsScene extends GameWindowedGUIScene {
 			pane.Add(mainObjectiveLabel);
 			// ---------------------
 			
-			// Main Objective Points Label. Score is TODO so hard value used for this
+			// Main Objective Points Label.
 			Label mainObjectivePointsLabel = new Label(this, labelText, Label.genericFont(Color.BLUE, 30), Game.goalsZ);
-			mainObjectivePointsLabel.setText("0pts");
+			mainObjectivePointsLabel.setText(goalArray.get(i).mainObjective.getScoreReward() + "pts");
 			mainObjectivePointsLabel.setLocalPosition(700, yCoord);
 			mainObjectivePointsLabel.setAlignment(0);
 			pane.Add(mainObjectivePointsLabel);
@@ -129,7 +129,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Main Objective Money Label
 			Label mainObjectiveMoneyLabel = new Label(this, labelText, Label.genericFont(Color.MAROON, 30), Game.goalsZ);
-			mainObjectiveMoneyLabel.setText(String.valueOf(goalArray.get(i).mainObjective.getMoneyReward())  + "cr");
+			mainObjectiveMoneyLabel.setText(String.valueOf("$" + goalArray.get(i).mainObjective.getMoneyReward()));
 			mainObjectiveMoneyLabel.setLocalPosition(850, yCoord);
 			mainObjectiveMoneyLabel.setAlignment(0);
 			pane.Add(mainObjectiveMoneyLabel);
@@ -153,7 +153,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Second Objective Money Label
 			Label secondObjectiveMoneyLabel = new Label(this, labelText, Label.genericFont(Color.MAROON, 20), Game.goalsZ);
-			secondObjectiveMoneyLabel.setText(String.valueOf(goalArray.get(i).sideObjective1.getMoneyReward())  + "cr");
+			secondObjectiveMoneyLabel.setText("$" + String.valueOf(goalArray.get(i).sideObjective1.getMoneyReward()));
 			secondObjectiveMoneyLabel.setLocalPosition(850, yCoord - 35);
 			secondObjectiveMoneyLabel.setAlignment(0);
 			pane.Add(secondObjectiveMoneyLabel);
@@ -177,7 +177,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Third Objective Money Label
 			Label thirdObjectiveMoneyLabel = new Label(this, labelText, Label.genericFont(Color.MAROON, 20), Game.goalsZ);
-			thirdObjectiveMoneyLabel.setText(String.valueOf(goalArray.get(i).sideObjective2.getMoneyReward()) + "cr");
+			thirdObjectiveMoneyLabel.setText("$" + String.valueOf(goalArray.get(i).sideObjective2.getMoneyReward()));
 			thirdObjectiveMoneyLabel.setLocalPosition(850, yCoord - 60);
 			thirdObjectiveMoneyLabel.setAlignment(0);
 			pane.Add(thirdObjectiveMoneyLabel);

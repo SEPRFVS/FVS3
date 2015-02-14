@@ -136,12 +136,12 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Steam"))
 				{
 					steamButton.setTexture(sellButtonText);
-					steamButton.setText("Sell: 10cr");
+					steamButton.setText("Sell: $10");
 				}
 				else
 				{
 					steamButton.setTexture(buyButtonText);
-					steamButton.setText("Buy: 10cr");
+					steamButton.setText("Buy: $10");
 				}
 				steamButton.setLocalPosition(65, 555);
 				steamButton.setSize(115, 34);
@@ -164,12 +164,12 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Diesel"))
 				{
 					dieselButton.setTexture(sellButtonText);
-					dieselButton.setText("Sell: 30cr");
+					dieselButton.setText("Sell: $30");
 				}
 				else
 				{
 					dieselButton.setTexture(buyButtonText);
-					dieselButton.setText("Buy: 30cr");
+					dieselButton.setText("Buy: $30");
 				}
 				dieselButton.setAlignment(1);
 				dieselButton.setAlpha(1);
@@ -190,12 +190,12 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Electric"))
 				{
 					electricButton.setTexture(sellButtonText);
-					electricButton.setText("Sell: 90cr");
+					electricButton.setText("Sell: $90");
 				}
 				else
 				{
 					electricButton.setTexture(buyButtonText);
-					electricButton.setText("Buy: 90cr");
+					electricButton.setText("Buy: $90");
 				}
 				electricButton.setAlignment(1);
 				electricButton.setAlpha(1);
@@ -216,12 +216,12 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Nuclear"))
 				{
 					nuclearButton.setTexture(sellButtonText);
-					nuclearButton.setText("Sell: 200r");
+					nuclearButton.setText("Sell: $200");
 				}
 				else
 				{
 					nuclearButton.setTexture(buyButtonText);
-					nuclearButton.setText("Buy: 200cr");
+					nuclearButton.setText("Buy: $200");
 				}
 				nuclearButton.setAlignment(1);
 				nuclearButton.setAlpha(1);
@@ -242,12 +242,12 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Mag"))
 				{
 					magLevButton.setTexture(sellButtonText);
-					magLevButton.setText("Sell: 500cr");
+					magLevButton.setText("Sell: $500");
 				}
 				else
 				{
 					magLevButton.setTexture(buyButtonText);
-					magLevButton.setText("Buy: 500cr");
+					magLevButton.setText("Buy: $500");
 				}
 				magLevButton.setAlignment(1);
 				magLevButton.setAlpha(1);
@@ -268,12 +268,12 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("TheKing"))
 				{
 					kingButton.setTexture(sellButtonText);
-					kingButton.setText("Sell: 1000cr");
+					kingButton.setText("Sell: $1000");
 				}
 				else
 				{
 					kingButton.setTexture(buyButtonText);
-					kingButton.setText("Buy: 1000cr");
+					kingButton.setText("Buy: $1000");
 				}
 				kingButton.setAlignment(1);
 				kingButton.setAlpha(1);
@@ -376,7 +376,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		fuelLabel.setAlignment(0);
 		pane.Add(fuelLabel);
 		fuelPriceLabel = new Label(this, LabelText, Label.genericFont(Color.BLUE, 40));
-		fuelPriceLabel.setText("Price per 100 fuel: " + parentGame.crPer100Fuel + "cr");
+		fuelPriceLabel.setText("Price per 100 fuel: $" + parentGame.crPer100Fuel);
 		fuelPriceLabel.setLocalPosition(65, 740);
 		fuelPriceLabel.setAlignment(0);
 		pane.Add(fuelPriceLabel);
@@ -436,13 +436,13 @@ public class ShopScene extends GameWindowedGUIScene {
 		if(activePlayer.hasTrain("Steam"))
 		{
 			steamButton.setTexture(sellButtonText);
-			steamButton.setText("Sell: 10cr");
+			steamButton.setText("Sell: $10");
 			drawUpgradeButtons(steamButton, activePlayer.getTrain("Steam"), activePlayer, 5);
 		}
 		else
 		{
 			steamButton.setTexture(buyButtonText);
-			steamButton.setText("Buy: 10cr");
+			steamButton.setText("Buy: $10");
 		}
 		// ---------------------
 		
@@ -450,64 +450,64 @@ public class ShopScene extends GameWindowedGUIScene {
 		if(activePlayer.hasTrain("Diesel"))
 		{
 			dieselButton.setTexture(sellButtonText);
-			dieselButton.setText("Sell: 30cr");
+			dieselButton.setText("Sell: $30");
 			drawUpgradeButtons(dieselButton, activePlayer.getTrain("Diesel"), activePlayer, 10);
 		}
 		else
 		{
 			dieselButton.setTexture(buyButtonText);
-			dieselButton.setText("Buy: 30cr");
+			dieselButton.setText("Buy: $30");
 		}
 		// Refresh Electric button
 		if(activePlayer.hasTrain("Electric"))
 		{
 			electricButton.setTexture(sellButtonText);
-			electricButton.setText("Sell: 90cr");
+			electricButton.setText("Sell: $90");
 			drawUpgradeButtons(electricButton, activePlayer.getTrain("Electric"), activePlayer, 30);
 		}
 		else
 		{
 			electricButton.setTexture(buyButtonText);
-			electricButton.setText("Buy: 90cr");
+			electricButton.setText("Buy: $90");
 		}
 				
 		// Refresh Nuclear button
 		if(activePlayer.hasTrain("Nuclear"))
 		{
 			nuclearButton.setTexture(sellButtonText);
-			nuclearButton.setText("Sell: 200r");
+			nuclearButton.setText("Sell: $200");
 			drawUpgradeButtons(nuclearButton, activePlayer.getTrain("Nuclear"), activePlayer, 50);
 		}
 		else
 		{
 			nuclearButton.setTexture(buyButtonText);
-			nuclearButton.setText("Buy: 200cr");
+			nuclearButton.setText("Buy: $200");
 		}
 				
 		// Refresh MagLev button
 		if(activePlayer.hasTrain("Mag"))
 		{
 			magLevButton.setTexture(sellButtonText);
-			magLevButton.setText("Sell: 500cr");
+			magLevButton.setText("Sell: $500");
 			drawUpgradeButtons(magLevButton, activePlayer.getTrain("Mag"), activePlayer, 100);
 		}
 		else
 		{
 			magLevButton.setTexture(buyButtonText);
-			magLevButton.setText("Buy: 500cr");
+			magLevButton.setText("Buy: $500");
 		}
 				
 		// Refresh King button
 		if(activePlayer.hasTrain("TheKing"))
 		{
 			kingButton.setTexture(sellButtonText);
-			kingButton.setText("Sell: 1000cr");
+			kingButton.setText("Sell: $1000");
 			drawUpgradeButtons(kingButton, activePlayer.getTrain("TheKing"), activePlayer, 150);
 		}
 		else
 		{
 			kingButton.setTexture(buyButtonText);
-			kingButton.setText("Buy: 1000cr");
+			kingButton.setText("Buy: $1000");
 		}
 		}
 		else if (paneType.equals("Resource"))
@@ -527,7 +527,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				fuelButton.setText("Buy");
 			}
 			fuelLabel.setText("Fuel Reserve: " + parentGame.fuel);
-			fuelPriceLabel.setText("Price per 100 fuel: " + parentGame.crPer100Fuel + "cr");
+			fuelPriceLabel.setText("Price per 100 fuel: $" + parentGame.crPer100Fuel);
 		}
 	}
 
@@ -819,10 +819,10 @@ public class ShopScene extends GameWindowedGUIScene {
 	{
 		if(player.getMoney() < price)
 		{
-			Game.pushScene(parentGame.makeDialogueScene("Requires " + price + "cr"));
+			Game.pushScene(parentGame.makeDialogueScene("Requires $" + price));
 			return;
 		}
-		DialogueScene dial =  new DialogueScene("Cost: " + price + "cr") {
+		DialogueScene dial =  new DialogueScene("Cost: $" + price) {
 			@Override
 			public void onOkayButton()
 			{
@@ -840,7 +840,7 @@ public class ShopScene extends GameWindowedGUIScene {
 	{
 		if(player.getMoney() < price)
 		{
-			Game.pushScene(parentGame.makeDialogueScene("Requires " + price + "cr"));
+			Game.pushScene(parentGame.makeDialogueScene("Requires $" + price));
 			return;
 		}
 		else if(player.getTrainCount() > 2)

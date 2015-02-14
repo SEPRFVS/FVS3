@@ -1,19 +1,18 @@
-package com.fvs.taxe.goals;
+package com.fvs.taxe.goals.objectives;
 
 import com.fvs.taxe.Player;
+import com.fvs.taxe.goals.EventHandler;
+import com.fvs.taxe.goals.objectives.Objective;
 
 public class EmptyObjective extends Objective {
 	//This class is a subchild of objective. It simply acts as a blank empty objective
-	
-	public static Objective generate()
-	{
-		return new EmptyObjective();
-	}
-	
+
 	public EmptyObjective() {
-		super(0, "No Objective");
+		setMoneyReward(0);
+		setScoreReward(0);
+		setGoalText("No Objective");
 	}
-	
+
 	//Override toString method
 	public String toString()
 	{

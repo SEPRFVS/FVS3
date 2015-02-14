@@ -1,10 +1,14 @@
-package com.fvs.taxe.goals;
+package com.fvs.taxe.goals.objectives;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import com.fvs.taxe.Player;
+import com.fvs.taxe.goals.Event;
+import com.fvs.taxe.goals.EventHandler;
 import com.fvs.taxe.routing.AiSprite;
+import com.fvs.taxe.scenes.GameScene;
+import com.fvs.taxe.goals.Dijkstra;
 
 public class ArrivalObjective extends Objective {
 	//This class is a child of objective. It specifically implements the Absolute objective of reaching a location
@@ -13,21 +17,25 @@ public class ArrivalObjective extends Objective {
 	private String destination = "";
 	
 	//Constructor sets destination
-	public ArrivalObjective(int money, String goalText, String destination) {
-		super(money, goalText);
-		this.setDestination(destination);
+
+	public ArrivalObjective(GameScene parentScene) {
+		setGoalText("Transport a train to ");
+		String randomStation = getRandomStation();
+		int distance;
+		if(parentScene.activePlayer().getStartLocation().equals(randomStation)) {
+			distance = 200;
+		} else {
+			distance = Dijkstra.calculate(parentScene.getLocations(), parentScene.getStationByName(parentScene.activePlayer().getStartLocation()), parentScene.getStationByName(randomStation));
+		}
+		setMoneyReward(distance);
+		setScoreReward(distance);
+		setDestination(randomStation);
 	}
 	
 	//Override toString method
 	public String toString()
 	{
 		return getGoalText() + destination;
-	}
-	
-	//This static method generates an instance of this class according to generic values
-	public static Objective generate()
-	{
-		return new ArrivalObjective(200, "Transport a train to ", getRandomStation());
 	}
 	
 	//This method simply generates a random station name from the list of station
