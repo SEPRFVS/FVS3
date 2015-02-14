@@ -109,7 +109,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		paneType = "Resource";
 		pane.clear();
 		
-		Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png");
+		Texture scrollPaneBackgroundText = new Texture("Resources_Scrollpane_Background.png");
 		scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
 		scrollPaneBackground.setSize(922,800);
 		scrollPaneBackground.setLocalPosition(0, 0);
