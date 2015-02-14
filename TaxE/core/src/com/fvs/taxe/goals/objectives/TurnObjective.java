@@ -20,22 +20,22 @@ public class TurnObjective extends Objective {
     public TurnObjective(MutableInt currentTurn) {
         this.currentTurn = currentTurn;
         this.startingTurn = currentTurn.getValue();
-        this.turns = 30;
+        this.turns = 50;
         // setGoalText("Complete within " + turnsRemaining() +" turns");
     }
 
     @Override
     public String toString() {
         if (failed) {
-            return "Turn side object failed";
+            return "Turn side objective failed";
         }
 
-        return "Complete within " + turnsRemaining() +" turns";
+        return "Complete within " + turnsElapsed() +"/"+ turns +" turns";
     }
 
     @Override
     public boolean fillsCompleteCriteria(Player pl, EventHandler eventLog) {
-        return false;
+        return !failed;
     }
 
     @Override
@@ -47,8 +47,12 @@ public class TurnObjective extends Objective {
         return turnsRemaining() * SCORE_MULTIPLIER;
     }
 
+    private int turnsElapsed() {
+        return currentTurn.getValue() - startingTurn;
+    }
+
     private int turnsRemaining() {
-        int turnsSinceCreation = currentTurn.getValue() - startingTurn;
+        int turnsSinceCreation = turnsElapsed();
         int turnsRemaining = this.turns - turnsSinceCreation;
 
         if (turnsRemaining <= 0) {
