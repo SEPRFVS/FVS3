@@ -3,9 +3,8 @@ package com.fvs.taxe.goals.objectives;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.goals.EventHandler;
 
+//This class is a subchild of objective. It simply acts as a blank empty objective
 public class EmptyObjective extends Objective {
-	//This class is a subchild of objective. It simply acts as a blank empty objective
-
 	public EmptyObjective() {
 		setMoneyReward(0);
 		setScoreReward(0);
@@ -24,5 +23,4 @@ public class EmptyObjective extends Objective {
 	{
 		return false;
 	}
-
 }

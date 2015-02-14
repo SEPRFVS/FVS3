@@ -19,9 +19,7 @@ abstract public class Objective {
     private int eventIndex = 0;
 
     //Override toString method
-    public String toString() {
-        return goalText;
-    }
+    public abstract String toString();
 
     //getter and setter for moneyReward, eventIndex and for goalText
     public int getMoneyReward() {
@@ -96,7 +94,5 @@ abstract public class Objective {
     }
 
     //This method is the generic method that gets overridden in children to determine whether a player has completed this objective
-    public boolean fillsCompleteCriteria(Player pl, EventHandler eventLog) {
-        return pl.getMoney() != -1;
-    }
+    public abstract boolean fillsCompleteCriteria(Player pl, EventHandler eventLog);
 }

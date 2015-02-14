@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.fvs.taxe.guiobjects.Label;
 
 public class ComponentBatch {
 	//This array list stores all the active sprite components of the game
@@ -38,6 +39,12 @@ public class ComponentBatch {
 	//This method is used to add a new active sprite component to the game
 	public void Add(SpriteComponent newComponent)
 	{
+        if(newComponent instanceof Label) {
+            if (((Label) newComponent).getText() == null) {
+                throw new RuntimeException("Tried to add label with no text");
+            }
+        }
+
 		spriteComponents.add(newComponent);
 		setReorderZ(true);
 	}

@@ -111,6 +111,11 @@ public class Label extends SpriteComponent {
 		
 		float originX = 0;
 		float originY = this.getY();
+
+        if (text == null) {
+            throw new RuntimeException("text is null");
+        }
+
 		TextBounds bounds = font.getBounds(text);
 		
 		// Left Alignment
