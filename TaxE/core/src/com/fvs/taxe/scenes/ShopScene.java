@@ -299,7 +299,7 @@ public class ShopScene extends GameWindowedGUIScene {
             public void onClickEnd(){
                 if(parentGame.activePlayer().getMoney() < junctionObstaclePrice)
                 {
-                    Game.pushScene(parentGame.makeDialogueScene("Requires " + junctionObstaclePrice + "cr"));
+                    Game.pushScene(parentGame.makeDialogueScene("Requires $" + junctionObstaclePrice));
                     return;
                 }
 
@@ -333,7 +333,7 @@ public class ShopScene extends GameWindowedGUIScene {
             }
         };
         junctionObstacleButton.setTexture(buyButtonText);
-        junctionObstacleButton.setText("Buy: 300cr");
+        junctionObstacleButton.setText("Buy: $300");
         junctionObstacleButton.setLocalPosition(420, 530);
         junctionObstacleButton.setSize(115, 34);
         junctionObstacleButton.setAlignment(1);
@@ -356,7 +356,7 @@ public class ShopScene extends GameWindowedGUIScene {
             }
         };
         stationObstacleButton.setTexture(buyButtonText);
-        stationObstacleButton.setText("Buy: " + stationObstaclePrice + "cr");
+        stationObstacleButton.setText("Buy: $" + stationObstaclePrice);
         stationObstacleButton.setSize(115, 34);
         stationObstacleButton.setLocalPosition(90, 530);
         stationObstacleButton.setAlignment(1);
