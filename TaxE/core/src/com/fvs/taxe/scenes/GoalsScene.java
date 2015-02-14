@@ -144,7 +144,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Second Objective Points Label
 			Label secondObjectivePointsLabel = new Label(this, labelText, Label.genericFont(Color.BLUE, 20), Game.goalsZ);
-			secondObjectivePointsLabel.setText("0pts");
+			secondObjectivePointsLabel.setText(goalArray.get(i).sideObjective1.getScoreReward() + "pts");
 			secondObjectivePointsLabel.setLocalPosition(700, yCoord - 35);
 			secondObjectivePointsLabel.setAlignment(0);
 			pane.Add(secondObjectivePointsLabel);
@@ -168,7 +168,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 			
 			// Third Objective Points Label
 			Label thirdObjectivePointsLabel = new Label(this, labelText, Label.genericFont(Color.BLUE, 20), Game.goalsZ);
-			thirdObjectivePointsLabel.setText("0pts");
+			thirdObjectivePointsLabel.setText(goalArray.get(i).sideObjective2.getScoreReward() + "pts");
 			thirdObjectivePointsLabel.setLocalPosition(700, yCoord - 60);
 			thirdObjectivePointsLabel.setAlignment(0);
 			pane.Add(thirdObjectivePointsLabel);
