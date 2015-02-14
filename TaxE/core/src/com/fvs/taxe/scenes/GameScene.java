@@ -24,6 +24,7 @@ import com.fvs.taxe.worldobjects.Station;
 import com.fvs.taxe.worldobjects.obstacles.JunctionObstacle;
 import com.fvs.taxe.worldobjects.obstacles.Obstacle;
 import com.fvs.taxe.worldobjects.obstacles.StationObstacle;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -49,7 +50,7 @@ public class GameScene extends GameGUIScene {
 	private SelectionScene trainSelectionScene;
 	private PauseMenuScene pauseScene;
 	
-	public int numberTurns = 0;
+	public MutableInt numberTurns = new MutableInt();
 	private ArrayList<CurvedPath> curvedPaths = new ArrayList<CurvedPath>();					// collection of curved paths (only one way for each path) for drawing
 	private ArrayList<RouteLocation> routeLocations = new ArrayList<RouteLocation>();			// collection of routelocations (junction/station)
 	
@@ -118,13 +119,14 @@ public class GameScene extends GameGUIScene {
 
 	public void nextTurn() {
 		if (map != null){
-			numberTurns++;
+			numberTurns.increment();
             updateObstacles();
 			ArrayList<AiSprite> collisions = getCollisions();
+
 			if (collisions.size() > 0) {
 				calculateCollisions(collisions);
-				prevCollision = numberTurns;
-			} else if (numberTurns - prevCollision > 2) {
+				prevCollision = numberTurns.getValue();
+			} else if (numberTurns.getValue() - prevCollision > 2) {
 				// stops repeated collisions if one players train is following the other players train
 				previousCollisions = new ArrayList<AiSprite>();
 			}
@@ -268,15 +270,9 @@ public class GameScene extends GameGUIScene {
 		Add(leaderButton);
 		
 		events = new EventHandler();
-		Objective sideObjective = new EmptyObjective();
-		Goal g = new Goal(this, new ArrivalObjective(this), sideObjective, sideObjective);
-		this.activeGoals.add(g);
 
-		sideObjective = new EmptyObjective();
-		g = new Goal(this,  new RouteObjective(this), sideObjective, sideObjective);
-		this.activeGoals.add(g);
+		initialiseGoals();
 
-		generateGoals();
 		player1Active();
 	}
 	
@@ -1040,6 +1036,21 @@ public class GameScene extends GameGUIScene {
         }
         checkObstacles(getPlayer2());
     }
+
+	/**
+	 * Method is called when GameScene is first created
+	 */
+	private void initialiseGoals() {
+		Objective sideObjective = new EmptyObjective();
+		Goal g = new Goal(this, new ArrivalObjective(this), new TurnObjective(numberTurns), sideObjective);
+		this.activeGoals.add(g);
+
+		sideObjective = new EmptyObjective();
+		g = new Goal(this,  new RouteObjective(this), sideObjective, sideObjective);
+		this.activeGoals.add(g);
+
+		generateGoals();
+	}
 	
 	public void updateGoals()
 	{
@@ -1051,7 +1062,7 @@ public class GameScene extends GameGUIScene {
 		generateGoals();
 	}
 	
-	public void generateGoals()
+	private void generateGoals()
 	{
 		activeGoals.trimToSize();
 		while (activeGoals.size() < 3)
