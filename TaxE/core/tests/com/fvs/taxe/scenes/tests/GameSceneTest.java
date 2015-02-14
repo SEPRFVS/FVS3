@@ -1,19 +1,5 @@
 package com.fvs.taxe.scenes.tests;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.fvs.taxe.Player;
@@ -26,6 +12,14 @@ import com.fvs.taxe.testrunners.GdxTestRunner;
 import com.fvs.taxe.worldobjects.Junction;
 import com.fvs.taxe.worldobjects.RouteLocation;
 import com.fvs.taxe.worldobjects.Station;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static org.junit.Assert.*;
 
 @RunWith(GdxTestRunner.class)
 public class GameSceneTest {
@@ -38,7 +32,7 @@ public class GameSceneTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		texture = new Texture("elec1.png");
+		texture = new Texture("electric.png");
 		player1 = new Player();
 		player1.setName("player1");
 		player2 = new Player();
@@ -341,7 +335,9 @@ public class GameSceneTest {
 	public void testSelectLocationStartingLocationSetConnectedLocations() {
 		// test selctLocation with startlocation set (through selectStartingLocation())
 		// will add location to newRoute
-		Station l1 = new Station(parentScene, "l1", 100, 100);
+        System.out.println("newRoute size: " + parentScene.getNewRoute().size());
+
+        Station l1 = new Station(parentScene, "l1", 100, 100);
 		Vector2[] dataSet1 = new Vector2[4];
 		dataSet1[0] = (new Vector2(500, 100));
 		dataSet1[1] = (new Vector2(500, 100));

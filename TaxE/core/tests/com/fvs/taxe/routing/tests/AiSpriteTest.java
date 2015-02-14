@@ -1,11 +1,5 @@
 package com.fvs.taxe.routing.tests;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
@@ -15,6 +9,11 @@ import com.fvs.taxe.routing.CurvedPath;
 import com.fvs.taxe.scenes.GameScene;
 import com.fvs.taxe.testrunners.GdxTestRunner;
 import com.fvs.taxe.worldobjects.Station;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(GdxTestRunner.class)
 public class AiSpriteTest {
@@ -29,7 +28,7 @@ public class AiSpriteTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		texture = new Texture("elec1.png");
+		texture = new Texture("electric.png");
 		player1 = new Player();
 		player1.setName("player1");
 		player2 = new Player();

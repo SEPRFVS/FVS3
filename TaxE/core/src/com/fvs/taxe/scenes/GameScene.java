@@ -705,7 +705,7 @@ public class GameScene extends GameGUIScene {
         // reverse everything changed in startSelectingRoute
         // reset buttons
 		nextGoButton.setSize(83, 44);
-		Remove(confirmRouteSelectionButton);
+        if (confirmRouteSelectionButton != null) Remove(confirmRouteSelectionButton);
 		routeSelectionButton.setSize(323,23);
 		routeSelectionButton.setTexture(selectRoute);
 		// reset routeLocations

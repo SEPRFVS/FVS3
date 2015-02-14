@@ -1,14 +1,5 @@
 package com.fvs.taxe.routing.tests;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.fvs.taxe.Player;
@@ -20,6 +11,14 @@ import com.fvs.taxe.testrunners.GdxTestRunner;
 import com.fvs.taxe.worldobjects.Junction;
 import com.fvs.taxe.worldobjects.RouteLocation;
 import com.fvs.taxe.worldobjects.Station;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.*;
 
 @RunWith(GdxTestRunner.class)
 public class TrainTest {
@@ -39,7 +38,7 @@ public class TrainTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		texture = new Texture("elec1.png");
+		texture = new Texture("electric.png");
 		player1 = new Player();
 		player1.setName("player1");
 		player2 = new Player();
