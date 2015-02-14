@@ -54,6 +54,9 @@ nbdist/
 nbactions.xml
 nb-configuration.xml
 
+## Intellij
+*.eml
+
 ## Gradle
 
 .gradle
