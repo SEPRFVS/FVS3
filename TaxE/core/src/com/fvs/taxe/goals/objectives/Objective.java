@@ -1,9 +1,9 @@
 package com.fvs.taxe.goals.objectives;
 
-import java.util.ArrayList;
-
 import com.fvs.taxe.Player;
 import com.fvs.taxe.goals.EventHandler;
+
+import java.util.ArrayList;
 
 abstract public class Objective {
 //This class acts as a base class from which we can create Absolute and Quantifiable objectives in the game	

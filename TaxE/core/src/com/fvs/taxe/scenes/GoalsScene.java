@@ -1,10 +1,7 @@
 package com.fvs.taxe.scenes;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.PerformanceCounter;
 import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.SpriteComponent;
@@ -14,6 +11,8 @@ import com.fvs.taxe.guiobjects.Label;
 import com.fvs.taxe.guiobjects.Pane;
 import com.fvs.taxe.guiobjects.Scroller;
 import util.Stopwatch;
+
+import java.util.ArrayList;
 
 public class GoalsScene extends GameWindowedGUIScene {
 	

@@ -4,13 +4,13 @@ package com.fvs.taxe.goals;
  * Taken from http://www.algolist.com/code/java/Dijkstra%27s_algorithm
  **********************************/
 
-import java.util.PriorityQueue;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.fvs.taxe.routing.Connection;
 import com.fvs.taxe.worldobjects.RouteLocation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.PriorityQueue;
 
 class DijkstraVertex implements Comparable<DijkstraVertex>{
     public final String name;

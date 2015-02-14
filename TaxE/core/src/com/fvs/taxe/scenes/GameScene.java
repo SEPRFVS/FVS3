@@ -1,12 +1,5 @@
 package com.fvs.taxe.scenes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -19,19 +12,15 @@ import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.Scene;
 import com.fvs.taxe.SpriteComponent;
-import com.fvs.taxe.goals.objectives.ArrivalObjective;
-import com.fvs.taxe.goals.objectives.EmptyObjective;
 import com.fvs.taxe.goals.EventHandler;
 import com.fvs.taxe.goals.Goal;
+import com.fvs.taxe.goals.objectives.ArrivalObjective;
+import com.fvs.taxe.goals.objectives.EmptyObjective;
 import com.fvs.taxe.goals.objectives.Objective;
 import com.fvs.taxe.goals.objectives.RouteObjective;
 import com.fvs.taxe.guiobjects.Button;
 import com.fvs.taxe.guiobjects.Label;
-import com.fvs.taxe.routing.AiSprite;
-import com.fvs.taxe.routing.Connection;
-import com.fvs.taxe.routing.CurvedPath;
-import com.fvs.taxe.routing.Route;
-import com.fvs.taxe.routing.Train;
+import com.fvs.taxe.routing.*;
 import com.fvs.taxe.worldobjects.Junction;
 import com.fvs.taxe.worldobjects.RouteLocation;
 import com.fvs.taxe.worldobjects.Station;
@@ -246,8 +235,8 @@ public class GameScene extends GameGUIScene {
 				}
 			}
 		};
-		routeSelectionButton.setPosition(350,627);
-		routeSelectionButton.setSize(323,23);
+		routeSelectionButton.setPosition(350, 627);
+		routeSelectionButton.setSize(323, 23);
 		routeSelectionButton.setTexture(selectRoute);
 		Add(routeSelectionButton);
 		

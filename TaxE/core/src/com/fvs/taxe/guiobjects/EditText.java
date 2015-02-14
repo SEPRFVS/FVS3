@@ -27,7 +27,7 @@ public class EditText extends LabelButton {
 		focus = true;
 		this.setFont(Label.genericFont(Color.GREEN, 40));
 		//Clear the editText
-		if (this.getText() == "Name"){this.setText("");}
+		if (this.getText().equals("Name")){this.setText("");}
 	}
 	
 	//We override clickEnd so that any click outside of the edit text drops focus

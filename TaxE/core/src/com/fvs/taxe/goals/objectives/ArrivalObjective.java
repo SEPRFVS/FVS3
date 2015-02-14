@@ -1,14 +1,14 @@
 package com.fvs.taxe.goals.objectives;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import com.fvs.taxe.Player;
+import com.fvs.taxe.goals.Dijkstra;
 import com.fvs.taxe.goals.Event;
 import com.fvs.taxe.goals.EventHandler;
 import com.fvs.taxe.routing.AiSprite;
 import com.fvs.taxe.scenes.GameScene;
-import com.fvs.taxe.goals.Dijkstra;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class ArrivalObjective extends Objective {
 	//This class is a child of objective. It specifically implements the Absolute objective of reaching a location

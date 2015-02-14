@@ -1,9 +1,9 @@
 package com.fvs.taxe.routing;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.ArrayList;
 
 public class CurvedPath extends CatmullRomSpline<Vector2> {
 	// a curved route is a curve from one location to another. represented by t values (depends on curve, speed etc), 
@@ -38,7 +38,7 @@ public class CurvedPath extends CatmullRomSpline<Vector2> {
 		}
 	}
 	public ArrayList<Float> getDistances(){
-		return (ArrayList<Float>) distances;
+		return distances;
 	}
 	public float getDistanceFromT(float t){
 		return distances.get(closestIndex(t,tvals));
@@ -55,9 +55,9 @@ public class CurvedPath extends CatmullRomSpline<Vector2> {
 	
 	public float getTotalDistance(){
 		float total = (float) 0;
-		for(int i = 0; i < distances.size(); i++){
-			total += distances.get(i);
-		}
+        for (Float distance : distances) {
+            total += distance;
+        }
 		return total;
 	}
 
