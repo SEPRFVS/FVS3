@@ -99,7 +99,7 @@ public class GoalsScene extends GameWindowedGUIScene {
 		int yCoord = 770;
 		goalArray.trimToSize();
 		
-		Texture scrollPaneBackgroundText = new Texture("Goals_Scrollpane_Background.png"); //TODO needs Obstacles_Scrollpane_Background
+		Texture scrollPaneBackgroundText = new Texture("Blank_Scrollpane_Background.png"); 
 		scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
 		scrollPaneBackground.setSize(922,800);
 		scrollPaneBackground.setLocalPosition(0, 0);

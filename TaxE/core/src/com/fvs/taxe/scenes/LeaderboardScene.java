@@ -50,7 +50,7 @@ public class LeaderboardScene extends Scene {
 		pane.setPosition(50, 485 - pane.getHeight());
 		Add(pane);
 		
-		Texture scrollPaneBackgroundText = new Texture("Obstacles_Scrollpane_Background.png");
+		Texture scrollPaneBackgroundText = new Texture("Blank_Scrollpane_Background.png");
 		SpriteComponent scrollPaneBackground = new SpriteComponent(this, scrollPaneBackgroundText, Game.guiZ);
 		scrollPaneBackground.setSize(922,800);
 		scrollPaneBackground.setLocalPosition(0, 0);
