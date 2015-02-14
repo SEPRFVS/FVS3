@@ -104,7 +104,7 @@ public class GameScene extends GameGUIScene {
 
     public void updateObstacles() {
         for (RouteLocation routeLoc : routeLocations) {
-            if (routeLoc instanceof Station) {
+            if (routeLoc instanceof Station && routeLoc.hasObstacle()) {
                 ((Station) routeLoc).decrementObstacleTurns();
             }
         }
@@ -999,7 +999,6 @@ public class GameScene extends GameGUIScene {
 		//We recalculate the fuel price every player 1 turn
 		regenerateFuelPrice();
 
-        checkObstacles(getPlayer1());
         if (getPlayer1().trainCrashed) {
             crashDialog();
             getPlayer1().trainCrashed = false;
@@ -1009,7 +1008,9 @@ public class GameScene extends GameGUIScene {
             delayedDialog();
             getPlayer1().trainDelayed = false;
         }
-	}
+        checkObstacles(getPlayer1());
+
+    }
 	
 	@Override
 	public void player2Active()
@@ -1024,7 +1025,6 @@ public class GameScene extends GameGUIScene {
 		}
 		updateGoals();
 
-        checkObstacles(getPlayer2());
         if (getPlayer2().trainCrashed) {
             crashDialog();
             getPlayer2().trainCrashed = false;
@@ -1034,6 +1034,7 @@ public class GameScene extends GameGUIScene {
             delayedDialog();
             getPlayer2().trainDelayed = false;
         }
+        checkObstacles(getPlayer2());
     }
 	
 	public void updateGoals()
