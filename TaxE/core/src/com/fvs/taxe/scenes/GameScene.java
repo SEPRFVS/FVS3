@@ -12,9 +12,9 @@ import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.Scene;
 import com.fvs.taxe.SpriteComponent;
-import com.fvs.taxe.goals.objectives.*;
 import com.fvs.taxe.goals.EventHandler;
 import com.fvs.taxe.goals.Goal;
+import com.fvs.taxe.goals.objectives.*;
 import com.fvs.taxe.guiobjects.Button;
 import com.fvs.taxe.guiobjects.Label;
 import com.fvs.taxe.routing.*;
@@ -1315,5 +1315,15 @@ public class GameScene extends GameGUIScene {
 			}
 		}
 	}
-	
+
+    public void removeObstacle(RouteLocation location) {
+        obstacles.remove(location.getObstacle());
+        Remove(location.getObstacle());
+        location.setObstacle(null);
+    }
+
+    public void removeTrain(Player player, Train train) {
+        Remove(train);
+        player.aiSprites.remove(train);
+    }
 }

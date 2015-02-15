@@ -238,9 +238,8 @@ public class Train extends AiSprite {
 					pathDistance = overshootDistance;
                     stationsPassed++;
 				} else if (connection.getTargetLocation().hasObstacle() && !delayed) {
-                    delayed = true;
                     System.out.println("delayed");
-                    delayedTrain();
+                    trainDelayed();
                 } else {
 					// if the routeLocation currently at is a station, fix to station for that turn
 					waypoint++; 								// move to next waypoint
@@ -267,17 +266,17 @@ public class Train extends AiSprite {
 		move();
 	}
 
-    private void delayedTrain() {
+    private void trainDelayed() {
         player.trainDelayed = true;
+        this.delayed = true;
     }
 
     public void trainCrashed(Junction junction) {
         player.trainCrashed = true;
-        parentScene.obstacles.remove(junction.getObstacle());
-        parentScene.Remove(junction.getObstacle());
         parentScene.Remove(this);
-        junction.setObstacle(null);
         player.aiSprites.remove(this);
+        parentScene.removeObstacle(junction);
+        parentScene.removeTrain(player, this);
     }
 
     public void checkObstacles() {

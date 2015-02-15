@@ -65,22 +65,21 @@ public class Station extends RouteLocation{
     }
 
     public void setObstacle(Obstacle obstacle) {
+        if (obstacle == null) {
+            super.setObstacle(null);
+            return;
+        }
         // clear previous obstacle before placing a new one
-        if (this.obstacle != null) removeObstacle();
+        if (this.obstacle != null) parentScene.removeObstacle(this);
         this.obstacle = obstacle;
     }
 
-    public void removeObstacle() {
-        parentScene.obstacles.remove(this.getObstacle());
-        parentScene.Remove(this.getObstacle());
-        this.obstacle = null;
-        obstacleTurns = - 1;
-    }
+
 
     public void decrementObstacleTurns() {
         if (obstacleTurns == -1) return;
         if (obstacleTurns == 0) {
-            removeObstacle();
+            parentScene.removeObstacle(this);
             obstacleTurns = -1;
             return;
         }
