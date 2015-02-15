@@ -79,7 +79,7 @@ public class LabelButton extends Button {
 		TextBounds textBounds = font.getBounds(text);
 		float bounds = this.getX();
 		float originX = 0;
-		float originY = this.getY() + (this.getHeight()) - 8; //Offset to be vertically central
+		float originY = this.getY() + (this.getHeight());
 		
 		// Left Alignment
 		if (alignment == 0) {
