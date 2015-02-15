@@ -273,8 +273,6 @@ public class Train extends AiSprite {
 
     public void trainCrashed(Junction junction) {
         player.trainCrashed = true;
-        parentScene.Remove(this);
-        player.aiSprites.remove(this);
         parentScene.removeObstacle(junction);
         parentScene.removeTrain(player, this);
     }
