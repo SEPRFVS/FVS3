@@ -204,9 +204,9 @@ public class GameSceneTest {
 	}
 	
 	@Test
-	public void generateTrainAndCarriageTestValid() {
-		// testing generateTrainAndCarriage with valid inputs
-		// will return a new train with a connected carriage, and said train being in the players aiSprites.
+	public void generateTrainTestValid() {
+		// testing generateTrain with valid inputs
+		// will return a new train, and said train being in the players aiSprites.
 		Player player = new Player();
 		Train expectedTrain = parentScene.generateTrain(player, station, Train.Type.ELECTRIC);
 		assertNotNull(expectedTrain);

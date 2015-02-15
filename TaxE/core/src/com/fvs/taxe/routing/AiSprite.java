@@ -14,10 +14,10 @@ import com.fvs.taxe.worldobjects.Station;
 public abstract class AiSprite extends Clickable {
 	public enum AIType
 	{
-		TRAIN, CARRIAGE, OBSTACLE;
+		TRAIN, OBSTACLE;
 	}
 	private AIType type = AIType.TRAIN;
-	// abstract class for anything that follows a path on every turn (extended by carriage, train)
+	// abstract class for anything that follows a path on every turn (extended by train)
 	protected Player player; 
 	public static final int SPRITEWIDTH = 50;		// could change to widths/ heights of corresponding trains
 	public static final float SPRITEHEIGHT = 20;
