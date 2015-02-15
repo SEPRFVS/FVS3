@@ -21,6 +21,7 @@ public class TurnObjective extends Objective {
         this.currentTurn = currentTurn;
         this.startingTurn = currentTurn.getValue();
         this.turns = 50;
+        setMoneyReward(50);
         // setGoalText("Complete within " + turnsRemaining() +" turns");
     }
 
