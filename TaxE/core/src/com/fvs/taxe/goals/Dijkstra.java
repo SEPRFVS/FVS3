@@ -15,7 +15,7 @@ import java.util.PriorityQueue;
 class DijkstraVertex implements Comparable<DijkstraVertex>{
     public final String name;
     public ArrayList<DijkstraEdge> adjacencies;
-    public int minDistance = Integer.MAX_VALUE;
+    public int minDistance = Integer.MAX_VALUE; //Shortest distance to get to Vertex from start
     public DijkstraVertex previous;
     
     public DijkstraVertex(String argName) { 
@@ -26,6 +26,7 @@ class DijkstraVertex implements Comparable<DijkstraVertex>{
     	return name; 
     }
     
+    //Get difference in distance
     public int compareTo(DijkstraVertex other) {
         return Double.compare(minDistance, other.minDistance);
     }
@@ -41,29 +42,34 @@ class DijkstraEdge {
 
 public class Dijkstra {
 	
+	//Static function to calculate distance between stations/junctions
     public static void computePaths(DijkstraVertex source) {
         source.minDistance = 0;
+        //Use Priority Queue to store nodes to be analysed
         PriorityQueue<DijkstraVertex> vertexQueue = new PriorityQueue<DijkstraVertex>();
       	vertexQueue.add(source);
 
       	while (!vertexQueue.isEmpty()) {
-      		DijkstraVertex u = vertexQueue.poll();
+      		//Loop through each item in Queue
+      		DijkstraVertex current = vertexQueue.poll();
 
-            // Visit each edge exiting u
-            for (DijkstraEdge e : u.adjacencies) {
-                DijkstraVertex v = e.target;
-                int weight = e.weight;
-                int distanceThroughU = u.minDistance + weight;
-                if (distanceThroughU < v.minDistance) {
-                	vertexQueue.remove(v);
-                	v.minDistance = distanceThroughU ;
-                	v.previous = u;
-                	vertexQueue.add(v);
+            // Visit each edge exiting
+            for (DijkstraEdge edge : current.adjacencies) {
+                DijkstraVertex vertex = edge.target;
+                int weight = edge.weight;
+                int distanceThroughU = current.minDistance + weight; //Calculate total distance along path to vertex
+                if (distanceThroughU < vertex.minDistance) {
+                	//If vertex already has shorter path available
+                	vertexQueue.remove(vertex);
+                	vertex.minDistance = distanceThroughU ;
+                	vertex.previous = current;
+                	vertexQueue.add(vertex);
                 }
             }
         }
     }
-
+    
+    //Return shortest path from source to destination (Not current used but useful if implementing a computer player)
     public static List<DijkstraVertex> getShortestPathTo(DijkstraVertex target) {
         List<DijkstraVertex> path = new ArrayList<DijkstraVertex>();
         for (DijkstraVertex vertex = target; vertex != null; vertex = vertex.previous) {
@@ -74,10 +80,12 @@ public class Dijkstra {
     }
 
     public static int calculate(ArrayList<RouteLocation> routeLocations, RouteLocation start, RouteLocation dest) {
+    	//Initialise variables
     	ArrayList<DijkstraVertex> vertices = new ArrayList<DijkstraVertex>();
     	DijkstraVertex startVertex = new DijkstraVertex("");
     	DijkstraVertex destVertex = new DijkstraVertex("");
     	
+    	//Add all stations/junctions to algorithm structure
     	for(RouteLocation routeLocation : routeLocations) {
     		DijkstraVertex newVertex = new DijkstraVertex(routeLocation.getName());
     		vertices.add(newVertex);
@@ -88,8 +96,10 @@ public class Dijkstra {
     		}
     	}
     	
+    	//Add all connections to route structure
     	for(RouteLocation routeLocation : routeLocations) {
     		DijkstraVertex vertex = new DijkstraVertex("");
+    		//Find correct initial vertex
     		for(DijkstraVertex test : vertices){
     			if(test.name.equals(routeLocation.getName())) {
     				vertex = test;
@@ -97,43 +107,18 @@ public class Dijkstra {
     		}
     		for(Connection connection : routeLocation.getConnections()) {
     			DijkstraVertex connectionDest = new DijkstraVertex("");
+    			//Find correct destination vertex
     			for(DijkstraVertex test: vertices){
     				if(test.name.equals(connection.getTargetLocation().getName())){
     					connectionDest = test;
     				}
     			}
-    			vertex.adjacencies.add(new DijkstraEdge(connectionDest, Math.round(connection.getPath().getFinalDistance())));
+    			vertex.adjacencies.add(new DijkstraEdge(connectionDest, Math.round(connection.getPath().getFinalDistance()))); //Use final distance so parts of route aren't counted twice
     		}
     	}
     	
-    	computePaths(startVertex);
+    	computePaths(startVertex); //Compute Distances
     	
     	return destVertex.minDistance;
-    	
-    	/*DijkstraVertex v0 = new DijkstraVertex("Redvile");
-    	DijkstraVertex v1 = new DijkstraVertex("Blueville");
-    	DijkstraVertex v2 = new DijkstraVertex("Greenville");
-		DijkstraVertex v3 = new DijkstraVertex("Orangeville");
-		DijkstraVertex v4 = new DijkstraVertex("Purpleville");
-
-		v0.adjacencies = new DijkstraEdge[]{ new DijkstraEdge(v1, 5),
-	                             new DijkstraEdge(v2, 10),
-                               new DijkstraEdge(v3, 8) };
-		v1.adjacencies = new DijkstraEdge[]{ new DijkstraEdge(v0, 5),
-	                             new DijkstraEdge(v2, 3),
-	                             new DijkstraEdge(v4, 7) };
-		v2.adjacencies = new DijkstraEdge[]{ new DijkstraEdge(v0, 10),
-                               new DijkstraEdge(v1, 3) };
-		v3.adjacencies = new DijkstraEdge[]{ new DijkstraEdge(v0, 8),
-	                             new DijkstraEdge(v4, 2) };
-		v4.adjacencies = new DijkstraEdge[]{ new DijkstraEdge(v1, 7),
-                               new DijkstraEdge(v3, 2) };
-		DijkstraVertex[] vertices = { v0, v1, v2, v3, v4 };
-        computePaths(v0);
-        for (DijkstraVertex v : vertices) {
-        	System.out.println("Distance to " + v + ": " + v.minDistance);
-        	List<DijkstraVertex> path = getShortestPathTo(v);
-        	System.out.println("Path: " + path);
-        }*/
     }
 }
