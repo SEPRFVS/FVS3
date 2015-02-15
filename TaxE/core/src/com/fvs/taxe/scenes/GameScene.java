@@ -1101,8 +1101,7 @@ public class GameScene extends GameGUIScene {
 	@Override
 	public void goalsToolbarPressed() 
 	{
-		if (!isSelectingRoute)
-			Game.pushScene(goalsScene);
+		Game.pushScene(goalsScene);
 	}
 	
 	@Override
@@ -1110,14 +1109,12 @@ public class GameScene extends GameGUIScene {
 	{
 		if (!isSelectingRoute)
 			Game.pushScene(shopScene);
-		
 	}
 	
 	@Override
 	public void resourcesToolbarPressed() 
 	{
-		if (!isSelectingRoute)
-			Game.pushScene(resourceScene);
+		Game.pushScene(resourceScene);
 	}
 	
 	@Override
