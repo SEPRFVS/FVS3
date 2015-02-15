@@ -12,6 +12,6 @@ public class JunctionObstacle extends Obstacle {
     public JunctionObstacle(Scene parentScene, Junction junction) {
         super(parentScene, junction, text);
         setSize(size, size);
-
+        junction.setObstacle(this);
     }
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.fvs.taxe.guiobjects.Label;
 import com.fvs.taxe.guiobjects.LabelButton;
 import com.fvs.taxe.scenes.GameScene;
+import com.fvs.taxe.worldobjects.obstacles.Obstacle;
 
 public class Station extends RouteLocation{
 
@@ -63,10 +64,17 @@ public class Station extends RouteLocation{
         obstacleTurns = turns;
     }
 
+    public void setObstacle(Obstacle obstacle) {
+        // clear previous obstacle before placing a new one
+        if (this.obstacle != null) removeObstacle();
+        this.obstacle = obstacle;
+    }
+
     public void removeObstacle() {
         parentScene.obstacles.remove(this.getObstacle());
         parentScene.Remove(this.getObstacle());
-        this.setObstacle(null);
+        this.obstacle = null;
+        obstacleTurns = - 1;
     }
 
     public void decrementObstacleTurns() {

@@ -17,6 +17,5 @@ public abstract class Obstacle extends SpriteComponent {
         super(parentScene, text, Game.objectsZ);
         Vector2 coords = routeLocation.getPosition();
         setPosition(coords.x, coords.y);
-        routeLocation.setObstacle(this);
     }
 }

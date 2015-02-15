@@ -19,7 +19,7 @@ public abstract class RouteLocation extends Clickable {
 	protected ArrayList<Connection> connections = new ArrayList<Connection>();  	// connected locations
 	protected int numConnections = 0;												// number of connected locations
 	protected Boolean selectingRoute = false;
-    private Obstacle obstacle;
+    protected Obstacle obstacle;
 	
 	// abstract class for anything that can lie on a route and have multiple routes converging to it
 	public RouteLocation(GameScene parentScene, Texture text, String name,  int x, int y) {

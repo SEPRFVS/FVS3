@@ -12,6 +12,7 @@ public class StationObstacle extends Obstacle {
     public StationObstacle(GameScene gameScene, Station location) {
         super(gameScene, location, text);
         setSize(size, size);
+        location.setObstacle(this);
         location.setObstacleTurns(turns);
     }
 }
