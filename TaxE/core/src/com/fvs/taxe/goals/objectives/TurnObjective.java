@@ -17,11 +17,10 @@ public class TurnObjective extends Objective {
     // number of turns that this objective must be completed within
     private int turns;
 
-    public TurnObjective(MutableInt currentTurn) {
+    public TurnObjective(MutableInt currentTurn, int distance) {
         this.currentTurn = currentTurn;
         this.startingTurn = currentTurn.getValue();
-        this.turns = 50;
-        // setGoalText("Complete within " + turnsRemaining() +" turns");
+        this.turns = distance/20;
     }
 
     @Override
@@ -45,6 +44,15 @@ public class TurnObjective extends Objective {
         }
 
         return turnsRemaining() * SCORE_MULTIPLIER;
+    }
+    
+    @Override
+    public int getMoneyReward() {
+    	if(failed) {
+    		return 0;
+    	}
+    	
+    	return 50;
     }
 
     private int turnsElapsed() {

@@ -12,17 +12,17 @@ import java.util.ArrayList;
 
 public class RouteObjective extends ArrivalObjective {
 	//This class extends ArrivalObjective, adding a start criteria as well as an end criteria so that
-	//The player must pass a train along a route as apposed to sending it to a single point
+	//The player must pass a train along a route as supposed to sending it to a single point
 	
 	//This variable stores the first station the player must reach for this objective
 	private String startStation = "";
 	//This array list stores the players who have completed this objective
 	private ArrayList<Train> activeTrains = new ArrayList<Train>();
-	
+
 	public RouteObjective(GameScene parentScene) {
-		//TODO calling the constructor does nothing useful so needs to be avoided
-		super(parentScene);
-		String station1 = getRandomStation();
+        super(parentScene);
+
+        String station1 = getRandomStation();
 		String station2 = getRandomStation();
 
 		while(station2.equals(station1)) {
@@ -30,10 +30,11 @@ public class RouteObjective extends ArrivalObjective {
 		}
 
 		setStartStation(station1);
-		
-		int distance = Dijkstra.calculate(parentScene.getLocations(),parentScene.getStationByName(station1), parentScene.getStationByName(station2));
+		setDestination(station2);
+
+		int distance = Dijkstra.calculate(parentScene.getLocations(),parentScene.getStationByName(station1), parentScene.getStationByName(station2)); //Calculate shortest distance
 		setMoneyReward(distance);
-		setScoreReward(distance + Math.round(((float) distance)*((float) 0.25)));
+		setScoreReward(distance + Math.round(((float) distance)*((float) 0.25))); //Apply a multiplier to score as more difficult than just getting to a destination
 		setGoalText("Transport a train between ");
 	}
 	

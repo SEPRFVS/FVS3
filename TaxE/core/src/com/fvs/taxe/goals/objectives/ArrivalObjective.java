@@ -23,9 +23,9 @@ public class ArrivalObjective extends Objective {
 		String randomStation = getRandomStation();
 		int distance;
 		if(parentScene.activePlayer().getStartLocation().equals(randomStation)) {
-			distance = 200;
+			distance = 200; //Give a standard score if already at station
 		} else {
-			distance = Dijkstra.calculate(parentScene.getLocations(), parentScene.getStationByName(parentScene.activePlayer().getStartLocation()), parentScene.getStationByName(randomStation));
+			distance = Dijkstra.calculate(parentScene.getLocations(), parentScene.getStationByName(parentScene.activePlayer().getStartLocation()), parentScene.getStationByName(randomStation)); //Calculate based on stating (base) station
 		}
 		setMoneyReward(distance);
 		setScoreReward(distance);

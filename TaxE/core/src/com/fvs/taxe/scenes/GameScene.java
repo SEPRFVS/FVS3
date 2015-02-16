@@ -24,10 +24,12 @@ import com.fvs.taxe.worldobjects.Station;
 import com.fvs.taxe.worldobjects.obstacles.JunctionObstacle;
 import com.fvs.taxe.worldobjects.obstacles.Obstacle;
 import com.fvs.taxe.worldobjects.obstacles.StationObstacle;
+
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -129,6 +131,26 @@ public class GameScene extends GameGUIScene {
 			} else if (numberTurns.getValue() - prevCollision > 2) {
 				// stops repeated collisions if one players train is following the other players train
 				previousCollisions = new ArrayList<AiSprite>();
+			}
+			
+			if(getPlayer1().getScore() >= 6000 || getPlayer2().getScore() >= 6000){
+				//Win the game
+				DialogueScene winDialogue = new DialogueScene(""){
+					@Override
+					public void onOkayButton(){
+						//Return to main menu
+						Game.popScene();
+						this.cleanup();
+						Game.setScene(new MainMenuScene());
+					}
+				};
+				if(getPlayer1().getScore() > getPlayer2().getScore()){
+					winDialogue.setText("Player 1 Wins!!!");
+				}else{
+					winDialogue.setText("Player 2 Wins!!!");
+				}
+				Game.pushScene(winDialogue);
+				//TODO add to leaderboard
 			}
 		}
 	}
@@ -1048,11 +1070,13 @@ public class GameScene extends GameGUIScene {
 	 */
 	private void initialiseGoals() {
 		Objective sideObjective = new EmptyObjective();
-		Goal g = new Goal(this, new ArrivalObjective(this), new TurnObjective(numberTurns), sideObjective);
+		Objective mainObjective = new ArrivalObjective(this);
+		Goal g = new Goal(this, mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
 		this.activeGoals.add(g);
 
 		sideObjective = new EmptyObjective();
-		g = new Goal(this,  new RouteObjective(this), sideObjective, sideObjective);
+		mainObjective = new RouteObjective(this);
+		g = new Goal(this,  mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
 		this.activeGoals.add(g);
 
 		generateGoals();
@@ -1083,7 +1107,7 @@ public class GameScene extends GameGUIScene {
 				mainObjective = new RouteObjective(this);
 			}
 			Objective sideObjective = new EmptyObjective();
-			Goal g = new Goal(this, mainObjective, sideObjective, sideObjective);
+			Goal g = new Goal(this, mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
 			this.activeGoals.add(g);
 		}
 	}
@@ -1107,8 +1131,7 @@ public class GameScene extends GameGUIScene {
 	@Override
 	public void goalsToolbarPressed() 
 	{
-		if (!isSelectingRoute)
-			Game.pushScene(goalsScene);
+		Game.pushScene(goalsScene);
 	}
 	
 	@Override
@@ -1116,14 +1139,12 @@ public class GameScene extends GameGUIScene {
 	{
 		if (!isSelectingRoute)
 			Game.pushScene(shopScene);
-		
 	}
 	
 	@Override
 	public void resourcesToolbarPressed() 
 	{
-		if (!isSelectingRoute)
-			Game.pushScene(resourceScene);
+		Game.pushScene(resourceScene);
 	}
 	
 	@Override
