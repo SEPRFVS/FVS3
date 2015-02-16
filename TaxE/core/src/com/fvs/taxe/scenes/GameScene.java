@@ -24,10 +24,12 @@ import com.fvs.taxe.worldobjects.Station;
 import com.fvs.taxe.worldobjects.obstacles.JunctionObstacle;
 import com.fvs.taxe.worldobjects.obstacles.Obstacle;
 import com.fvs.taxe.worldobjects.obstacles.StationObstacle;
+
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -129,6 +131,26 @@ public class GameScene extends GameGUIScene {
 			} else if (numberTurns.getValue() - prevCollision > 2) {
 				// stops repeated collisions if one players train is following the other players train
 				previousCollisions = new ArrayList<AiSprite>();
+			}
+			
+			if(getPlayer1().getScore() >= 6000 || getPlayer2().getScore() >= 6000){
+				//Win the game
+				DialogueScene winDialogue = new DialogueScene(""){
+					@Override
+					public void onOkayButton(){
+						//Return to main menu
+						Game.popScene();
+						this.cleanup();
+						Game.setScene(new MainMenuScene());
+					}
+				};
+				if(getPlayer1().getScore() > getPlayer2().getScore()){
+					winDialogue.setText("Player 1 Wins!!!");
+				}else{
+					winDialogue.setText("Player 2 Wins!!!");
+				}
+				Game.pushScene(winDialogue);
+				//TODO add to leaderboard
 			}
 		}
 	}
