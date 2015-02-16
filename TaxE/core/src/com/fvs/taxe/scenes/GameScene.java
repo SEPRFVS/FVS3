@@ -1042,11 +1042,13 @@ public class GameScene extends GameGUIScene {
 	 */
 	private void initialiseGoals() {
 		Objective sideObjective = new EmptyObjective();
-		Goal g = new Goal(this, new ArrivalObjective(this), new TurnObjective(numberTurns), sideObjective);
+		Objective mainObjective = new ArrivalObjective(this);
+		Goal g = new Goal(this, mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
 		this.activeGoals.add(g);
 
 		sideObjective = new EmptyObjective();
-		g = new Goal(this,  new RouteObjective(this), sideObjective, sideObjective);
+		mainObjective = new RouteObjective(this);
+		g = new Goal(this,  mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
 		this.activeGoals.add(g);
 
 		generateGoals();
@@ -1077,7 +1079,7 @@ public class GameScene extends GameGUIScene {
 				mainObjective = new RouteObjective(this);
 			}
 			Objective sideObjective = new EmptyObjective();
-			Goal g = new Goal(this, mainObjective, sideObjective, sideObjective);
+			Goal g = new Goal(this, mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
 			this.activeGoals.add(g);
 		}
 	}
