@@ -320,7 +320,7 @@ public class ShopScene extends GameWindowedGUIScene {
 
 
 
-                final SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselection.png"), lstIn) {
+                final SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselectionobstacles.png"), lstIn) {
                     @Override
                     public void onSelectionEnd() {
                         Junction selectedJunction = (Junction) parentGame.getStationByName(juncDict.get(elements.get(selectedElementIndex)));
@@ -896,7 +896,7 @@ public class ShopScene extends GameWindowedGUIScene {
         lstIn.add("Berlin");
         lstIn.add("Madrid");
         lstIn.add("Budapest");
-        SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselection.png"), lstIn) {
+        SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselectionobstacles.png"), lstIn) {
             @Override
             public void onSelectionEnd() {
                 String selectedStation = (String)elements.get(selectedElementIndex);
