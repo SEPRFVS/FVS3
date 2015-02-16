@@ -107,7 +107,7 @@ public class LabelButton extends Button {
 		}
 		//Center aligned
 		else if (verticalAlign == 1){
-			originY = this.getY() + this.getHeight() - textBounds.height/2;
+			originY = this.getY() + this.getHeight()/2 + textBounds.height/2;
 		}
 
 		font.draw(batch, text, originX, originY);
