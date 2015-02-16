@@ -21,7 +21,6 @@ public class TurnObjective extends Objective {
         this.currentTurn = currentTurn;
         this.startingTurn = currentTurn.getValue();
         this.turns = distance/20;
-        setMoneyReward(50);
     }
 
     @Override
@@ -45,6 +44,15 @@ public class TurnObjective extends Objective {
         }
 
         return turnsRemaining() * SCORE_MULTIPLIER;
+    }
+    
+    @Override
+    public int getMoneyReward() {
+    	if(failed) {
+    		return 0;
+    	}
+    	
+    	return 50;
     }
 
     private int turnsElapsed() {
