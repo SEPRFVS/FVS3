@@ -1069,14 +1069,12 @@ public class GameScene extends GameGUIScene {
 	 * Method is called when GameScene is first created
 	 */
 	private void initialiseGoals() {
-		Objective sideObjective = new EmptyObjective();
-		Objective mainObjective = new ArrivalObjective(this);
-		Goal g = new Goal(this, mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
+		ArrivalObjective mainObjective = new ArrivalObjective(this);
+		Goal g = new Goal(this, mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), new ViaObjective(this, null, mainObjective.getDestination()));
 		this.activeGoals.add(g);
 
-		sideObjective = new EmptyObjective();
 		mainObjective = new RouteObjective(this);
-		g = new Goal(this,  mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
+		g = new Goal(this,  mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), new ViaObjective(this, ((RouteObjective) mainObjective).getStartStation(), mainObjective.getDestination()));
 		this.activeGoals.add(g);
 
 		generateGoals();
@@ -1097,17 +1095,19 @@ public class GameScene extends GameGUIScene {
 		activeGoals.trimToSize();
 		while (activeGoals.size() < 3)
 		{
-			Objective mainObjective;
+			ArrivalObjective mainObjective;
+			ViaObjective viaObjective;
 			if(new Random().nextDouble() > 0.5)
 			{
 				mainObjective = new ArrivalObjective(this);
+				viaObjective = new ViaObjective(this, null, mainObjective.getDestination());
 			}
 			else
 			{
 				mainObjective = new RouteObjective(this);
+				viaObjective = new ViaObjective(this, ((RouteObjective) mainObjective).getStartStation(), mainObjective.getDestination());
 			}
-			Objective sideObjective = new EmptyObjective();
-			Goal g = new Goal(this, mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), sideObjective);
+			Goal g = new Goal(this, mainObjective, new TurnObjective(numberTurns, mainObjective.getMoneyReward()), viaObjective);
 			this.activeGoals.add(g);
 		}
 	}
