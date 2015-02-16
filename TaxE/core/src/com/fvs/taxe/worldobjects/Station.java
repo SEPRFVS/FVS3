@@ -65,6 +65,7 @@ public class Station extends RouteLocation{
     }
 
     public void setObstacle(Obstacle obstacle) {
+        // if we want to set the obstacle to null we don't care what it was before
         if (obstacle == null) {
             super.setObstacle(null);
             return;
@@ -79,6 +80,7 @@ public class Station extends RouteLocation{
     public void decrementObstacleTurns() {
         if (obstacleTurns == -1) return;
         if (obstacleTurns == 0) {
+            // the obstacle timed out, need to remove it
             parentScene.removeObstacle(this);
             obstacleTurns = -1;
             return;

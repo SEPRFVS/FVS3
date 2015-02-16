@@ -690,7 +690,6 @@ public class GameScene extends GameGUIScene {
                     break;
             }
         }
-
         if (hasObstacle) {
             Game.pushScene(this.makeDialogueScene("Obstacle on the route!"));
         }
@@ -970,8 +969,15 @@ public class GameScene extends GameGUIScene {
 
     public void checkObstacles(Player player) {
         for (Train train : player.getTrains()) {
-            train.checkObstacles();
+            if (train.hasObstacleOnRoute()) {
+                obstacleDialog(train);
+            }
         }
+    }
+
+    public void obstacleDialog(Train train) {
+        DialogueScene dialogueScene = new DialogueScene("Obstacle warning for " + train.getName() + " train!");
+        Game.pushScene(dialogueScene);
     }
 
     public void crashDialog() {

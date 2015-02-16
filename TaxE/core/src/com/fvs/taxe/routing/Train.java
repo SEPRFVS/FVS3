@@ -277,21 +277,20 @@ public class Train extends AiSprite {
         parentScene.removeTrain(player, this);
     }
 
-    public void checkObstacles() {
+    public boolean hasObstacleOnRoute() {
         //Check if obstacles on the route
-        if (route == null) return;
+        if (route == null) return false;
 
         List<RouteLocation> routeLocations = route.getRouteLocations();
-        if (routeLocations == null) return;
+        if (routeLocations == null) return false;
 
         routeLocations = routeLocations.subList(stationsPassed + 1, routeLocations.size());
         for (RouteLocation routeLocation : routeLocations) {
             if (routeLocation.hasObstacle()) {
-                DialogueScene dialogueScene = new DialogueScene("Obstacle warning for " + this.getName() + " train!");
-                Game.pushScene(dialogueScene);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
 	@Override
