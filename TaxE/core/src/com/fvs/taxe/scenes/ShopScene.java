@@ -146,6 +146,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				steamButton.setLocalPosition(65, 555);
 				steamButton.setSize(115, 34);
 				steamButton.setAlignment(1);
+				steamButton.setVertical(1);
 				steamButton.setAlpha(1);
 				steamButton.setFont(Label.genericFont(Color.WHITE, 22));
 				pane.Add(steamButton);
@@ -172,6 +173,7 @@ public class ShopScene extends GameWindowedGUIScene {
 					dieselButton.setText("Buy: $30");
 				}
 				dieselButton.setAlignment(1);
+				dieselButton.setVertical(1);
 				dieselButton.setAlpha(1);
 				dieselButton.setFont(Label.genericFont(Color.WHITE, 22));
 				pane.Add(dieselButton);
@@ -198,6 +200,7 @@ public class ShopScene extends GameWindowedGUIScene {
 					electricButton.setText("Buy: $90");
 				}
 				electricButton.setAlignment(1);
+				electricButton.setVertical(1);
 				electricButton.setAlpha(1);
 				electricButton.setFont(Label.genericFont(Color.WHITE, 22));
 				pane.Add(electricButton);
@@ -224,6 +227,7 @@ public class ShopScene extends GameWindowedGUIScene {
 					nuclearButton.setText("Buy: $200");
 				}
 				nuclearButton.setAlignment(1);
+				nuclearButton.setVertical(1);
 				nuclearButton.setAlpha(1);
 				nuclearButton.setFont(Label.genericFont(Color.WHITE, 22));
 				pane.Add(nuclearButton);
@@ -250,6 +254,7 @@ public class ShopScene extends GameWindowedGUIScene {
 					magLevButton.setText("Buy: $500");
 				}
 				magLevButton.setAlignment(1);
+				magLevButton.setVertical(1);
 				magLevButton.setAlpha(1);
 				magLevButton.setFont(Label.genericFont(Color.WHITE, 22));
 				pane.Add(magLevButton);
@@ -276,6 +281,7 @@ public class ShopScene extends GameWindowedGUIScene {
 					kingButton.setText("Buy: $1000");
 				}
 				kingButton.setAlignment(1);
+				kingButton.setVertical(1);
 				kingButton.setAlpha(1);
 				kingButton.setFont(Label.genericFont(Color.WHITE, 22));
 				pane.Add(kingButton);
@@ -337,6 +343,7 @@ public class ShopScene extends GameWindowedGUIScene {
         junctionObstacleButton.setLocalPosition(420, 530);
         junctionObstacleButton.setSize(115, 34);
         junctionObstacleButton.setAlignment(1);
+        junctionObstacleButton.setVertical(1);
         junctionObstacleButton.setAlpha(1);
         junctionObstacleButton.setFont(Label.genericFont(Color.WHITE, 22));
         pane.Add(junctionObstacleButton);
@@ -360,6 +367,7 @@ public class ShopScene extends GameWindowedGUIScene {
         stationObstacleButton.setSize(115, 34);
         stationObstacleButton.setLocalPosition(90, 530);
         stationObstacleButton.setAlignment(1);
+        stationObstacleButton.setVertical(1);
         stationObstacleButton.setAlpha(1);
         stationObstacleButton.setFont(Label.genericFont(Color.WHITE, 22));
         pane.Add(stationObstacleButton);
@@ -370,14 +378,14 @@ public class ShopScene extends GameWindowedGUIScene {
 		Texture buyButtonText = new Texture("buy_bg.png");
 		Texture emptyButtonText = new Texture("sell_bg.png");
 		Texture LabelText = new Texture("Clear_Button.png");
-		fuelLabel = new Label(this, LabelText, Label.genericFont(Color.BLUE, 40));
-		fuelLabel.setText("Fuel Reserve: " + parentGame.fuel);
-		fuelLabel.setLocalPosition(65, 800);
+		fuelLabel = new Label(this, LabelText, Label.genericFont(Color.RED, 25));
+		fuelLabel.setText("Fuel reserve: " + parentGame.fuel + " litres");
+		fuelLabel.setLocalPosition(65, 740);
 		fuelLabel.setAlignment(0);
 		pane.Add(fuelLabel);
-		fuelPriceLabel = new Label(this, LabelText, Label.genericFont(Color.BLUE, 40));
-		fuelPriceLabel.setText("Price per 100 fuel: $" + parentGame.crPer100Fuel);
-		fuelPriceLabel.setLocalPosition(65, 740);
+		fuelPriceLabel = new Label(this, LabelText, Label.genericFont(Color.DARK_GRAY, 40));
+		fuelPriceLabel.setText("Price per 100l fuel: $" + parentGame.crPer100Fuel);
+		fuelPriceLabel.setLocalPosition(65, 795);
 		fuelPriceLabel.setAlignment(0);
 		pane.Add(fuelPriceLabel);
 		fuelButton = new LabelButton(this) {
@@ -391,7 +399,7 @@ public class ShopScene extends GameWindowedGUIScene {
 						Game.pushScene(parentGame.makeDialogueScene("Fuel bought!"));
 						parentGame.activePlayer().setMoney(parentGame.activePlayer().getMoney() - parentGame.crPer100Fuel);
 						parentGame.activePlayer().setFuel(parentGame.activePlayer().getFuel() + 100);
-						parentGame.fuel += -100;
+						parentGame.fuel -= 100;
 					}
 					else
 					{
@@ -408,11 +416,12 @@ public class ShopScene extends GameWindowedGUIScene {
 		else
 		{
 			fuelButton.setTexture(buyButtonText);
-			fuelButton.setText("Buy");
+			fuelButton.setText("Buy 100l");
 		}
-		fuelButton.setLocalPosition(65, 650);
+		fuelButton.setLocalPosition(65, 665);
 		fuelButton.setSize(115, 34);
 		fuelButton.setAlignment(1);
+		fuelButton.setVertical(1);
 		fuelButton.setAlpha(1);
 		fuelButton.setFont(Label.genericFont(Color.WHITE, 22));
 		pane.Add(fuelButton);
@@ -524,10 +533,10 @@ public class ShopScene extends GameWindowedGUIScene {
 			else
 			{
 				fuelButton.setTexture(buyButtonText);
-				fuelButton.setText("Buy");
+				fuelButton.setText("Buy 100l");
 			}
-			fuelLabel.setText("Fuel Reserve: " + parentGame.fuel);
-			fuelPriceLabel.setText("Price per 100 fuel: $" + parentGame.crPer100Fuel);
+			fuelLabel.setText("Fuel reserve: " + parentGame.fuel + " litres");
+			fuelPriceLabel.setText("Price per 100l fuel: $" + parentGame.crPer100Fuel);
 		}
 	}
 
@@ -575,6 +584,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		}
 		upgradeButton.setText(text);
 		upgradeButton.setAlignment(1);
+		upgradeButton.setVertical(1);
 		upgradeButton.setAlpha(1);
 		upgradeButton.setFont(Label.genericFont(Color.WHITE, 18));
 		return upgradeButton;

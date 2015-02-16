@@ -15,6 +15,7 @@ public class LabelButton extends Button {
 	private BitmapFont font;
 	private String text;
 	private int alignment = 1;
+	private int verticalAlign = 0;
 	
 	public LabelButton(Scene parentScene) {
 		super(parentScene);
@@ -68,6 +69,12 @@ public class LabelButton extends Button {
 		alignment = newAlignment; 
 	}
 	
+	public void setVertical(int newVertical)
+	{
+		// 0 = no offset, 1 = center offset
+		verticalAlign = newVertical;
+	}
+	
 	//We override the default draw method so that we draw the text *after* we draw the object's texture 
 	//So that the text appears on top
 	@Override
@@ -79,7 +86,7 @@ public class LabelButton extends Button {
 		TextBounds textBounds = font.getBounds(text);
 		float bounds = this.getX();
 		float originX = 0;
-		float originY = this.getY() + (this.getHeight());
+		float originY = 0;
 		
 		// Left Alignment
 		if (alignment == 0) {
@@ -92,6 +99,15 @@ public class LabelButton extends Button {
 		// Right aligned
 		else if (alignment == 2) {
 			originX = bounds + this.getWidth()/2;
+		}
+		
+		//Top aligned
+		if (verticalAlign == 0){
+			originY = this.getY() + this.getHeight();
+		}
+		//Center aligned
+		else if (verticalAlign == 1){
+			originY = this.getY() + this.getHeight() - textBounds.height/2;
 		}
 
 		font.draw(batch, text, originX, originY);
