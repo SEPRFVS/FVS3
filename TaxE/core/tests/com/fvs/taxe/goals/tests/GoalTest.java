@@ -1,11 +1,14 @@
 package com.fvs.taxe.goals.tests;
 
+import com.fvs.taxe.Game;
 import com.fvs.taxe.Player;
 import com.fvs.taxe.goals.EventHandler;
 import com.fvs.taxe.goals.Goal;
 import com.fvs.taxe.goals.objectives.EmptyObjective;
+import com.fvs.taxe.scenes.DialogueScene;
 import com.fvs.taxe.scenes.GameScene;
 import com.fvs.taxe.testrunners.GdxTestRunner;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,5 +52,20 @@ public class GoalTest {
 
         assertEquals(moneyBefore + GOAL_MONEY, player1.getMoney());
         assertEquals(scoreBefore + GOAL_SCORE, player1.getScore());
+    }
+    
+    @Test
+    public void winTest() {
+    	//Test that a player can win
+    	boolean gameWon = false;
+    	
+    	GameScene scene = new GameScene(player1, player2);
+    	
+    	player1.setScore(8000);
+    	scene.nextTurn();
+    	
+    	gameWon = player1.getScore() >= 6000;
+    	
+    	assertEquals(gameWon, true);
     }
 }
