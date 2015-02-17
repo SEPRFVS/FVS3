@@ -173,20 +173,6 @@ public class CurrentResourcesScene extends GameWindowedGUIScene {
 		Add(trainsButton);
 		// ---------------------
 		
-		// Create obstacles button
-		Button obstaclesButton = new Button(this) {
-			@Override
-			public void onClickEnd()
-			{
-				obstaclesPressed();
-			}
-		};
-		obstaclesButton.setPosition(798, 518);
-		obstaclesButton.setSize(180, 70);
-		obstaclesButton.setTexture(buttonText);
-		Add(obstaclesButton);
-		// ---------------------
-		
 		//Create Exit Button
 				Button exitButton = new Button(this) {
 					@Override
@@ -228,13 +214,6 @@ public class CurrentResourcesScene extends GameWindowedGUIScene {
 		magLevUsage.setAlpha(1);
 		kingUsage.setAlpha(1);
 		// ---------------------
-		
-	}
-	
-	public void obstaclesPressed()
-	{
-		System.out.println("obstaclesPressed");
-		Game.pushScene(parentGame.makeDialogueScene("Coming soon!"));
 		
 	}
 	
