@@ -59,10 +59,6 @@ public class PauseMenuScene extends Scene {
 		Game.popScene();
 		
 	}
-	public void savePressed()
-	{
-		Game.pushScene(new DialogueScene("Coming Soon!"));
-	}
 	public void quitPressed()
 	{
 		Game.popScene();

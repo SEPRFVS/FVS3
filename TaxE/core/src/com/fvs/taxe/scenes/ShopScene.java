@@ -672,8 +672,6 @@ public class ShopScene extends GameWindowedGUIScene {
         this.drawObstacleScrollPane();
         Texture obstaclesText = new Texture("Shop_Obstacles.png");
         shop.setTexture(obstaclesText);
-		//Game.pushScene(parentGame.makeDialogueScene("Coming soon!"));
-		
 	}
 	
 	public void resourcePressed()

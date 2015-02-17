@@ -12,7 +12,7 @@ public class MainMenuScene extends Scene {
 	public void onCreate()
 	{	
 		//Create background image game menu
-		Texture bkgText = new Texture("main.jpg");
+		Texture bkgText = new Texture("main.png");
 		bkg = new SpriteComponent(this, bkgText, Game.mainZ);
 		bkg.setPosition(0, 0);
 		bkg.setSize(Game.targetWindowsWidth, Game.targetWindowsHeight);
@@ -28,39 +28,11 @@ public class MainMenuScene extends Scene {
 			}
 		};
 		//Position new game button
-		newGameButton.setPosition(632, 443);
-		newGameButton.setSize(302, 78);		
+		newGameButton.setPosition(560, 280);
+		newGameButton.setSize(404, 90);		
 		Add(newGameButton);
 		
-		//Create load game button
-		Button loadGameButton = new Button(this) {
-			@Override
-			public void onClickEnd()
-			{
-				Game.pushScene(new DialogueScene("Coming Soon"));
-				cleanup();
-			}
-		};
-		//Position load game button
-		loadGameButton.setPosition(631, 354);
-		loadGameButton.setSize(317, 75);		
-		Add(loadGameButton);
-		
-		//Create leaderboard button
-		Button viewLeaderboardButton = new Button(this) {
-			@Override
-			public void onClickEnd()
-			{
-				Game.pushScene(new DialogueScene("Coming Soon!"));
-				cleanup();
-			}
-		};
-		//Position view leaderboard button
-		viewLeaderboardButton.setPosition(619, 229);
-		viewLeaderboardButton.setSize(340, 112);		
-		Add(viewLeaderboardButton);
-		
-		//Create new game scene
+		//Create exit game scene
 		Button exitGameButton = new Button(this) {
 			@Override
 			public void onClickEnd()
@@ -68,9 +40,9 @@ public class MainMenuScene extends Scene {
 				System.exit(0);
 			}
 		};
-		//Position view leaderboard button
-		exitGameButton.setPosition(641, 137);
-		exitGameButton.setSize(295, 73);		
+		//Position view exit button
+		exitGameButton.setPosition(680, 150);
+		exitGameButton.setSize(160, 90);		
 		Add(exitGameButton);
 		
 	}
