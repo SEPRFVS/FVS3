@@ -34,24 +34,12 @@ public class PauseMenuScene extends Scene {
 			resumePressed();
 		}
 	};
-	resumeButton.setPosition(370, 378);
+	resumeButton.setPosition(370, 308);
 	resumeButton.setSize(280, 70);
 	Texture resumeText = new Texture("Clear_Button.png");
 	resumeButton.setTexture(resumeText);
 	Add(resumeButton);
 	
-	Button saveButton = new Button(this) {
-		@Override
-		public void onClickEnd()
-		{
-			savePressed();
-		}
-	};
-	saveButton.setPosition(370, 308);
-	saveButton.setSize(280, 70);
-	Texture saveText = new Texture("Clear_Button.png");
-	saveButton.setTexture(saveText);
-	Add(saveButton);
 	
 	Button quitButton = new Button(this) {
 		@Override

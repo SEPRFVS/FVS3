@@ -273,19 +273,6 @@ public class GameScene extends GameGUIScene {
 		Add(settingsButton);
 		//Create settings menu button
 		
-		Button leaderButton = new Button(this) {
-			@Override
-			public void onClickEnd()
-			{
-				Game.pushScene(makeDialogueScene("Leaderboard coming soon!"));
-			}
-		};
-		leaderButton.setZ(Game.guiZ);
-		leaderButton.setPosition(814, 0);
-		leaderButton.setSize(100, 100);
-		leaderButton.setTexture(buttonText);
-		Add(leaderButton);
-		
 		events = new EventHandler();
 
 		initialiseGoals();
