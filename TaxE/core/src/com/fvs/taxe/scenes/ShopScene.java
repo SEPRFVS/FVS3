@@ -857,14 +857,15 @@ public class ShopScene extends GameWindowedGUIScene {
 			return;
 		}
 		ArrayList<String> lstIn = new ArrayList<String>();
-		lstIn.add("London");
-		lstIn.add("Rome");
-		lstIn.add("Moscow");
-		lstIn.add("Lisbon");
-		lstIn.add("Paris");
 		lstIn.add("Berlin");
-		lstIn.add("Madrid");
 		lstIn.add("Budapest");
+		lstIn.add("Krakow");
+		lstIn.add("Lisbon");
+		lstIn.add("London");
+		lstIn.add("Madrid");
+		lstIn.add("Moscow");
+		lstIn.add("Paris");
+		lstIn.add("Rome");
 		SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselection.png"), lstIn) {
 			@Override
 			public void onSelectionEnd() {
@@ -886,14 +887,15 @@ public class ShopScene extends GameWindowedGUIScene {
         }
 
         ArrayList<String> lstIn = new ArrayList<String>();
-        lstIn.add("London");
-        lstIn.add("Rome");
-        lstIn.add("Moscow");
-        lstIn.add("Lisbon");
-        lstIn.add("Paris");
-        lstIn.add("Berlin");
-        lstIn.add("Madrid");
-        lstIn.add("Budapest");
+		lstIn.add("Berlin");
+		lstIn.add("Budapest");
+		lstIn.add("Krakow");
+		lstIn.add("Lisbon");
+		lstIn.add("London");
+		lstIn.add("Madrid");
+		lstIn.add("Moscow");
+		lstIn.add("Paris");
+		lstIn.add("Rome");
         SelectionScene locationSelectionScene = new SelectionScene(new Texture("locationselectionobstacles.png"), lstIn) {
             @Override
             public void onSelectionEnd() {
