@@ -96,6 +96,7 @@ public class ViaObjective extends Objective {
 					}
 				}
 			}
+			//Test if correct train
 			for(Train train : completeTrains) {
 				if(train == e.train){
 					return true;

@@ -37,7 +37,7 @@ public class MainMenuScene extends Scene {
 			@Override
 			public void onClickEnd()
 			{
-				Game.pushScene(new LoadGameScene());
+				Game.pushScene(new DialogueScene("Coming Soon"));
 				cleanup();
 			}
 		};
@@ -46,12 +46,12 @@ public class MainMenuScene extends Scene {
 		loadGameButton.setSize(317, 75);		
 		Add(loadGameButton);
 		
-		//Create leaderborad button
+		//Create leaderboard button
 		Button viewLeaderboardButton = new Button(this) {
 			@Override
 			public void onClickEnd()
 			{
-				Game.pushScene(new LeaderboardScene());
+				Game.pushScene(new DialogueScene("Coming Soon!"));
 				cleanup();
 			}
 		};
