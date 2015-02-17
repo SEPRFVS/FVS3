@@ -68,4 +68,21 @@ public class GoalTest {
     	
     	assertEquals(gameWon, true);
     }
+    
+    @Test
+    public void testTurnResources() {
+    	GameScene scene = new GameScene(player1, player2);
+    	scene.nextGoPressed(); //Start game
+    	
+    	int initialFuel = player1.getFuel();
+    	int initialMoney = player1.getMoney();
+    	scene.nextGoPressed();
+    	//Get to player 1 so increment happens
+    	while(scene.activePlayer() != player1) {
+    		scene.nextGoPressed();
+    	}
+    	
+    	assertEquals(player1.getMoney(), initialMoney + 5);
+    	assertEquals(player1.getFuel(), initialFuel + 5);
+    }
 }
