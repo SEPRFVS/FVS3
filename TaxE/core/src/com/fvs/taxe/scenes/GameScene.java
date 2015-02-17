@@ -1008,6 +1008,10 @@ public class GameScene extends GameGUIScene {
 		updateGoals();
 		//We recalculate the fuel price every player 1 turn
 		regenerateFuelPrice();
+		
+		//Give 2 resources to player
+		getPlayer1().setFuel(getPlayer1().getFuel() + 5);
+		getPlayer1().setMoney(getPlayer1().getMoney() + 5);
 
         if (getPlayer1().trainCrashed) {
             crashDialog();
@@ -1034,6 +1038,10 @@ public class GameScene extends GameGUIScene {
 			g.nextTurn(getPlayer2());
 		}
 		updateGoals();
+		
+		//Give 2 resources to player
+		getPlayer2().setFuel(getPlayer2().getFuel() + 5);
+		getPlayer2().setMoney(getPlayer2().getMoney() + 5);
 
         if (getPlayer2().trainCrashed) {
             crashDialog();
