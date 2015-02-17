@@ -136,7 +136,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Steam"))
 				{
 					steamButton.setTexture(sellButtonText);
-					steamButton.setText("Sell: $10");
+					steamButton.setText("Sell: $5");
 				}
 				else
 				{
@@ -165,7 +165,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Diesel"))
 				{
 					dieselButton.setTexture(sellButtonText);
-					dieselButton.setText("Sell: $30");
+					dieselButton.setText("Sell: $15");
 				}
 				else
 				{
@@ -192,7 +192,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Electric"))
 				{
 					electricButton.setTexture(sellButtonText);
-					electricButton.setText("Sell: $90");
+					electricButton.setText("Sell: $45");
 				}
 				else
 				{
@@ -219,7 +219,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Nuclear"))
 				{
 					nuclearButton.setTexture(sellButtonText);
-					nuclearButton.setText("Sell: $200");
+					nuclearButton.setText("Sell: $100");
 				}
 				else
 				{
@@ -246,7 +246,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("Mag"))
 				{
 					magLevButton.setTexture(sellButtonText);
-					magLevButton.setText("Sell: $500");
+					magLevButton.setText("Sell: $250");
 				}
 				else
 				{
@@ -273,7 +273,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				if(activePlayer.hasTrain("TheKing"))
 				{
 					kingButton.setTexture(sellButtonText);
-					kingButton.setText("Sell: $1000");
+					kingButton.setText("Sell: $500");
 				}
 				else
 				{
@@ -445,7 +445,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		if(activePlayer.hasTrain("Steam"))
 		{
 			steamButton.setTexture(sellButtonText);
-			steamButton.setText("Sell: $10");
+			steamButton.setText("Sell: $5");
 			drawUpgradeButtons(steamButton, activePlayer.getTrain("Steam"), activePlayer, 5);
 		}
 		else
@@ -459,7 +459,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		if(activePlayer.hasTrain("Diesel"))
 		{
 			dieselButton.setTexture(sellButtonText);
-			dieselButton.setText("Sell: $30");
+			dieselButton.setText("Sell: $15");
 			drawUpgradeButtons(dieselButton, activePlayer.getTrain("Diesel"), activePlayer, 10);
 		}
 		else
@@ -471,7 +471,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		if(activePlayer.hasTrain("Electric"))
 		{
 			electricButton.setTexture(sellButtonText);
-			electricButton.setText("Sell: $90");
+			electricButton.setText("Sell: $45");
 			drawUpgradeButtons(electricButton, activePlayer.getTrain("Electric"), activePlayer, 30);
 		}
 		else
@@ -484,7 +484,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		if(activePlayer.hasTrain("Nuclear"))
 		{
 			nuclearButton.setTexture(sellButtonText);
-			nuclearButton.setText("Sell: $200");
+			nuclearButton.setText("Sell: $100");
 			drawUpgradeButtons(nuclearButton, activePlayer.getTrain("Nuclear"), activePlayer, 50);
 		}
 		else
@@ -497,7 +497,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		if(activePlayer.hasTrain("Mag"))
 		{
 			magLevButton.setTexture(sellButtonText);
-			magLevButton.setText("Sell: $500");
+			magLevButton.setText("Sell: $250");
 			drawUpgradeButtons(magLevButton, activePlayer.getTrain("Mag"), activePlayer, 100);
 		}
 		else
@@ -510,7 +510,7 @@ public class ShopScene extends GameWindowedGUIScene {
 		if(activePlayer.hasTrain("TheKing"))
 		{
 			kingButton.setTexture(sellButtonText);
-			kingButton.setText("Sell: $1000");
+			kingButton.setText("Sell: $500");
 			drawUpgradeButtons(kingButton, activePlayer.getTrain("TheKing"), activePlayer, 150);
 		}
 		else
@@ -704,7 +704,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				@Override
 				public void onOkayButton()
 				{
-					parentGame.activePlayer().sellTrain("Steam", 10, parentGame);
+					parentGame.activePlayer().sellTrain("Steam", 5, parentGame);
 					refreshButtons();
 					updateValues();
 				}
@@ -726,7 +726,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				@Override
 				public void onOkayButton()
 				{
-					parentGame.activePlayer().sellTrain("Diesel", 30, parentGame);
+					parentGame.activePlayer().sellTrain("Diesel", 15, parentGame);
 					refreshButtons();
 					updateValues();
 				}
@@ -748,7 +748,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				@Override
 				public void onOkayButton()
 				{
-					parentGame.activePlayer().sellTrain("Electric", 90, parentGame);
+					parentGame.activePlayer().sellTrain("Electric", 45, parentGame);
 					refreshButtons();
 					updateValues();
 				}
@@ -770,7 +770,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				@Override
 				public void onOkayButton()
 				{
-					parentGame.activePlayer().sellTrain("Nuclear", 200, parentGame);
+					parentGame.activePlayer().sellTrain("Nuclear", 100, parentGame);
 					refreshButtons();
 					updateValues();
 				}
@@ -792,7 +792,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				@Override
 				public void onOkayButton()
 				{
-					parentGame.activePlayer().sellTrain("Mag", 500, parentGame);
+					parentGame.activePlayer().sellTrain("Mag", 250, parentGame);
 					refreshButtons();
 					updateValues();
 				}
@@ -814,7 +814,7 @@ public class ShopScene extends GameWindowedGUIScene {
 				@Override
 				public void onOkayButton()
 				{
-					parentGame.activePlayer().sellTrain("TheKing", 1000, parentGame);
+					parentGame.activePlayer().sellTrain("TheKing", 500, parentGame);
 					refreshButtons();
 					updateValues();
 				}
