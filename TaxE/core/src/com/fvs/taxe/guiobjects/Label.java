@@ -11,10 +11,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.fvs.taxe.Game;
 import com.fvs.taxe.Scene;
 import com.fvs.taxe.SpriteComponent;
-import util.Stopwatch;
 import util.Tuple;
 
-import java.util.Dictionary;
 import java.util.HashMap;
 
 public class Label extends SpriteComponent {

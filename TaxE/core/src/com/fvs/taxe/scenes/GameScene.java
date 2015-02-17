@@ -1,7 +1,5 @@
 package com.fvs.taxe.scenes;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,9 +24,6 @@ import com.fvs.taxe.worldobjects.obstacles.Obstacle;
 import com.fvs.taxe.worldobjects.obstacles.StationObstacle;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;

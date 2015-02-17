@@ -28,7 +28,8 @@ public class Tuple<T,U> {
         if (obj == this)
             return true;
 
-        Tuple<T,U> rhs = (Tuple<T,U>) obj;
+        @SuppressWarnings("unchecked")
+		Tuple<T,U> rhs = (Tuple<T,U>) obj;
         return new EqualsBuilder().
                 // if deriving: appendSuper(super.equals(obj)).
                         append(one, rhs.one).
